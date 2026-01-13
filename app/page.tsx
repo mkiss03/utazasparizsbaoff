@@ -10,6 +10,8 @@ import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
 import type { Profile, Post } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
 export const revalidate = 60 // Revalidate every 60 seconds
 
 export default async function Home() {

@@ -5,6 +5,9 @@ import Footer from '@/components/Footer'
 import CheckoutClient from '@/components/checkout/CheckoutClient'
 import type { CityPricing } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
+
 interface Props {
   searchParams: Promise<{ city?: string }>
 }

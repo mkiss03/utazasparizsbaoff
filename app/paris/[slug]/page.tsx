@@ -5,6 +5,9 @@ import Footer from '@/components/Footer'
 import ParisTopicDetailClient from '@/components/paris/ParisTopicDetailClient'
 import type { Bundle, Flashcard } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: Promise<{ slug: string }>
 }

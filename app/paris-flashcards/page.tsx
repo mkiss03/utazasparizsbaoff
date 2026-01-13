@@ -4,6 +4,9 @@ import Footer from '@/components/Footer'
 import ParisFlashcardsPageClient from '@/components/paris/ParisFlashcardsPageClient'
 import type { Bundle, Flashcard } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Párizs Flashcards - Város Útmutató Flashcardok',
   description: 'Felfedezd az összes Párizs-specifikus tanulási témakört. Demo kártyák mindenki számára, teljes hozzáférés Pass után.',

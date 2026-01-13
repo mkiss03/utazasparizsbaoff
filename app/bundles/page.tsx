@@ -4,6 +4,9 @@ import Footer from '@/components/Footer'
 import BundlesCitiesPageClient from '@/components/bundles/BundlesCitiesPageClient'
 import type { Bundle } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Összes Város - Tanulási Csomagok',
   description: 'Fedezd fel az összes város tanulási csomagjait. Párizs, Róma, Bécs és még sok más város nyelvtanulási témaköreit.',
