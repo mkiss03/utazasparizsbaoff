@@ -4,6 +4,8 @@ import Footer from '@/components/Footer'
 import PricingClient from '@/components/pricing/PricingClient'
 import type { CityPricing } from '@/lib/types/database'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
 export const revalidate = 60 // Revalidate every 60 seconds
 
 export default async function PricingPage() {

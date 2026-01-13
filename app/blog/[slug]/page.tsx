@@ -7,6 +7,8 @@ import { Calendar, ArrowLeft, Clock } from 'lucide-react'
 import type { Post } from '@/lib/types/database'
 import { notFound } from 'next/navigation'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 interface BlogPostPageProps {
