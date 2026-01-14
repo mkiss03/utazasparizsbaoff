@@ -135,6 +135,7 @@ export default function BlogPage() {
                     size="sm"
                     variant="outline"
                     onClick={() => router.push(`/admin/blog/edit/${post.id}`)}
+                    title="Szerkesztés"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -150,6 +151,8 @@ export default function BlogPage() {
                         deleteMutation.mutate(post.id)
                       }
                     }}
+                    title="Törlés"
+                    className="flex items-center justify-center"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

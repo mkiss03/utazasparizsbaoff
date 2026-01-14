@@ -9,11 +9,19 @@ interface ContactSectionProps {
   email?: string
   phone?: string
   whatsapp?: string
+  title?: string
+  subtitle?: string
+  locationLabel?: string
+  locationValue?: string
 }
 
 export default function ContactSection({
   email = 'viktoria@parizstourist.com',
   phone = '+33 6 12 34 56 78',
+  title = 'Lépjen kapcsolatba',
+  subtitle = 'Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!',
+  locationLabel = 'Helyszín',
+  locationValue = 'Párizs, Franciaország',
 }: ContactSectionProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -65,8 +73,8 @@ export default function ContactSection({
     },
     {
       icon: MapPin,
-      label: 'Helyszín',
-      value: 'Párizs, Franciaország',
+      label: locationLabel,
+      value: locationValue,
       href: '#',
     },
   ]
@@ -85,15 +93,15 @@ export default function ContactSection({
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
-            Lépjen kapcsolatba
+          <h2 className="mb-4 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl">
+            {title}
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600 md:text-xl">
-            Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!
+          <p className="mx-auto max-w-2xl text-base text-parisian-grey-600 sm:text-lg md:text-xl">
+            {subtitle}
           </p>
         </motion.div>
 
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
