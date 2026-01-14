@@ -115,16 +115,16 @@ export default function ServicesSection() {
           >
             Mit kínálunk
           </motion.span>
-          <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
+          <h2 className="mb-4 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl">
             Szolgáltatások
           </h2>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-parisian-grey-600 md:text-xl">
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-parisian-grey-600 sm:text-lg md:text-xl">
             Kattints a kártyákra a részletes információkért
           </p>
         </motion.div>
 
         {/* Services Grid */}
-        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
@@ -139,24 +139,24 @@ export default function ServicesSection() {
               <motion.div
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-white to-parisian-cream-50 p-8 shadow-lg transition-all duration-500 hover:shadow-2xl"
+                className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-white to-parisian-cream-50 p-6 sm:p-8 shadow-lg transition-all duration-500 hover:shadow-2xl"
               >
                 {/* Icon */}
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ duration: 0.3 }}
-                  className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${service.color} shadow-lg`}
+                  className={`mb-4 sm:mb-6 inline-flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${service.color} shadow-lg`}
                 >
-                  <service.icon className="h-8 w-8 text-white" />
+                  <service.icon className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
                 </motion.div>
 
                 {/* Title */}
-                <h3 className="mb-4 font-playfair text-2xl font-bold text-parisian-grey-800">
+                <h3 className="mb-3 sm:mb-4 font-playfair text-xl sm:text-2xl font-bold text-parisian-grey-800">
                   {service.title}
                 </h3>
 
                 {/* Short Description */}
-                <p className="mb-6 text-base leading-relaxed text-parisian-grey-600">
+                <p className="mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed text-parisian-grey-600">
                   {service.shortDescription}
                 </p>
 

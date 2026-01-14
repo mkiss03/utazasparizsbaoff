@@ -43,7 +43,7 @@ export default function AboutSection({
           >
             Rólam
           </motion.span>
-          <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
+          <h2 className="mb-4 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl">
             {title}
           </h2>
         </motion.div>
@@ -89,13 +89,13 @@ export default function AboutSection({
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                   viewport={{ once: true }}
-                  className="flex items-start gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
+                  className="flex items-start gap-3 sm:gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-4 sm:p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
                 >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
-                    <Heart className="h-6 w-6 text-parisian-beige-600" />
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
+                    <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-parisian-beige-600" />
                   </div>
                   <div>
-                    <h4 className="mb-2 font-montserrat text-lg font-bold text-parisian-grey-800">
+                    <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
                       Személyre szabott élmények
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
@@ -109,13 +109,13 @@ export default function AboutSection({
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                   viewport={{ once: true }}
-                  className="flex items-start gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
+                  className="flex items-start gap-3 sm:gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-4 sm:p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
                 >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
-                    <MapPin className="h-6 w-6 text-parisian-beige-600" />
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
+                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-parisian-beige-600" />
                   </div>
                   <div>
-                    <h4 className="mb-2 font-montserrat text-lg font-bold text-parisian-grey-800">
+                    <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
                       Helyi insider tudás
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
@@ -129,13 +129,13 @@ export default function AboutSection({
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.7 }}
                   viewport={{ once: true }}
-                  className="flex items-start gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
+                  className="flex items-start gap-3 sm:gap-4 rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-4 sm:p-6 transition-all duration-300 hover:border-parisian-beige-300 hover:shadow-lg"
                 >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
-                    <Sparkles className="h-6 w-6 text-parisian-beige-600" />
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100">
+                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-parisian-beige-600" />
                   </div>
                   <div>
-                    <h4 className="mb-2 font-montserrat text-lg font-bold text-parisian-grey-800">
+                    <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
                       Gondtalan élmény
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
@@ -168,20 +168,20 @@ export default function AboutSection({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
-              className="space-y-6"
+              className="space-y-6 mx-auto md:mx-0"
             >
               {/* Smaller Profile Image */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
-                className="relative"
+                className="relative mx-auto md:mx-0"
               >
-                <div className="relative aspect-[3/4] w-full max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
+                <div className="relative aspect-[3/4] w-full max-w-full sm:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
                   <Image
                     src={imageUrl}
                     alt="Viktória"
                     fill
-                    sizes="(max-width: 768px) 280px, 280px"
+                    sizes="(max-width: 640px) 100vw, 280px"
                     className="object-cover object-top"
                   />
                 </div>

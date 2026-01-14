@@ -75,7 +75,7 @@ export default function HeroSection({
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mb-6 font-playfair text-5xl font-bold leading-tight text-parisian-grey-800 md:text-6xl lg:text-7xl"
+              className="mb-6 font-playfair text-3xl font-bold leading-tight text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
             >
               {headline}
             </motion.h1>
@@ -84,7 +84,7 @@ export default function HeroSection({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="mb-10 max-w-xl text-lg leading-relaxed text-parisian-grey-600 md:text-xl"
+              className="mb-10 max-w-xl text-base leading-relaxed text-parisian-grey-600 sm:text-lg md:text-xl"
             >
               {subheadline}
             </motion.p>
@@ -146,7 +146,7 @@ export default function HeroSection({
               transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
               className="relative overflow-hidden rounded-3xl shadow-2xl"
             >
-              <div className="relative h-[500px] w-full lg:h-[600px]">
+              <div className="relative h-[400px] w-full sm:h-[500px] lg:h-[600px]">
                 <Image
                   src={imageUrl}
                   alt="Paris"
@@ -165,20 +165,20 @@ export default function HeroSection({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
-              className="absolute -bottom-6 -left-6 rounded-2xl bg-white p-6 shadow-xl"
+              className="absolute bottom-2 left-2 rounded-2xl bg-white p-4 shadow-xl sm:p-6 lg:-bottom-6 lg:-left-6"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-parisian-beige-100">
-                  <svg className="h-6 w-6 text-parisian-beige-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-parisian-beige-100 sm:h-12 sm:w-12">
+                  <svg className="h-5 w-5 text-parisian-beige-600 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-montserrat text-sm font-semibold text-parisian-grey-800">
+                  <p className="font-montserrat text-xs font-semibold text-parisian-grey-800 sm:text-sm">
                     Teljes körű szervezés
                   </p>
-                  <p className="font-montserrat text-xs text-parisian-grey-500">
+                  <p className="font-montserrat text-xs text-parisian-grey-500 hidden sm:block">
                     Minden részlet egy helyen
                   </p>
                 </div>
@@ -190,18 +190,18 @@ export default function HeroSection({
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 1.4 }}
-              className="absolute -right-4 top-20 rounded-2xl bg-white p-4 shadow-xl"
+              className="absolute right-2 top-20 rounded-2xl bg-white p-3 shadow-xl sm:p-4 lg:-right-4"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-parisian-beige-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-parisian-beige-100 sm:h-10 sm:w-10"
                 >
-                  <span className="text-lg">✨</span>
+                  <span className="text-base sm:text-lg">✨</span>
                 </motion.div>
                 <div>
-                  <p className="font-montserrat text-sm font-semibold text-parisian-grey-800">
+                  <p className="font-montserrat text-xs font-semibold text-parisian-grey-800 sm:text-sm">
                     Több éves tapasztalat
                   </p>
                 </div>

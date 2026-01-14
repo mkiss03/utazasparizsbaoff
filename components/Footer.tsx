@@ -9,12 +9,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 text-white">
+    <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 sm:py-16 text-white">
       {/* Background Decoration */}
       <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-parisian-beige-400 opacity-10 blur-3xl" />
 
       <div className="container relative z-10 mx-auto px-4">
-        <div className="grid gap-12 md:grid-cols-3">
+        <div className="grid gap-8 sm:gap-12 md:grid-cols-3">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -22,8 +22,8 @@ export default function Footer() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative h-12 w-12">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4">
+              <div className="relative h-10 w-10 sm:h-12 sm:w-12">
                 <Image
                   src="/images/logo.png"
                   alt="Utazás Párizsba"
@@ -32,7 +32,7 @@ export default function Footer() {
                   priority
                 />
               </div>
-              <h3 className="font-playfair text-2xl font-bold">
+              <h3 className="font-playfair text-xl sm:text-2xl font-bold">
                 Utazás <span className="text-parisian-beige-400">Párizsba</span>
               </h3>
             </div>
