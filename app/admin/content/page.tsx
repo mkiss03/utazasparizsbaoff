@@ -13,6 +13,7 @@ import type { Profile } from '@/lib/types/database'
 
 export default function ContentPage() {
   const [profile, setProfile] = useState<Partial<Profile>>({})
+  const [staticTexts, setStaticTexts] = useState<Record<string, string>>({})
   const supabase = createClient()
   const queryClient = useQueryClient()
 
@@ -24,11 +25,29 @@ export default function ContentPage() {
     },
   })
 
+  const { data: textsData, isLoading: textsLoading } = useQuery({
+    queryKey: ['static-texts'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_text_content').select('*')
+      return data || []
+    },
+  })
+
   useEffect(() => {
     if (data) {
       setProfile(data)
     }
   }, [data])
+
+  useEffect(() => {
+    if (textsData) {
+      const textMap: Record<string, string> = {}
+      textsData.forEach((item: any) => {
+        textMap[item.key] = item.value || ''
+      })
+      setStaticTexts(textMap)
+    }
+  }, [textsData])
 
   const saveMutation = useMutation({
     mutationFn: async (updates: Partial<Profile>) => {
@@ -48,8 +67,33 @@ export default function ContentPage() {
     },
   })
 
+  const saveTextsMutation = useMutation({
+    mutationFn: async (texts: Record<string, string>) => {
+      const updates = Object.entries(texts).map(([key, value]) => ({
+        key,
+        value,
+      }))
+
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('site_text_content')
+          .update({ value: update.value })
+          .eq('key', update.key)
+        if (error) throw error
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['static-texts'] })
+      alert('Statikus szövegek sikeresen mentve!')
+    },
+  })
+
   const handleSave = () => {
     saveMutation.mutate(profile)
+  }
+
+  const handleSaveTexts = () => {
+    saveTextsMutation.mutate(staticTexts)
   }
 
   const handleHeroBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +154,7 @@ export default function ContentPage() {
     setProfile({ ...profile, about_image: publicUrl })
   }
 
-  if (isLoading) {
+  if (isLoading || textsLoading) {
     return <div>Betöltés...</div>
   }
 
@@ -319,6 +363,150 @@ export default function ContentPage() {
                 }
                 placeholder="Feliratkozom"
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Statikus Szövegek</CardTitle>
+              <Button
+                onClick={handleSaveTexts}
+                variant="secondary"
+                size="sm"
+                disabled={saveTextsMutation.isPending}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {saveTextsMutation.isPending ? 'Mentés...' : 'Mentés'}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Contact Section */}
+            <div className="space-y-4 rounded-lg border p-4">
+              <h3 className="font-semibold text-navy-500">Kapcsolat Szekció</h3>
+              <div className="space-y-2">
+                <Label htmlFor="contact_title">Főcím</Label>
+                <Input
+                  id="contact_title"
+                  value={staticTexts.contact_title || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_title: e.target.value })
+                  }
+                  placeholder="Lépjen kapcsolatba"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_subtitle">Alcím / Leírás</Label>
+                <Textarea
+                  id="contact_subtitle"
+                  value={staticTexts.contact_subtitle || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_subtitle: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Készen áll felfedezni Párizst?..."
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="contact_location_label">Helyszín címke</Label>
+                  <Input
+                    id="contact_location_label"
+                    value={staticTexts.contact_location_label || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_location_label: e.target.value })
+                    }
+                    placeholder="Helyszín"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_location_value">Helyszín érték</Label>
+                  <Input
+                    id="contact_location_value"
+                    value={staticTexts.contact_location_value || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_location_value: e.target.value })
+                    }
+                    placeholder="Párizs, Franciaország"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Section */}
+            <div className="space-y-4 rounded-lg border p-4">
+              <h3 className="font-semibold text-navy-500">Lábléc (Footer)</h3>
+              <div className="space-y-2">
+                <Label htmlFor="footer_description">Rövid leírás</Label>
+                <Textarea
+                  id="footer_description"
+                  value={staticTexts.footer_description || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, footer_description: e.target.value })
+                  }
+                  rows={2}
+                  placeholder="Fedezze fel Párizs varázslatos titkait..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="footer_copyright">Copyright szöveg</Label>
+                <Input
+                  id="footer_copyright"
+                  value={staticTexts.footer_copyright || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, footer_copyright: e.target.value })
+                  }
+                  placeholder="Szeidl Viktória. Készült"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="footer_services_title">Szolgáltatások cím</Label>
+                <Input
+                  id="footer_services_title"
+                  value={staticTexts.footer_services_title || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, footer_services_title: e.target.value })
+                  }
+                  placeholder="Szolgáltatások:"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="footer_service_1">Szolgáltatás 1</Label>
+                  <Input
+                    id="footer_service_1"
+                    value={staticTexts.footer_service_1 || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, footer_service_1: e.target.value })
+                    }
+                    placeholder="Városnéző séták"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="footer_service_2">Szolgáltatás 2</Label>
+                  <Input
+                    id="footer_service_2"
+                    value={staticTexts.footer_service_2 || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, footer_service_2: e.target.value })
+                    }
+                    placeholder="Programszervezés"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="footer_service_3">Szolgáltatás 3</Label>
+                  <Input
+                    id="footer_service_3"
+                    value={staticTexts.footer_service_3 || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, footer_service_3: e.target.value })
+                    }
+                    placeholder="Transzferek"
+                  />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

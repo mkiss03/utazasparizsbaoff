@@ -5,8 +5,19 @@ import { Facebook, Heart, Mail, Phone, FileText } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function Footer() {
+interface FooterProps {
+  staticTexts?: Record<string, string>
+}
+
+export default function Footer({ staticTexts = {} }: FooterProps) {
   const currentYear = new Date().getFullYear()
+
+  const description = staticTexts.footer_description || 'Fedezze fel Párizs varázslatos titkait egy tapasztalt magyar idegenvezetővel.'
+  const copyright = staticTexts.footer_copyright || 'Szeidl Viktória. Készült'
+  const servicesTitle = staticTexts.footer_services_title || 'Szolgáltatások:'
+  const service1 = staticTexts.footer_service_1 || 'Városnéző séták'
+  const service2 = staticTexts.footer_service_2 || 'Programszervezés'
+  const service3 = staticTexts.footer_service_3 || 'Transzferek'
 
   return (
     <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 sm:py-16 text-white">
@@ -40,7 +51,7 @@ export default function Footer() {
               Hivatalos idegenvezető és programszervező Párizsban
             </p>
             <p className="text-sm text-white/70">
-              Fedezze fel Párizs varázslatos titkait egy tapasztalt magyar idegenvezetővel.
+              {description}
             </p>
 
             {/* Legal Info */}
@@ -123,11 +134,11 @@ export default function Footer() {
 
             {/* Services */}
             <div className="mb-6">
-              <h5 className="mb-2 text-sm font-semibold text-white/90">Szolgáltatások:</h5>
+              <h5 className="mb-2 text-sm font-semibold text-white/90">{servicesTitle}</h5>
               <ul className="space-y-1 text-xs text-white/70">
-                <li>• Városnéző séták</li>
-                <li>• Programszervezés</li>
-                <li>• Transzferek</li>
+                <li>• {service1}</li>
+                <li>• {service2}</li>
+                <li>• {service3}</li>
               </ul>
             </div>
 
@@ -157,7 +168,7 @@ export default function Footer() {
           className="mt-12 border-t border-white/20 pt-8 text-center"
         >
           <p className="flex items-center justify-center gap-2 text-sm text-white/70">
-            © {currentYear} Szeidl Viktória. Készült{' '}
+            © {currentYear} {copyright}{' '}
             <Heart className="h-4 w-4 fill-parisian-beige-400 text-parisian-beige-400" /> -tel Párizsban
           </p>
         </motion.div>

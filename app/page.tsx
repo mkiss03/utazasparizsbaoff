@@ -28,6 +28,13 @@ export default async function Home() {
     .order('published_at', { ascending: false })
     .limit(3)
 
+  // Fetch static texts
+  const { data: staticTexts } = await supabase.from('site_text_content').select('*')
+  const textsMap: Record<string, string> = {}
+  staticTexts?.forEach((item: any) => {
+    textsMap[item.key] = item.value || ''
+  })
+
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
 
@@ -53,9 +60,13 @@ export default async function Home() {
       <ContactSection
         email={profileData?.contact_email}
         phone={profileData?.contact_phone}
+        title={textsMap.contact_title}
+        subtitle={textsMap.contact_subtitle}
+        locationLabel={textsMap.contact_location_label}
+        locationValue={textsMap.contact_location_value}
       />
       <NewsletterSection />
-      <Footer />
+      <Footer staticTexts={textsMap} />
     </main>
   )
 }
