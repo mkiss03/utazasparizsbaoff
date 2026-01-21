@@ -82,7 +82,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
         {/* Paris Map Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/paris-map-bg.jpg)' }}
+          style={{ backgroundImage: 'url(/images/ChatGPT%20Image%202026.%20jan.%2021.%2017_09_51.png)' }}
         />
         {/* Light overlay so map is visible but doesn't compete with content */}
         <div className="absolute inset-0 bg-white/85" />
@@ -102,9 +102,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Smooth Arc Path */}
+        {/* Smooth Arc Path following Paris geography */}
         <motion.path
-          d="M 120 290 Q 500 200, 880 290"
+          d="M 180 250 Q 350 210, 500 240 T 820 270"
           fill="none"
           stroke="url(#lineGradient)"
           strokeWidth="6"
@@ -141,7 +141,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
         {/* Paris Map Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/paris-map-bg.jpg)' }}
+          style={{ backgroundImage: 'url(/images/ChatGPT%20Image%202026.%20jan.%2021.%2017_09_51.png)' }}
         />
         {/* Light overlay so map is visible but doesn't compete with content */}
         <div className="absolute inset-0 bg-white/85" />

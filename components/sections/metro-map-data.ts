@@ -10,7 +10,7 @@ export interface MetroStation {
 }
 
 // Desktop positions (horizontal smooth arc matching Paris map)
-// Positions from West to East (La Défense → République → Nation area)
+// Positions following the Seine river's north bank (West to East)
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -18,8 +18,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'App & Card',
     description: 'Use Bonjour RATP app or Navigo Easy card for seamless travel across Paris.',
     icon: 'Smartphone',
-    x: 15,  // Western Paris (La Défense area)
-    y: 48,
+    x: 18,  // Western Paris (Arc de Triomphe/Champs-Élysées area)
+    y: 42,
   },
   {
     id: '2',
@@ -27,8 +27,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Fares',
     description: 'Flat €2.55 fare covers all Metro & RER within Paris region. Single tickets available at machines.',
     icon: 'Banknote',
-    x: 32,  // Northwest (Opera/Louvre area)
-    y: 38,
+    x: 35,  // Opera/Louvre area (following Seine curve)
+    y: 35,
   },
   {
     id: '3',
@@ -36,8 +36,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Navigation',
     description: 'Follow line number and Terminus station signs. Paris Metro is color-coded for easy navigation.',
     icon: 'Navigation',
-    x: 50,  // Center (Châtelet/République area)
-    y: 33,
+    x: 50,  // Center (Châtelet/Île de la Cité area)
+    y: 40,
   },
   {
     id: '4',
@@ -45,7 +45,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Weekly Pass',
     description: '€32.40 Navigo (Mon-Sun) offers best value for tourists staying 4+ days in Paris.',
     icon: 'Calendar',
-    x: 68,  // Northeast (Gare de l'Est/Gare du Nord area)
+    x: 65,  // Marais/République/Bastille area
     y: 38,
   },
   {
@@ -54,8 +54,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Zones & Airports',
     description: 'Line 14 connects to Orly, RER B serves CDG Airport. Check zone coverage for your pass.',
     icon: 'Plane',
-    x: 85,  // Eastern Paris (Nation/CDG direction)
-    y: 48,
+    x: 82,  // Eastern Paris (Nation/Gare de Lyon direction)
+    y: 45,
   },
 ]
 
