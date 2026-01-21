@@ -9,8 +9,8 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (horizontal smooth arc matching Paris map)
-// Positions following the Seine river's north bank (West to East)
+// Desktop positions (evenly distributed along wide S-curve)
+// Positioned to sit perfectly on the full-width path
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -18,8 +18,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'App & Card',
     description: 'Use Bonjour RATP app or Navigo Easy card for seamless travel across Paris.',
     icon: 'Smartphone',
-    x: 18,  // Western Paris (Arc de Triomphe/Champs-Élysées area)
-    y: 42,
+    x: 10,   // Left side (start of curve)
+    y: 47,   // On the line at start point
   },
   {
     id: '2',
@@ -27,8 +27,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Fares',
     description: 'Flat €2.55 fare covers all Metro & RER within Paris region. Single tickets available at machines.',
     icon: 'Banknote',
-    x: 35,  // Opera/Louvre area (following Seine curve)
-    y: 35,
+    x: 27.5, // Quarter point (curve peak)
+    y: 33,   // Top of the arc
   },
   {
     id: '3',
@@ -36,8 +36,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Navigation',
     description: 'Follow line number and Terminus station signs. Paris Metro is color-coded for easy navigation.',
     icon: 'Navigation',
-    x: 50,  // Center (Châtelet/Île de la Cité area)
-    y: 40,
+    x: 50,   // Center point
+    y: 43,   // Middle of curve
   },
   {
     id: '4',
@@ -45,8 +45,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Weekly Pass',
     description: '€32.40 Navigo (Mon-Sun) offers best value for tourists staying 4+ days in Paris.',
     icon: 'Calendar',
-    x: 65,  // Marais/République/Bastille area
-    y: 38,
+    x: 72.5, // Three-quarter point (curve valley)
+    y: 53,   // Bottom of the arc
   },
   {
     id: '5',
@@ -54,8 +54,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Zones & Airports',
     description: 'Line 14 connects to Orly, RER B serves CDG Airport. Check zone coverage for your pass.',
     icon: 'Plane',
-    x: 82,  // Eastern Paris (Nation/Gare de Lyon direction)
-    y: 45,
+    x: 90,   // Right side (end of curve)
+    y: 47,   // On the line at end point
   },
 ]
 

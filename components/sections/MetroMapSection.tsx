@@ -102,9 +102,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Smooth Arc Path following Paris geography */}
+        {/* Wide S-Curve Path spanning full width */}
         <motion.path
-          d="M 180 250 Q 350 210, 500 240 T 820 270"
+          d="M 50 280 Q 275 200, 500 260 T 950 280"
           fill="none"
           stroke="url(#lineGradient)"
           strokeWidth="6"
