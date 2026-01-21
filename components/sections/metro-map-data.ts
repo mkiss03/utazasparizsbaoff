@@ -9,7 +9,7 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (horizontal S-curve)
+// Desktop positions (horizontal smooth arc)
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -17,8 +17,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'App & Card',
     description: 'Use Bonjour RATP app or Navigo Easy card for seamless travel across Paris.',
     icon: 'Smartphone',
-    x: 10,
-    y: 45,
+    x: 12,
+    y: 48,
   },
   {
     id: '2',
@@ -26,8 +26,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Fares',
     description: 'Flat €2.55 fare covers all Metro & RER within Paris region. Single tickets available at machines.',
     icon: 'Banknote',
-    x: 28,
-    y: 35,
+    x: 30,
+    y: 38,
   },
   {
     id: '3',
@@ -36,7 +36,7 @@ export const stationsDesktop: MetroStation[] = [
     description: 'Follow line number and Terminus station signs. Paris Metro is color-coded for easy navigation.',
     icon: 'Navigation',
     x: 50,
-    y: 50,
+    y: 33,
   },
   {
     id: '4',
@@ -44,8 +44,8 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Weekly Pass',
     description: '€32.40 Navigo (Mon-Sun) offers best value for tourists staying 4+ days in Paris.',
     icon: 'Calendar',
-    x: 72,
-    y: 40,
+    x: 70,
+    y: 38,
   },
   {
     id: '5',
@@ -53,12 +53,12 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Zones & Airports',
     description: 'Line 14 connects to Orly, RER B serves CDG Airport. Check zone coverage for your pass.',
     icon: 'Plane',
-    x: 90,
-    y: 50,
+    x: 88,
+    y: 48,
   },
 ]
 
-// Mobile positions (vertical winding line)
+// Mobile positions (vertical smooth curve)
 export const stationsMobile: MetroStation[] = [
   {
     id: '1',
@@ -66,8 +66,8 @@ export const stationsMobile: MetroStation[] = [
     title: 'App & Card',
     description: 'Use Bonjour RATP app or Navigo Easy card for seamless travel across Paris.',
     icon: 'Smartphone',
-    x: 45,
-    y: 10,
+    x: 50,
+    y: 12,
   },
   {
     id: '2',
@@ -75,8 +75,8 @@ export const stationsMobile: MetroStation[] = [
     title: 'Fares',
     description: 'Flat €2.55 fare covers all Metro & RER within Paris region. Single tickets available at machines.',
     icon: 'Banknote',
-    x: 55,
-    y: 26,
+    x: 60,
+    y: 28,
   },
   {
     id: '3',
@@ -85,7 +85,7 @@ export const stationsMobile: MetroStation[] = [
     description: 'Follow line number and Terminus station signs. Paris Metro is color-coded for easy navigation.',
     icon: 'Navigation',
     x: 50,
-    y: 45,
+    y: 48,
   },
   {
     id: '4',
@@ -94,7 +94,7 @@ export const stationsMobile: MetroStation[] = [
     description: '€32.40 Navigo (Mon-Sun) offers best value for tourists staying 4+ days in Paris.',
     icon: 'Calendar',
     x: 40,
-    y: 64,
+    y: 68,
   },
   {
     id: '5',
@@ -103,6 +103,6 @@ export const stationsMobile: MetroStation[] = [
     description: 'Line 14 connects to Orly, RER B serves CDG Airport. Check zone coverage for your pass.',
     icon: 'Plane',
     x: 50,
-    y: 82,
+    y: 88,
   },
 ]

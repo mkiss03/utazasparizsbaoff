@@ -107,9 +107,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* S-Curve Path */}
+        {/* Smooth Arc Path */}
         <motion.path
-          d="M 100 270 Q 280 210, 500 300 T 900 300"
+          d="M 120 290 Q 500 200, 880 290"
           fill="none"
           stroke="url(#lineGradient)"
           strokeWidth="6"
@@ -171,9 +171,9 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Vertical Winding Path */}
+        {/* Vertical Smooth S-Curve Path */}
         <motion.path
-          d="M 180 80 Q 220 210, 200 360 T 200 656"
+          d="M 200 96 Q 240 224, 200 384 Q 160 544, 200 704"
           fill="none"
           stroke="url(#lineGradientMobile)"
           strokeWidth="5"
