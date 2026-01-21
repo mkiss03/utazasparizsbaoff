@@ -9,7 +9,8 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (horizontal smooth arc)
+// Desktop positions (horizontal smooth arc matching Paris map)
+// Positions from West to East (La Défense → République → Nation area)
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -17,7 +18,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'App & Card',
     description: 'Use Bonjour RATP app or Navigo Easy card for seamless travel across Paris.',
     icon: 'Smartphone',
-    x: 12,
+    x: 15,  // Western Paris (La Défense area)
     y: 48,
   },
   {
@@ -26,7 +27,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Fares',
     description: 'Flat €2.55 fare covers all Metro & RER within Paris region. Single tickets available at machines.',
     icon: 'Banknote',
-    x: 30,
+    x: 32,  // Northwest (Opera/Louvre area)
     y: 38,
   },
   {
@@ -35,7 +36,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Navigation',
     description: 'Follow line number and Terminus station signs. Paris Metro is color-coded for easy navigation.',
     icon: 'Navigation',
-    x: 50,
+    x: 50,  // Center (Châtelet/République area)
     y: 33,
   },
   {
@@ -44,7 +45,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Weekly Pass',
     description: '€32.40 Navigo (Mon-Sun) offers best value for tourists staying 4+ days in Paris.',
     icon: 'Calendar',
-    x: 70,
+    x: 68,  // Northeast (Gare de l'Est/Gare du Nord area)
     y: 38,
   },
   {
@@ -53,7 +54,7 @@ export const stationsDesktop: MetroStation[] = [
     title: 'Zones & Airports',
     description: 'Line 14 connects to Orly, RER B serves CDG Airport. Check zone coverage for your pass.',
     icon: 'Plane',
-    x: 88,
+    x: 85,  // Eastern Paris (Nation/CDG direction)
     y: 48,
   },
 ]

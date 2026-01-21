@@ -79,18 +79,13 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
     <div className="relative h-[600px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
       {/* Background Map Image with Overlay */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-parisian-beige-50 to-parisian-cream-100" />
-        <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-parisian-beige-50/80" />
-
-        {/* Decorative Elements to simulate map */}
-        <svg className="absolute inset-0 h-full w-full opacity-10">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" className="text-parisian-grey-400" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
+        {/* Paris Map Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/images/paris-map-bg.jpg)' }}
+        />
+        {/* Light overlay so map is visible but doesn't compete with content */}
+        <div className="absolute inset-0 bg-white/85" />
       </div>
 
       {/* SVG Metro Line */}
@@ -143,18 +138,13 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
     <div className="relative h-[800px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
       {/* Background Map Image with Overlay */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-parisian-beige-50 to-parisian-cream-100" />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/90 to-parisian-beige-50/80" />
-
-        {/* Decorative Grid */}
-        <svg className="absolute inset-0 h-full w-full opacity-10">
-          <defs>
-            <pattern id="gridMobile" width="30" height="30" patternUnits="userSpaceOnUse">
-              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="currentColor" strokeWidth="1" className="text-parisian-grey-400" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#gridMobile)" />
-        </svg>
+        {/* Paris Map Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/images/paris-map-bg.jpg)' }}
+        />
+        {/* Light overlay so map is visible but doesn't compete with content */}
+        <div className="absolute inset-0 bg-white/85" />
       </div>
 
       {/* SVG Metro Line */}
