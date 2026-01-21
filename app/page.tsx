@@ -4,7 +4,7 @@ import HeroSection from '@/components/sections/HeroSection'
 import AboutSection from '@/components/sections/AboutSection'
 import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
-import MetroGuideSection from '@/components/sections/MetroGuideSection'
+import MetroMapSection from '@/components/sections/MetroMapSection'
 import BlogSection from '@/components/sections/BlogSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
@@ -57,7 +57,7 @@ export default async function Home() {
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && (
         <ParisFlashcardsPromoSection />
       )}
-      <MetroGuideSection />
+      <MetroMapSection />
       <BlogSection posts={postsData} />
       <ContactSection
         email={profileData?.contact_email}
