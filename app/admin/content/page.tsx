@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Save } from 'lucide-react'
+import { Save, Trash2 } from 'lucide-react'
 import type { Profile } from '@/lib/types/database'
 
 export default function ContentPage() {
@@ -261,12 +261,22 @@ export default function ContentPage() {
             <div className="space-y-2">
               <Label htmlFor="about_img_upload">Profilkép</Label>
               {profile.about_image && (
-                <div className="mb-3">
+                <div className="mb-3 relative">
                   <img
                     src={profile.about_image}
                     alt="Rólam kép előnézet"
                     className="h-64 w-64 rounded-lg object-cover"
                   />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setProfile({ ...profile, about_image: '' })}
+                    className="mt-2"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Kép törlése
+                  </Button>
                 </div>
               )}
               <input
