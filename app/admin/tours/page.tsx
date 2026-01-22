@@ -147,6 +147,22 @@ export default function ToursPage() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="full_description">Hosszú leírás</Label>
+              <Textarea
+                id="full_description"
+                value={editingTour.full_description || ''}
+                onChange={(e) =>
+                  setEditingTour({
+                    ...editingTour,
+                    full_description: e.target.value,
+                  })
+                }
+                rows={6}
+                placeholder="Részletes leírás a túráról, amely megjelenik a kártya megnyitásakor..."
+              />
+            </div>
+
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="price">Ár (EUR)</Label>
