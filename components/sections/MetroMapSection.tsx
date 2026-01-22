@@ -82,7 +82,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
         {/* Paris Map Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ChatGPT%20Image%202026.%20jan.%2021.%2017_09_51.png)' }}
+          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
         />
         {/* Light overlay so map is visible but doesn't compete with content */}
         <div className="absolute inset-0 bg-white/85" />
@@ -141,7 +141,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
         {/* Paris Map Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ChatGPT%20Image%202026.%20jan.%2021.%2017_09_51.png)' }}
+          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
         />
         {/* Light overlay so map is visible but doesn't compete with content */}
         <div className="absolute inset-0 bg-white/85" />

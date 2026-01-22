@@ -6,15 +6,17 @@ import Image from 'next/image'
 
 interface AboutSectionProps {
   title?: string
+  description?: string
   image?: string
 }
 
 export default function AboutSection({
   title = 'Bemutatkozás',
-  image = '/images/aboutme.jpeg',
+  description,
+  image = '/images/viktoriaprofillouvre.jpg',
 }: AboutSectionProps) {
   // Use default image if image prop is null or empty
-  const imageUrl = image && image.trim() !== '' ? image : '/images/aboutme.jpeg'
+  const imageUrl = image && image.trim() !== '' ? image : '/images/viktoriaprofillouvre.jpg'
 
   return (
     <section
@@ -61,15 +63,24 @@ export default function AboutSection({
                 viewport={{ once: true }}
                 className="space-y-6"
               >
-                <p className="text-lg leading-relaxed text-parisian-grey-700 md:text-xl">
-                  <span className="font-playfair text-2xl font-semibold text-parisian-grey-800">
-                    Üdvözöllek!
-                  </span>{' '}
-                  Viktória vagyok, és több mint 10 éve élek Párizsban. A francia kultúra és történelem iránti szenvedélyem vezet minden nap, amikor megosztom veled a Fények Városa rejtett kincseit.
-                </p>
-                <p className="text-base leading-relaxed text-parisian-grey-600 md:text-lg">
-                  Párizs nem csak egy város számomra – ez az otthonom, a második hazám, ahol minden utca egy történetet mesél, minden sarok egy titkot rejt. Célom, hogy ne csak turistaként, hanem egy helyi szemével fedezd fel ezt a varázslatos várost.
-                </p>
+                {description ? (
+                  <div
+                    className="prose prose-lg max-w-none text-parisian-grey-700"
+                    dangerouslySetInnerHTML={{ __html: description }}
+                  />
+                ) : (
+                  <>
+                    <p className="text-lg leading-relaxed text-parisian-grey-700 md:text-xl">
+                      <span className="font-playfair text-2xl font-semibold text-parisian-grey-800">
+                        Üdvözöllek!
+                      </span>{' '}
+                      Viktória vagyok, és több mint 10 éve élek Párizsban. A francia kultúra és történelem iránti szenvedélyem vezet minden nap, amikor megosztom veled a Fények Városa rejtett kincseit.
+                    </p>
+                    <p className="text-base leading-relaxed text-parisian-grey-600 md:text-lg">
+                      Párizs nem csak egy város számomra – ez az otthonom, a második hazám, ahol minden utca egy történetet mesél, minden sarok egy titkot rejt. Célom, hogy ne csak turistaként, hanem egy helyi szemével fedezd fel ezt a varázslatos várost.
+                    </p>
+                  </>
+                )}
               </motion.div>
 
               {/* What I Offer - Styled Cards */}
