@@ -8,6 +8,8 @@ import {
   Navigation as NavigationIcon,
   Calendar,
   Plane,
+  Ticket,
+  AlertTriangle,
   X,
 } from 'lucide-react'
 import { stationsDesktop, stationsMobile, type MetroStation } from './metro-map-data'
@@ -18,6 +20,8 @@ const iconMap: Record<string, any> = {
   Navigation: NavigationIcon,
   Calendar,
   Plane,
+  Ticket,
+  AlertTriangle,
 }
 
 export default function MetroMapSection() {
@@ -47,10 +51,10 @@ export default function MetroMapSection() {
             </span>
           </motion.div>
           <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
-            Párizsi Metro 2026
+            Párizsi Metró 2026
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600">
-            Fedezd fel a párizsi tömegközlekedés legfontosabb információit
+            Minden, amit az új jegyekről és árakról tudnod kell
           </p>
         </motion.div>
       </div>
@@ -251,42 +255,72 @@ function StationNode({
         {station.title}
       </motion.div>
 
-      {/* Info Card (Glassmorphism) - Shows on Click/Active */}
+      {/* Modal Backdrop - Fixed fullscreen */}
       {isActive && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 10 }}
-          className="absolute left-1/2 top-full z-30 mt-16 w-64 -translate-x-1/2"
-        >
-          <div className="glass-strong relative rounded-2xl border border-white/30 bg-white/95 p-6 shadow-2xl backdrop-blur-xl">
-            {/* Close Button */}
-            <button
-              onClick={onToggle}
-              className="absolute right-2 top-2 rounded-full p-1 text-parisian-grey-500 transition-colors hover:bg-parisian-beige-100 hover:text-parisian-grey-800"
-            >
-              <X className="h-4 w-4" />
-            </button>
+        <>
+          {/* Dark Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onToggle}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+          />
 
-            {/* Icon */}
-            {Icon && (
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200">
-                <Icon className="h-6 w-6 text-parisian-beige-600" />
+          {/* Modal Card - Centered and Scrollable */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-3xl bg-white shadow-2xl"
+            style={{ position: 'fixed' }}
+          >
+            <div className="max-h-[85vh] overflow-y-auto">
+              <div className="relative p-6 md:p-8">
+                {/* Close Button */}
+                <button
+                  onClick={onToggle}
+                  className="absolute right-4 top-4 z-10 rounded-full bg-parisian-grey-100 p-2 text-parisian-grey-600 transition-colors hover:bg-parisian-grey-200 hover:text-parisian-grey-800"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+
+                {/* Icon */}
+                {Icon && (
+                  <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-md">
+                    <Icon className="h-8 w-8 text-parisian-beige-600" />
+                  </div>
+                )}
+
+                {/* Title */}
+                <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800 md:text-3xl">
+                  {station.title}
+                </h3>
+
+                {/* Description */}
+                <p className="mb-6 text-base leading-relaxed text-parisian-grey-600 md:text-lg">
+                  {station.description}
+                </p>
+
+                {/* Details List */}
+                {station.details && station.details.length > 0 && (
+                  <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
+                    {station.details.map((detail, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 text-sm leading-relaxed text-parisian-grey-700 md:text-base"
+                      >
+                        <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                        <span>{detail}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-
-            {/* Content */}
-            <h3 className="mb-2 font-playfair text-xl font-bold text-parisian-grey-800">
-              {station.title}
-            </h3>
-            <p className="text-sm leading-relaxed text-parisian-grey-600">
-              {station.description}
-            </p>
-
-            {/* Arrow pointing to marker */}
-            <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white/95" />
-          </div>
-        </motion.div>
+            </div>
+          </motion.div>
+        </>
       )}
     </motion.div>
   )
