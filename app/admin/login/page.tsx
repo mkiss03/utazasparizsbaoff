@@ -30,11 +30,12 @@ export default function LoginPage() {
 
       if (error) throw error
 
-      router.push('/admin/dashboard')
+      // Refresh first, then navigate
       router.refresh()
+      // Use window.location for a hard navigation after login to ensure clean state
+      window.location.href = '/admin/dashboard'
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bejelentkezési hiba')
-    } finally {
       setLoading(false)
     }
   }

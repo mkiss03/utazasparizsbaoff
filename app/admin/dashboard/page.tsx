@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MapPin, Image, FileText, Euro } from 'lucide-react'
+import Link from 'next/link'
 import type { Tour } from '@/lib/types/database'
 
 export default function DashboardPage() {
@@ -33,14 +34,14 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      title: 'Összes túra',
+      title: 'Összes szolgáltatás',
       value: tours?.length || 0,
       icon: MapPin,
       color: 'text-navy-500',
       bg: 'bg-navy-50',
     },
     {
-      title: 'Kiemelt túrák',
+      title: 'Kiemelt szolgáltatások',
       value: tours?.filter((t) => t.is_featured).length || 0,
       icon: Euro,
       color: 'text-gold-600',
@@ -95,19 +96,19 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
-            <a
-              href="/admin/tours"
+            <Link
+              href="/admin/services"
               className="flex items-center gap-3 rounded-lg border-2 border-champagne-300 p-4 transition-all hover:border-gold-400 hover:bg-gold-50"
             >
               <MapPin className="h-6 w-6 text-gold-500" />
               <div>
-                <h3 className="font-semibold text-navy-500">Túrák kezelése</h3>
+                <h3 className="font-semibold text-navy-500">Szolgáltatások kezelése</h3>
                 <p className="text-sm text-navy-400">
-                  Túrák hozzáadása, szerkesztése
+                  Szolgáltatások hozzáadása, szerkesztése
                 </p>
               </div>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/content"
               className="flex items-center gap-3 rounded-lg border-2 border-champagne-300 p-4 transition-all hover:border-gold-400 hover:bg-gold-50"
             >
@@ -120,7 +121,7 @@ export default function DashboardPage() {
                   Hero, Rólam szekció frissítése
                 </p>
               </div>
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>
