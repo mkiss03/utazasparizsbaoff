@@ -80,8 +80,67 @@ export default function ToursPage() {
       max_group_size: 8,
       is_featured: false,
       display_order: (tours?.length || 0) + 1,
+      programs: [],
+      icon_name: 'MapPin',
+      color_gradient: 'from-parisian-beige-400 to-parisian-beige-500',
     })
     setIsEditing(true)
+  }
+
+  const handleAddProgram = () => {
+    if (editingTour) {
+      setEditingTour({
+        ...editingTour,
+        programs: [
+          ...(editingTour.programs || []),
+          { title: '', description: '', items: [] }
+        ]
+      })
+    }
+  }
+
+  const handleRemoveProgram = (index: number) => {
+    if (editingTour?.programs) {
+      const newPrograms = [...editingTour.programs]
+      newPrograms.splice(index, 1)
+      setEditingTour({ ...editingTour, programs: newPrograms })
+    }
+  }
+
+  const handleProgramChange = (index: number, field: string, value: any) => {
+    if (editingTour?.programs) {
+      const newPrograms = [...editingTour.programs]
+      newPrograms[index] = { ...newPrograms[index], [field]: value }
+      setEditingTour({ ...editingTour, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemAdd = (programIndex: number) => {
+    if (editingTour?.programs) {
+      const newPrograms = [...editingTour.programs]
+      newPrograms[programIndex].items = [...(newPrograms[programIndex].items || []), '']
+      setEditingTour({ ...editingTour, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemChange = (programIndex: number, itemIndex: number, value: string) => {
+    if (editingTour?.programs) {
+      const newPrograms = [...editingTour.programs]
+      const items = [...(newPrograms[programIndex].items || [])]
+      items[itemIndex] = value
+      newPrograms[programIndex].items = items
+      setEditingTour({ ...editingTour, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemRemove = (programIndex: number, itemIndex: number) => {
+    if (editingTour?.programs) {
+      const newPrograms = [...editingTour.programs]
+      const items = [...(newPrograms[programIndex].items || [])]
+      items.splice(itemIndex, 1)
+      newPrograms[programIndex].items = items
+      setEditingTour({ ...editingTour, programs: newPrograms })
+    }
   }
 
   if (isLoading) {
@@ -209,6 +268,34 @@ export default function ToursPage() {
               </div>
             </div>
 
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="icon_name">Ikon neve</Label>
+                <Input
+                  id="icon_name"
+                  value={editingTour.icon_name || 'MapPin'}
+                  onChange={(e) =>
+                    setEditingTour({ ...editingTour, icon_name: e.target.value })
+                  }
+                  placeholder="MapPin, Calendar, Coffee, stb."
+                />
+                <p className="text-xs text-navy-400">
+                  Lucide ikon neve (pl.: MapPin, Calendar, Coffee)
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="color_gradient">Szín gradiens</Label>
+                <Input
+                  id="color_gradient"
+                  value={editingTour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'}
+                  onChange={(e) =>
+                    setEditingTour({ ...editingTour, color_gradient: e.target.value })
+                  }
+                  placeholder="from-parisian-beige-400 to-parisian-beige-500"
+                />
+              </div>
+            </div>
+
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -225,6 +312,94 @@ export default function ToursPage() {
               <Label htmlFor="is_featured" className="cursor-pointer">
                 Kiemelt túra
               </Label>
+            </div>
+
+            {/* Programs Section */}
+            <div className="space-y-4 rounded-lg border-2 border-parisian-beige-200 bg-parisian-cream-50 p-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-lg font-semibold">Programok / Részletek (aldobozok a modal-ban)</Label>
+                <Button
+                  type="button"
+                  onClick={handleAddProgram}
+                  size="sm"
+                  variant="outline"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Új program
+                </Button>
+              </div>
+              <p className="text-sm text-navy-400">
+                Ezek a dobozok jelennek meg amikor rákattintanak a szolgáltatásra. Ha üres, nem jelenik meg semmi.
+              </p>
+
+              {editingTour.programs?.map((program, programIdx) => (
+                <div key={programIdx} className="space-y-3 rounded-lg border border-parisian-beige-300 bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="font-semibold">Program #{programIdx + 1}</Label>
+                    <Button
+                      type="button"
+                      onClick={() => handleRemoveProgram(programIdx)}
+                      size="sm"
+                      variant="destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`program-title-${programIdx}`}>Program címe *</Label>
+                    <Input
+                      id={`program-title-${programIdx}`}
+                      value={program.title}
+                      onChange={(e) => handleProgramChange(programIdx, 'title', e.target.value)}
+                      placeholder="pl.: A klasszikus városnézés tartalmazza"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`program-desc-${programIdx}`}>Program leírása (opcionális)</Label>
+                    <Textarea
+                      id={`program-desc-${programIdx}`}
+                      value={program.description || ''}
+                      onChange={(e) => handleProgramChange(programIdx, 'description', e.target.value)}
+                      rows={2}
+                      placeholder="Rövid leírás a programról..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Pontok / Lista elemek</Label>
+                      <Button
+                        type="button"
+                        onClick={() => handleProgramItemAdd(programIdx)}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        <Plus className="mr-1 h-3 w-3" />
+                        Új pont
+                      </Button>
+                    </div>
+                    {program.items?.map((item, itemIdx) => (
+                      <div key={itemIdx} className="flex gap-2">
+                        <Input
+                          value={item}
+                          onChange={(e) => handleProgramItemChange(programIdx, itemIdx, e.target.value)}
+                          placeholder="pl.: Eiffel-torony látogatás"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => handleProgramItemRemove(programIdx, itemIdx)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="flex gap-3">
