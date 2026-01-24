@@ -72,13 +72,20 @@ export default function ContentPage() {
       const updates = Object.entries(texts).map(([key, value]) => ({
         key,
         value,
+        section: key.startsWith('footer_') ? 'footer' :
+                 key.startsWith('contact_') ? 'contact' : 'general'
       }))
 
       for (const update of updates) {
         const { error } = await supabase
           .from('site_text_content')
-          .update({ value: update.value })
-          .eq('key', update.key)
+          .upsert({
+            key: update.key,
+            value: update.value,
+            section: update.section
+          }, {
+            onConflict: 'key'
+          })
         if (error) throw error
       }
     },
