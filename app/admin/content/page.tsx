@@ -471,6 +471,32 @@ export default function ContentPage() {
                   placeholder="Szeidl Viktória. Készült"
                 />
               </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="footer_contact_email">Kapcsolat - Email</Label>
+                  <Input
+                    id="footer_contact_email"
+                    type="email"
+                    value={staticTexts.footer_contact_email || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, footer_contact_email: e.target.value })
+                    }
+                    placeholder="viktoria.szeidl@gmail.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="footer_contact_phone">Kapcsolat - Telefon</Label>
+                  <Input
+                    id="footer_contact_phone"
+                    type="tel"
+                    value={staticTexts.footer_contact_phone || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, footer_contact_phone: e.target.value })
+                    }
+                    placeholder="+33 6 12 34 56 78"
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="footer_services_title">Szolgáltatások cím</Label>
                 <Input
