@@ -45,18 +45,40 @@ export default function ServicesSection() {
         return
       }
 
-      // Transform tours to services
-      const transformedServices: Service[] = (tours || []).map((tour: Tour) => ({
-        id: tour.id,
-        title: tour.title,
-        icon: getIconComponent(tour.icon_name || 'MapPin'),
-        shortDescription: tour.short_description || '',
-        description: tour.full_description || tour.short_description || '',
-        programs: tour.programs || [],
-        duration: tour.duration ? `kb. ${tour.duration} óra` : '',
-        price: tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : '',
-        color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'
-      }))
+      // Transform tours to services with special display rules
+      const transformedServices: Service[] = (tours || []).map((tour: Tour) => {
+        const isTransfer = tour.title.toLowerCase().includes('transzfer') || tour.title.toLowerCase().includes('közlekedés')
+        const isProgramOrganization = tour.title.toLowerCase().includes('programszervez')
+
+        let duration = ''
+        let price = ''
+
+        if (isTransfer) {
+          // Transzfer: Hide all data, show kilometer-based billing note
+          duration = ''
+          price = 'Kilométer alapú számlázás'
+        } else if (isProgramOrganization) {
+          // Programszervezés: Show only price, no duration or max people
+          duration = ''
+          price = tour.price ? `${tour.price} EUR` : ''
+        } else {
+          // Default: Show all information
+          duration = tour.duration ? `kb. ${tour.duration} óra` : ''
+          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : ''
+        }
+
+        return {
+          id: tour.id,
+          title: tour.title,
+          icon: getIconComponent(tour.icon_name || 'MapPin'),
+          shortDescription: tour.short_description || '',
+          description: tour.full_description || tour.short_description || '',
+          programs: tour.programs || [],
+          duration,
+          price,
+          color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'
+        }
+      })
 
       setServices(transformedServices)
       setIsLoading(false)

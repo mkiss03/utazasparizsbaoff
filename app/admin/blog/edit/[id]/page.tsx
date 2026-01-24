@@ -27,6 +27,7 @@ export default function EditBlogPostPage() {
     content: '',
     cover_image: '',
     category_id: '',
+    tags: '',
     status: 'draft' as PostStatus,
     is_published: false,
   })
@@ -63,6 +64,7 @@ export default function EditBlogPostPage() {
         content: post.content,
         cover_image: post.cover_image || '',
         category_id: post.category_id || '',
+        tags: post.tags || '',
         status: post.status || 'draft',
         is_published: post.is_published,
       })
@@ -237,6 +239,21 @@ export default function EditBlogPostPage() {
                 />
                 <p className="text-xs text-navy-400">
                   Jelenik meg a blog listában és a keresési találatokban
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tags">Címkék / Hashtagek</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
+                  placeholder="#párizs, #utazás, #tippek"
+                />
+                <p className="text-xs text-navy-400">
+                  Vesszővel elválasztva. Javítja a keresőoptimalizálást és a Google Search Console-t.
                 </p>
               </div>
 

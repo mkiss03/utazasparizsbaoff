@@ -25,6 +25,7 @@ export default function NewBlogPostPage() {
     content: '',
     cover_image: '',
     category_id: '',
+    tags: '',
     is_published: false,
   })
 
@@ -217,6 +218,28 @@ export default function NewBlogPostPage() {
                 />
                 <p className="text-xs text-navy-400">
                   Ez jelenik meg a bloglistán és a közösségi médiában
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Címkék / Hashtagek</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="tags">Hashtagek</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
+                  placeholder="#párizs, #utazás, #tippek"
+                />
+                <p className="text-xs text-navy-400">
+                  Vesszővel elválasztva. Javítja a keresőoptimalizálást és a Google Search Console-t.
                 </p>
               </div>
             </CardContent>

@@ -3,8 +3,9 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, ArrowLeft, Clock } from 'lucide-react'
+import { Calendar, ArrowLeft, Clock, Hash } from 'lucide-react'
 import type { Post } from '@/lib/types/database'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 // Force dynamic rendering to avoid build-time database access
@@ -23,6 +24,55 @@ function estimateReadingTime(content: string): number {
   const textContent = content.replace(/<[^>]*>/g, '') // Strip HTML tags
   const wordCount = textContent.trim().split(/\s+/).length
   return Math.ceil(wordCount / wordsPerMinute)
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const supabase = await createClient()
+
+  const { data: post } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .single()
+
+  if (!post) {
+    return {
+      title: 'Bejegyzés nem található',
+    }
+  }
+
+  const postData = post as Post
+
+  // Process tags for keywords
+  const keywords = postData.tags
+    ? postData.tags
+        .split(',')
+        .map((tag) => tag.trim().replace(/^#/, ''))
+        .filter((tag) => tag !== '')
+        .join(', ')
+    : 'párizs, utazás, idegenvezetés'
+
+  return {
+    title: postData.title,
+    description: postData.excerpt || postData.title,
+    keywords: keywords,
+    openGraph: {
+      title: postData.title,
+      description: postData.excerpt || postData.title,
+      images: postData.cover_image ? [postData.cover_image] : [],
+      type: 'article',
+      publishedTime: postData.published_at || postData.created_at,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: postData.title,
+      description: postData.excerpt || postData.title,
+      images: postData.cover_image ? [postData.cover_image] : [],
+    },
+  }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -105,9 +155,28 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               {/* Excerpt */}
               {postData.excerpt && (
-                <p className="border-l-4 border-parisian-beige-400 pl-6 text-lg italic text-parisian-grey-700">
+                <p className="mb-6 border-l-4 border-parisian-beige-400 pl-6 text-lg italic text-parisian-grey-700">
                   {postData.excerpt}
                 </p>
+              )}
+
+              {/* Tags */}
+              {postData.tags && postData.tags.trim() !== '' && (
+                <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-parisian-beige-200">
+                  <Hash className="h-4 w-4 text-parisian-beige-500" />
+                  {postData.tags
+                    .split(',')
+                    .map((tag) => tag.trim())
+                    .filter((tag) => tag !== '')
+                    .map((tag, index) => (
+                      <span
+                        key={index}
+                        className="rounded-full bg-parisian-beige-100 px-3 py-1 text-sm font-medium text-parisian-grey-700 transition-colors hover:bg-parisian-beige-200"
+                      >
+                        {tag.startsWith('#') ? tag : `#${tag}`}
+                      </span>
+                    ))}
+                </div>
               )}
             </div>
           </div>
