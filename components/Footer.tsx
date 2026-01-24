@@ -18,6 +18,8 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
   const service1 = staticTexts.footer_service_1 || 'Városnéző séták'
   const service2 = staticTexts.footer_service_2 || 'Programszervezés'
   const service3 = staticTexts.footer_service_3 || 'Transzferek'
+  const contactEmail = staticTexts.footer_contact_email || 'viktoria.szeidl@gmail.com'
+  const contactPhone = staticTexts.footer_contact_phone || '+33 6 12 34 56 78'
 
   return (
     <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 sm:py-16 text-white">
@@ -82,11 +84,6 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 5 }}>
-                <a href="/pricing" className="text-white/80 transition-colors hover:text-white">
-                  Városbérletek
-                </a>
-              </motion.li>
-              <motion.li whileHover={{ x: 5 }}>
                 <a href="/blog" className="text-white/80 transition-colors hover:text-white">
                   Blog
                 </a>
@@ -117,18 +114,18 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             {/* Contact Info */}
             <div className="mb-6 space-y-3">
               <a
-                href="mailto:viktoria.szeidl@gmail.com"
+                href={`mailto:${contactEmail}`}
                 className="flex items-center gap-3 text-white/80 transition-colors hover:text-white"
               >
                 <Mail className="h-5 w-5" />
-                <span className="text-sm">viktoria.szeidl@gmail.com</span>
+                <span className="text-sm">{contactEmail}</span>
               </a>
               <a
-                href="tel:+33612345678"
+                href={`tel:${contactPhone.replace(/\s/g, '')}`}
                 className="flex items-center gap-3 text-white/80 transition-colors hover:text-white"
               >
                 <Phone className="h-5 w-5" />
-                <span className="text-sm">+33 6 12 34 56 78</span>
+                <span className="text-sm">{contactPhone}</span>
               </a>
             </div>
 

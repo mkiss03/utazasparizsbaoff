@@ -217,7 +217,7 @@ export default function AboutSection({
 
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
-                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">500+</p>
+                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">1000+</p>
                     <p className="font-montserrat text-sm text-parisian-grey-600">elégedett vendég</p>
                   </div>
                 </div>
