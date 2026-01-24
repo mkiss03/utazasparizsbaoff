@@ -30,21 +30,22 @@ export default function LoginPage() {
 
       if (error) throw error
 
-      router.push('/admin/dashboard')
+      // Refresh first, then navigate
       router.refresh()
+      // Use window.location for a hard navigation after login to ensure clean state
+      window.location.href = '/admin/dashboard'
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bejelentkezési hiba')
-    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-champagne-200 to-champagne-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-parisian-beige-200 to-parisian-beige-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-400">
-            <LogIn className="h-8 w-8 text-navy-500" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-parisian-beige-400">
+            <LogIn className="h-8 w-8 text-french-blue-500" />
           </div>
           <CardTitle className="text-3xl">Admin Bejelentkezés</CardTitle>
           <CardDescription>
@@ -78,14 +79,14 @@ export default function LoginPage() {
               />
             </div>
             {error && (
-              <div className="rounded-lg bg-burgundy-50 p-3 text-sm text-burgundy-600">
+              <div className="rounded-lg bg-french-red-50 p-3 text-sm text-french-red-600">
                 {error}
               </div>
             )}
             <Button
               type="submit"
-              className="w-full text-black"
-              variant="default"
+              className="w-full"
+              variant="secondary"
               size="lg"
               disabled={loading}
             >

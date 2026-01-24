@@ -79,6 +79,7 @@ export interface Post {
   content: string
   cover_image?: string
   category_id?: string
+  tags?: string // Comma-separated hashtags (e.g., "#párizs, #utazás, #tippek")
   status: PostStatus
   is_published: boolean
   published_at?: string

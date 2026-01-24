@@ -130,6 +130,7 @@ export function AdminNav() {
             <li key={item.href}>
               <Link
                 href={item.href!}
+                prefetch={true}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-all ${
                   isActive
                     ? 'bg-french-blue-500 text-white font-semibold'

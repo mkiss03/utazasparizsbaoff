@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RichTextEditor } from '@/components/admin/rich-text-editor'
 import { ArrowLeft, Save, Eye } from 'lucide-react'
-import type { Post } from '@/lib/types/database'
+import type { Post, BlogCategory } from '@/lib/types/database'
 
 export default function NewBlogPostPage() {
   const router = useRouter()
@@ -24,7 +24,20 @@ export default function NewBlogPostPage() {
     excerpt: '',
     content: '',
     cover_image: '',
+    category_id: '',
+    tags: '',
     is_published: false,
+  })
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('blog_categories')
+        .select('*')
+        .order('name')
+      return data as BlogCategory[]
+    },
   })
 
   const saveMutation = useMutation({
@@ -163,6 +176,32 @@ export default function NewBlogPostPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Kategória</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Kategória</Label>
+                <select
+                  id="category"
+                  value={formData.category_id}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category_id: e.target.value })
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Válassz kategóriát...</option>
+                  {categories?.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Kivonat</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -179,6 +218,28 @@ export default function NewBlogPostPage() {
                 />
                 <p className="text-xs text-navy-400">
                   Ez jelenik meg a bloglistán és a közösségi médiában
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Címkék / Hashtagek</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="tags">Hashtagek</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
+                  placeholder="#párizs, #utazás, #tippek"
+                />
+                <p className="text-xs text-navy-400">
+                  Vesszővel elválasztva. Javítja a keresőoptimalizálást és a Google Search Console-t.
                 </p>
               </div>
             </CardContent>

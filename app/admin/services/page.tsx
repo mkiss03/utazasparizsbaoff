@@ -8,13 +8,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus, Edit, Trash2, Star, AlertCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, Star } from 'lucide-react'
 import type { Tour } from '@/lib/types/database'
 
 export default function ServicesPage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editingService, setEditingService] = useState<Partial<Tour> | null>(null)
-  const [programsJsonError, setProgramsJsonError] = useState<string | null>(null)
   const supabase = createClient()
   const queryClient = useQueryClient()
 
@@ -52,7 +51,6 @@ export default function ServicesPage() {
       queryClient.invalidateQueries({ queryKey: ['tours'] })
       setIsEditing(false)
       setEditingService(null)
-      setProgramsJsonError(null)
     },
   })
 
@@ -68,11 +66,6 @@ export default function ServicesPage() {
 
   const handleSave = () => {
     if (editingService) {
-      // Validate programs JSON if it exists
-      if (editingService.programs && typeof editingService.programs === 'string') {
-        setProgramsJsonError('JSON formátum hibás - javítsd ki mielőtt mentesz!')
-        return
-      }
       saveMutation.mutate(editingService)
     }
   }
@@ -87,23 +80,66 @@ export default function ServicesPage() {
       max_group_size: 8,
       is_featured: false,
       display_order: (services?.length || 0) + 1,
+      programs: [],
       icon_name: 'MapPin',
       color_gradient: 'from-parisian-beige-400 to-parisian-beige-500',
-      programs: [],
     })
     setIsEditing(true)
-    setProgramsJsonError(null)
   }
 
-  const handleProgramsChange = (value: string) => {
-    try {
-      const parsed = JSON.parse(value)
-      setEditingService({ ...editingService, programs: parsed })
-      setProgramsJsonError(null)
-    } catch {
-      // Keep raw value for user to fix JSON
-      setEditingService({ ...editingService, programs: value as unknown as Program[] })
-      setProgramsJsonError('Érvénytelen JSON formátum')
+  const handleAddProgram = () => {
+    if (editingService) {
+      setEditingService({
+        ...editingService,
+        programs: [
+          ...(editingService.programs || []),
+          { title: '', description: '', items: [] }
+        ]
+      })
+    }
+  }
+
+  const handleRemoveProgram = (index: number) => {
+    if (editingService?.programs) {
+      const newPrograms = [...editingService.programs]
+      newPrograms.splice(index, 1)
+      setEditingService({ ...editingService, programs: newPrograms })
+    }
+  }
+
+  const handleProgramChange = (index: number, field: string, value: any) => {
+    if (editingService?.programs) {
+      const newPrograms = [...editingService.programs]
+      newPrograms[index] = { ...newPrograms[index], [field]: value }
+      setEditingService({ ...editingService, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemAdd = (programIndex: number) => {
+    if (editingService?.programs) {
+      const newPrograms = [...editingService.programs]
+      newPrograms[programIndex].items = [...(newPrograms[programIndex].items || []), '']
+      setEditingService({ ...editingService, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemChange = (programIndex: number, itemIndex: number, value: string) => {
+    if (editingService?.programs) {
+      const newPrograms = [...editingService.programs]
+      const items = [...(newPrograms[programIndex].items || [])]
+      items[itemIndex] = value
+      newPrograms[programIndex].items = items
+      setEditingService({ ...editingService, programs: newPrograms })
+    }
+  }
+
+  const handleProgramItemRemove = (programIndex: number, itemIndex: number) => {
+    if (editingService?.programs) {
+      const newPrograms = [...editingService.programs]
+      const items = [...(newPrograms[programIndex].items || [])]
+      items.splice(itemIndex, 1)
+      newPrograms[programIndex].items = items
+      setEditingService({ ...editingService, programs: newPrograms })
     }
   }
 
@@ -150,7 +186,7 @@ export default function ServicesPage() {
                   onChange={(e) =>
                     setEditingService({ ...editingService, slug: e.target.value })
                   }
-                  placeholder="varosnezesi-setak"
+                  placeholder="klasszikus-parizs"
                 />
               </div>
             </div>
@@ -171,7 +207,7 @@ export default function ServicesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="full_description">Részletes leírás</Label>
+              <Label htmlFor="full_description">Hosszú leírás</Label>
               <Textarea
                 id="full_description"
                 value={editingService.full_description || ''}
@@ -181,7 +217,8 @@ export default function ServicesPage() {
                     full_description: e.target.value,
                   })
                 }
-                rows={3}
+                rows={6}
+                placeholder="Részletes leírás a szolgáltatásról, amely megjelenik a kártya megnyitásakor..."
               />
             </div>
 
@@ -233,73 +270,30 @@ export default function ServicesPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="icon_name">Ikon</Label>
-                <select
+                <Label htmlFor="icon_name">Ikon neve</Label>
+                <Input
                   id="icon_name"
                   value={editingService.icon_name || 'MapPin'}
                   onChange={(e) =>
                     setEditingService({ ...editingService, icon_name: e.target.value })
                   }
-                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
-                >
-                  <option value="MapPin">MapPin (Térkép pin)</option>
-                  <option value="Calendar">Calendar (Naptár)</option>
-                  <option value="Car">Car (Autó)</option>
-                  <option value="Compass">Compass (Iránytű)</option>
-                  <option value="Utensils">Utensils (Evőeszközök)</option>
-                  <option value="Camera">Camera (Fényképezőgép)</option>
-                  <option value="Users">Users (Emberek)</option>
-                  <option value="Briefcase">Briefcase (Táska)</option>
-                  <option value="Heart">Heart (Szív)</option>
-                  <option value="Star">Star (Csillag)</option>
-                </select>
+                  placeholder="MapPin, Calendar, Coffee, stb."
+                />
+                <p className="text-xs text-navy-400">
+                  Lucide ikon neve (pl.: MapPin, Calendar, Coffee)
+                </p>
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="color_gradient">Színgradiens</Label>
-                <select
+                <Label htmlFor="color_gradient">Szín gradiens</Label>
+                <Input
                   id="color_gradient"
                   value={editingService.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'}
                   onChange={(e) =>
                     setEditingService({ ...editingService, color_gradient: e.target.value })
                   }
-                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
-                >
-                  <option value="from-parisian-beige-400 to-parisian-beige-500">Bézs világos</option>
-                  <option value="from-parisian-beige-500 to-parisian-beige-600">Bézs közepes</option>
-                  <option value="from-parisian-beige-600 to-parisian-beige-700">Bézs sötét</option>
-                  <option value="from-french-blue-400 to-french-blue-500">Kék</option>
-                  <option value="from-champagne-400 to-champagne-500">Pezsgő</option>
-                  <option value="from-gold-400 to-gold-500">Arany</option>
-                </select>
+                  placeholder="from-parisian-beige-400 to-parisian-beige-500"
+                />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="programs">
-                Programok (JSON formátum)
-                <span className="ml-2 text-xs text-slate-500">
-                  Példa: [{'{'}&#34;title&#34;:&#34;Program neve&#34;,&#34;description&#34;:&#34;Leírás&#34;,&#34;items&#34;:[&#34;Elem 1&#34;,&#34;Elem 2&#34;]{'}'}]
-                </span>
-              </Label>
-              <Textarea
-                id="programs"
-                value={
-                  typeof editingService.programs === 'string'
-                    ? editingService.programs
-                    : JSON.stringify(editingService.programs || [], null, 2)
-                }
-                onChange={(e) => handleProgramsChange(e.target.value)}
-                rows={12}
-                className="font-mono text-sm"
-                placeholder='[{"title":"Program neve","description":"Leírás szövege","items":null}]'
-              />
-              {programsJsonError && (
-                <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
-                  <AlertCircle className="h-4 w-4" />
-                  {programsJsonError}
-                </div>
-              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -320,15 +314,102 @@ export default function ServicesPage() {
               </Label>
             </div>
 
+            {/* Programs Section */}
+            <div className="space-y-4 rounded-lg border-2 border-parisian-beige-200 bg-parisian-cream-50 p-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-lg font-semibold">Programok / Részletek (aldobozok a modal-ban)</Label>
+                <Button
+                  type="button"
+                  onClick={handleAddProgram}
+                  size="sm"
+                  variant="outline"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Új program
+                </Button>
+              </div>
+              <p className="text-sm text-navy-400">
+                Ezek a dobozok jelennek meg amikor rákattintanak a szolgáltatásra. Ha üres, nem jelenik meg semmi.
+              </p>
+
+              {editingService.programs?.map((program, programIdx) => (
+                <div key={programIdx} className="space-y-3 rounded-lg border border-parisian-beige-300 bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="font-semibold">Program #{programIdx + 1}</Label>
+                    <Button
+                      type="button"
+                      onClick={() => handleRemoveProgram(programIdx)}
+                      size="sm"
+                      variant="destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`program-title-${programIdx}`}>Program címe *</Label>
+                    <Input
+                      id={`program-title-${programIdx}`}
+                      value={program.title}
+                      onChange={(e) => handleProgramChange(programIdx, 'title', e.target.value)}
+                      placeholder="pl.: A klasszikus városnézés tartalmazza"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`program-desc-${programIdx}`}>Program leírása (opcionális)</Label>
+                    <Textarea
+                      id={`program-desc-${programIdx}`}
+                      value={program.description || ''}
+                      onChange={(e) => handleProgramChange(programIdx, 'description', e.target.value)}
+                      rows={2}
+                      placeholder="Rövid leírás a programról..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Pontok / Lista elemek</Label>
+                      <Button
+                        type="button"
+                        onClick={() => handleProgramItemAdd(programIdx)}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        <Plus className="mr-1 h-3 w-3" />
+                        Új pont
+                      </Button>
+                    </div>
+                    {program.items?.map((item, itemIdx) => (
+                      <div key={itemIdx} className="flex gap-2">
+                        <Input
+                          value={item}
+                          onChange={(e) => handleProgramItemChange(programIdx, itemIdx, e.target.value)}
+                          placeholder="pl.: Eiffel-torony látogatás"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => handleProgramItemRemove(programIdx, itemIdx)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div className="flex gap-3">
-              <Button onClick={handleSave} variant="secondary" disabled={saveMutation.isPending || !!programsJsonError}>
-                {saveMutation.isPending ? 'Mentés...' : 'Mentés'}
+              <Button onClick={handleSave} variant="secondary">
+                Mentés
               </Button>
               <Button
                 onClick={() => {
                   setIsEditing(false)
                   setEditingService(null)
-                  setProgramsJsonError(null)
                 }}
                 variant="outline"
               >
@@ -360,18 +441,6 @@ export default function ServicesPage() {
                     <span>{service.duration} óra</span>
                     <span>•</span>
                     <span>Max. {service.max_group_size} fő</span>
-                    {service.icon_name && (
-                      <>
-                        <span>•</span>
-                        <span>Ikon: {service.icon_name}</span>
-                      </>
-                    )}
-                    {service.programs && service.programs.length > 0 && (
-                      <>
-                        <span>•</span>
-                        <span>{service.programs.length} program</span>
-                      </>
-                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -381,7 +450,6 @@ export default function ServicesPage() {
                     onClick={() => {
                       setEditingService(service)
                       setIsEditing(true)
-                      setProgramsJsonError(null)
                     }}
                   >
                     <Edit className="h-4 w-4" />

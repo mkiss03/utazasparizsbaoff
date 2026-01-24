@@ -45,18 +45,40 @@ export default function ServicesSection() {
         return
       }
 
-      // Transform tours to services
-      const transformedServices: Service[] = (tours || []).map((tour: Tour) => ({
-        id: tour.id,
-        title: tour.title,
-        icon: getIconComponent(tour.icon_name || 'MapPin'),
-        shortDescription: tour.short_description || '',
-        description: tour.full_description || tour.short_description || '',
-        programs: tour.programs || [],
-        duration: tour.duration ? `kb. ${tour.duration} óra` : '',
-        price: tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : '',
-        color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'
-      }))
+      // Transform tours to services with special display rules
+      const transformedServices: Service[] = (tours || []).map((tour: Tour) => {
+        const isTransfer = tour.title.toLowerCase().includes('transzfer') || tour.title.toLowerCase().includes('közlekedés')
+        const isProgramOrganization = tour.title.toLowerCase().includes('programszervez')
+
+        let duration = ''
+        let price = ''
+
+        if (isTransfer) {
+          // Transzfer: Hide all data, show kilometer-based billing note
+          duration = ''
+          price = 'Kilométer alapú számlázás'
+        } else if (isProgramOrganization) {
+          // Programszervezés: Show only price, no duration or max people
+          duration = ''
+          price = tour.price ? `${tour.price} EUR` : ''
+        } else {
+          // Default: Show all information
+          duration = tour.duration ? `kb. ${tour.duration} óra` : ''
+          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : ''
+        }
+
+        return {
+          id: tour.id,
+          title: tour.title,
+          icon: getIconComponent(tour.icon_name || 'MapPin'),
+          shortDescription: tour.short_description || '',
+          description: tour.full_description || tour.short_description || '',
+          programs: tour.programs || [],
+          duration,
+          price,
+          color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'
+        }
+      })
 
       setServices(transformedServices)
       setIsLoading(false)
@@ -182,13 +204,52 @@ export default function ServicesSection() {
           ))}
         </div>
 
+        {/* Group Booking CTA - Csoportos foglalás kiemelés */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          viewport={{ once: true }}
+          className="mt-16 mx-auto max-w-4xl"
+        >
+          <div className="rounded-3xl bg-gradient-to-br from-parisian-beige-100 via-parisian-cream-100 to-parisian-beige-50 border-2 border-parisian-beige-300 p-8 md:p-10 shadow-xl">
+            <div className="text-center">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-500 shadow-lg"
+              >
+                <Icons.Users className="h-8 w-8 text-white" />
+              </motion.div>
+              <h3 className="mb-3 font-playfair text-2xl md:text-3xl font-bold text-parisian-grey-800">
+                Csoportos megrendelés?
+              </h3>
+              <p className="mb-6 text-base md:text-lg leading-relaxed text-parisian-grey-700">
+                Nagyobb csoportok, céges rendezvények vagy különleges igények esetén egyedi árkalkulációt biztosítunk.
+                Vegye fel velünk a kapcsolatot, és állítsunk össze Önnek személyre szabott ajánlatot!
+              </p>
+              <motion.a
+                href="#contact"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 rounded-full bg-parisian-beige-400 px-8 py-4 font-montserrat text-base md:text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:bg-parisian-beige-500 hover:shadow-xl"
+              >
+                Érdekel az egyedi ajánlat
+                <Icons.ArrowRight className="h-5 w-5" />
+              </motion.a>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
-          className="mt-16 text-center"
+          className="mt-12 text-center"
         >
           <p className="mb-6 text-lg text-parisian-grey-600">
             Nem találja amit keres? Kérjen egyedi ajánlatot!
@@ -269,50 +330,52 @@ export default function ServicesSection() {
                     </p>
                   </motion.div>
 
-                  {/* Programs */}
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="mb-8 space-y-6"
-                  >
-                    {selectedService.programs.map((program, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.5 + idx * 0.1 }}
-                        className="rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 shadow-md"
-                      >
-                        <h4 className="mb-3 font-montserrat text-lg font-bold text-parisian-grey-800">
-                          {program.title}
-                        </h4>
-                        {program.description && (
-                          <p className="mb-3 text-sm leading-relaxed text-parisian-grey-600">
-                            {program.description}
-                          </p>
-                        )}
-                        {program.items && (
-                          <ul className="space-y-2">
-                            {program.items.map((item, itemIdx) => (
-                              <motion.li
-                                key={itemIdx}
-                                initial={{ x: -10, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
-                                className="flex items-start gap-3"
-                              >
-                                <div className="mt-1.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-200">
-                                  <div className="h-2 w-2 rounded-full bg-parisian-beige-500" />
-                                </div>
-                                <span className="text-sm leading-relaxed text-parisian-grey-600">{item}</span>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        )}
-                      </motion.div>
-                    ))}
-                  </motion.div>
+                  {/* Programs - csak akkor jelenjen meg, ha van program */}
+                  {selectedService.programs && selectedService.programs.length > 0 && (
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="mb-8 space-y-6"
+                    >
+                      {selectedService.programs.map((program, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ delay: 0.5 + idx * 0.1 }}
+                          className="rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 shadow-md"
+                        >
+                          <h4 className="mb-3 font-montserrat text-lg font-bold text-parisian-grey-800">
+                            {program.title}
+                          </h4>
+                          {program.description && (
+                            <p className="mb-3 text-sm leading-relaxed text-parisian-grey-600">
+                              {program.description}
+                            </p>
+                          )}
+                          {program.items && program.items.length > 0 && (
+                            <ul className="space-y-2">
+                              {program.items.map((item, itemIdx) => (
+                                <motion.li
+                                  key={itemIdx}
+                                  initial={{ x: -10, opacity: 0 }}
+                                  animate={{ x: 0, opacity: 1 }}
+                                  transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
+                                  className="flex items-start gap-3"
+                                >
+                                  <div className="mt-1.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-200">
+                                    <div className="h-2 w-2 rounded-full bg-parisian-beige-500" />
+                                  </div>
+                                  <span className="text-sm leading-relaxed text-parisian-grey-600">{item}</span>
+                                </motion.li>
+                              ))}
+                            </ul>
+                          )}
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
 
                   {/* Price & Duration */}
                   <motion.div

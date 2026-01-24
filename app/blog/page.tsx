@@ -59,12 +59,12 @@ export default function BlogPage() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-b from-parisian-cream-100 to-parisian-beige-100">
         {/* Hero */}
-        <div className="bg-gradient-to-br from-parisian-grey-800 to-parisian-grey-700 py-20 md:py-32">
+        <div className="bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50 py-20 md:py-32">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="mb-4 font-playfair text-5xl font-bold text-white md:text-6xl lg:text-7xl">
+            <h1 className="mb-4 font-playfair text-5xl font-bold text-parisian-grey-800 md:text-6xl lg:text-7xl">
               Párizsi Napló
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-parisian-beige-100">
+            <p className="mx-auto max-w-2xl text-xl text-parisian-grey-600">
               Történetek, élmények és titkos helyek a Fények Városából
             </p>
           </div>

@@ -66,3 +66,25 @@ body {
     perspective: 1px;
   }
 }
+
+/* Prose Content - Fix text overflow and word wrapping */
+.prose {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.prose p,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
+.prose li,
+.prose blockquote,
+.prose td,
+.prose th {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}

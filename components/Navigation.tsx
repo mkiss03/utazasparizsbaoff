@@ -56,7 +56,7 @@ export default function Navigation() {
               transition={{ duration: 0.5 }}
               className="flex items-center gap-2"
             >
-              <div className="relative h-12 w-12">
+              <div className="relative h-16 w-16">
                 <Image
                   src="/images/logo.png"
                   alt="Utazás Párizsba"
