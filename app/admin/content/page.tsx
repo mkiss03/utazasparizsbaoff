@@ -450,6 +450,171 @@ export default function ContentPage() {
                   />
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_availability_title">Elérhetőségek címe</Label>
+                <Input
+                  id="contact_availability_title"
+                  value={staticTexts.contact_availability_title || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_availability_title: e.target.value })
+                  }
+                  placeholder="Elérhetőségek"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_form_title">Űrlap címe</Label>
+                <Input
+                  id="contact_form_title"
+                  value={staticTexts.contact_form_title || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_form_title: e.target.value })
+                  }
+                  placeholder="Küldjön üzenetet"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="contact_form_name_label">Név mező címke</Label>
+                  <Input
+                    id="contact_form_name_label"
+                    value={staticTexts.contact_form_name_label || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_form_name_label: e.target.value })
+                    }
+                    placeholder="Név"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_form_email_label">Email mező címke</Label>
+                  <Input
+                    id="contact_form_email_label"
+                    value={staticTexts.contact_form_email_label || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_form_email_label: e.target.value })
+                    }
+                    placeholder="Email"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_form_message_label">Üzenet mező címke</Label>
+                  <Input
+                    id="contact_form_message_label"
+                    value={staticTexts.contact_form_message_label || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_form_message_label: e.target.value })
+                    }
+                    placeholder="Üzenet"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="contact_form_button_text">Küldés gomb szövege</Label>
+                  <Input
+                    id="contact_form_button_text"
+                    value={staticTexts.contact_form_button_text || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_form_button_text: e.target.value })
+                    }
+                    placeholder="Üzenet küldése"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_form_button_sending">Küldés közben szöveg</Label>
+                  <Input
+                    id="contact_form_button_sending"
+                    value={staticTexts.contact_form_button_sending || ''}
+                    onChange={(e) =>
+                      setStaticTexts({ ...staticTexts, contact_form_button_sending: e.target.value })
+                    }
+                    placeholder="Küldés..."
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_quote_text">Idézet szövege</Label>
+                <Textarea
+                  id="contact_quote_text"
+                  value={staticTexts.contact_quote_text || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_quote_text: e.target.value })
+                  }
+                  rows={2}
+                  placeholder="Párizs mindig jó ötlet..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_quote_author">Idézet szerzője</Label>
+                <Input
+                  id="contact_quote_author"
+                  value={staticTexts.contact_quote_author || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, contact_quote_author: e.target.value })
+                  }
+                  placeholder="- Viktória"
+                />
+              </div>
+            </div>
+
+            {/* Services Section */}
+            <div className="space-y-4 rounded-lg border p-4">
+              <h3 className="font-semibold text-navy-500">Szolgáltatások Szekció</h3>
+              <div className="space-y-2">
+                <Label htmlFor="services_group_booking_title">Csoportos megrendelés címe</Label>
+                <Input
+                  id="services_group_booking_title"
+                  value={staticTexts.services_group_booking_title || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, services_group_booking_title: e.target.value })
+                  }
+                  placeholder="Csoportos megrendelés?"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="services_group_booking_description">Csoportos megrendelés leírás</Label>
+                <Textarea
+                  id="services_group_booking_description"
+                  value={staticTexts.services_group_booking_description || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, services_group_booking_description: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Nagyobb csoportok, céges rendezvények..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="services_group_booking_button">Csoportos megrendelés gomb</Label>
+                <Input
+                  id="services_group_booking_button"
+                  value={staticTexts.services_group_booking_button || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, services_group_booking_button: e.target.value })
+                  }
+                  placeholder="Érdekel az egyedi ajánlat"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="services_custom_offer_text">Egyedi ajánlat szöveg</Label>
+                <Input
+                  id="services_custom_offer_text"
+                  value={staticTexts.services_custom_offer_text || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, services_custom_offer_text: e.target.value })
+                  }
+                  placeholder="Nem találja amit keres?..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="services_custom_offer_button">Egyedi ajánlat gomb</Label>
+                <Input
+                  id="services_custom_offer_button"
+                  value={staticTexts.services_custom_offer_button || ''}
+                  onChange={(e) =>
+                    setStaticTexts({ ...staticTexts, services_custom_offer_button: e.target.value })
+                  }
+                  placeholder="Egyedi ajánlatkérés"
+                />
+              </div>
             </div>
 
             {/* Footer Section */}

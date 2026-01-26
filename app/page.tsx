@@ -53,7 +53,13 @@ export default async function Home() {
         description={profileData?.about_description}
         image={profileData?.about_image}
       />
-      <ServicesSection />
+      <ServicesSection
+        groupBookingTitle={textsMap.services_group_booking_title}
+        groupBookingDescription={textsMap.services_group_booking_description}
+        groupBookingButtonText={textsMap.services_group_booking_button}
+        customOfferText={textsMap.services_custom_offer_text}
+        customOfferButtonText={textsMap.services_custom_offer_button}
+      />
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && (
         <ParisFlashcardsPromoSection />
       )}
@@ -66,6 +72,15 @@ export default async function Home() {
         subtitle={textsMap.contact_subtitle}
         locationLabel={textsMap.contact_location_label}
         locationValue={textsMap.contact_location_value}
+        availabilityTitle={textsMap.contact_availability_title}
+        formTitle={textsMap.contact_form_title}
+        formNameLabel={textsMap.contact_form_name_label}
+        formEmailLabel={textsMap.contact_form_email_label}
+        formMessageLabel={textsMap.contact_form_message_label}
+        formButtonText={textsMap.contact_form_button_text}
+        formButtonSending={textsMap.contact_form_button_sending}
+        quoteText={textsMap.contact_quote_text}
+        quoteAuthor={textsMap.contact_quote_author}
       />
       <NewsletterSection />
       <Footer staticTexts={textsMap} />
