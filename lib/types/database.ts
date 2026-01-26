@@ -213,3 +213,16 @@ export interface GlobalStats {
   total_revenue: number
   total_commission: number
 }
+
+export interface Testimonial {
+  id: string
+  name: string
+  message: string
+  rating?: number
+  date?: string
+  avatar?: string
+  display_order: number
+  is_visible: boolean
+  created_at: string
+  updated_at: string
+}

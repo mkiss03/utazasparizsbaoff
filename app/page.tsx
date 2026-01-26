@@ -6,6 +6,7 @@ import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import MetroMapSection from '@/components/sections/MetroMapSection'
 import BlogSection from '@/components/sections/BlogSection'
+import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
@@ -29,6 +30,13 @@ export default async function Home() {
     .order('published_at', { ascending: false })
     .limit(3)
 
+  // Fetch testimonials
+  const { data: testimonials } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_visible', true)
+    .order('display_order')
+
   // Fetch static texts
   const { data: staticTexts } = await supabase.from('site_text_content').select('*')
   const textsMap: Record<string, string> = {}
@@ -38,6 +46,7 @@ export default async function Home() {
 
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
+  const testimonialsData = testimonials || []
 
   return (
     <main className="relative bg-parisian-cream-50">
@@ -64,6 +73,11 @@ export default async function Home() {
         <ParisFlashcardsPromoSection />
       )}
       <MetroMapSection />
+      <TestimonialsSection
+        title={textsMap.testimonials_title}
+        subtitle={textsMap.testimonials_subtitle}
+        testimonials={testimonialsData}
+      />
       <BlogSection posts={postsData} />
       <ContactSection
         email={profileData?.contact_email}
