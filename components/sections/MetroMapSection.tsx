@@ -80,9 +80,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
+    <div className="relative h-[500px] w-full overflow-visible rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl pb-16">
       {/* Background Map Image with Overlay */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden rounded-3xl">
         {/* Paris Map Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -94,8 +94,8 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
 
       {/* SVG Metro Line */}
       <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1000 600"
+        className="absolute inset-0 h-full w-full pointer-events-none"
+        viewBox="0 0 1000 500"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -108,10 +108,10 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
 
         {/* Wide S-Curve Path spanning full width */}
         <motion.path
-          d="M 50 280 Q 275 200, 500 260 T 950 280"
+          d="M 80 250 Q 300 180, 500 235 T 920 250"
           fill="none"
           stroke="url(#lineGradient)"
-          strokeWidth="6"
+          strokeWidth="5"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={isInView ? { pathLength: 1 } : {}}
@@ -224,22 +224,22 @@ function StationNode({
       {/* Station Marker (Circle) */}
       <motion.button
         onClick={onToggle}
-        whileHover={{ scale: 1.15 }}
-        whileTap={{ scale: 0.95 }}
-        className={`relative flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg transition-all ${
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        className={`relative flex h-12 w-12 items-center justify-center rounded-full border-3 border-white shadow-lg transition-all ${
           isActive
-            ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-200'
-            : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-200'
+            ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-2 ring-french-blue-300'
+            : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-2 hover:ring-parisian-beige-300'
         }`}
       >
-        <span className="font-playfair text-xl font-bold text-white">{station.letter}</span>
+        <span className="font-playfair text-lg font-bold text-white">{station.letter}</span>
 
         {/* Pulse Effect */}
         {isActive && (
           <motion.div
             className="absolute inset-0 rounded-full bg-french-blue-400"
             initial={{ scale: 1, opacity: 0.5 }}
-            animate={{ scale: 1.8, opacity: 0 }}
+            animate={{ scale: 2, opacity: 0 }}
             transition={{ duration: 1.5, repeat: Infinity }}
           />
         )}
@@ -247,12 +247,12 @@ function StationNode({
 
       {/* Station Title (Always Visible) */}
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white/90 px-3 py-1 text-center text-sm font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm"
+        className="pointer-events-none absolute left-1/2 top-full mt-3 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white/95 px-2.5 py-1 text-center text-xs font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm max-w-[140px]"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 + index * 0.15 }}
       >
-        {station.title}
+        <span className="line-clamp-2">{station.title}</span>
       </motion.div>
 
       {/* Modal Backdrop - Fixed fullscreen */}

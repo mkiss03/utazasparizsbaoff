@@ -26,8 +26,8 @@ export const stationsDesktop: MetroStation[] = [
       '⚠️ FONTOS: Papírjegy már nincs, csak digitális'
     ],
     icon: 'Ticket',
-    x: 10,
-    y: 47,
+    x: 12,
+    y: 50,
   },
   {
     id: '2',
@@ -42,8 +42,8 @@ export const stationsDesktop: MetroStation[] = [
       'Szabály: 1 kártya = 1 ember'
     ],
     icon: 'Smartphone',
-    x: 27.5,
-    y: 33,
+    x: 30,
+    y: 38,
   },
   {
     id: '3',
@@ -59,7 +59,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Plane',
     x: 50,
-    y: 43,
+    y: 47,
   },
   {
     id: '4',
@@ -74,8 +74,8 @@ export const stationsDesktop: MetroStation[] = [
       '⚠️ Más után bemenni: A kamerák és ellenőrök figyelik'
     ],
     icon: 'AlertTriangle',
-    x: 72.5,
-    y: 53,
+    x: 70,
+    y: 58,
   },
   {
     id: '5',
@@ -91,8 +91,8 @@ export const stationsDesktop: MetroStation[] = [
       '🚦 Csúcsidő: 7:30-9:30 és 16:30-18:30 között nagy a tömeg'
     ],
     icon: 'Calendar',
-    x: 90,
-    y: 47,
+    x: 88,
+    y: 50,
   },
 ]
 
