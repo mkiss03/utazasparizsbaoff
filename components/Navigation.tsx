@@ -28,8 +28,9 @@ export default function Navigation() {
   const allNavItems = [
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
+    { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Városbérletek', href: '/pricing' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Párizsi Napló', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
   ]
 
