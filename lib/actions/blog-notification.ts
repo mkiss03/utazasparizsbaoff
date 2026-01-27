@@ -52,8 +52,9 @@ export async function sendBlogNotification(post: BlogPost) {
     // Send email to all subscribers
     const emailPromises = subscribers.map((subscriber) =>
       resend.emails.send({
-        from: 'Utazás Párizsba <onboarding@resend.dev>',
+        from: 'Párizsi Útitárs <info@utazasparizsba.com>',
         to: [subscriber.email],
+        replyTo: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'utazasparizsba@gmail.com',
         subject: `Új blogbejegyzés: ${post.title}`,
         html: `
           <!DOCTYPE html>
