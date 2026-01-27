@@ -99,6 +99,12 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
                   Impresszum
                 </Link>
               </motion.li>
+              <motion.li whileHover={{ x: 5 }}>
+                <Link href="/aszf" className="text-white/80 transition-colors hover:text-white inline-flex items-center gap-1">
+                  <FileText className="h-3 w-3" />
+                  ÁSZF
+                </Link>
+              </motion.li>
             </ul>
           </motion.div>
 

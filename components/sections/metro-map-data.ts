@@ -10,9 +10,9 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (mathematically aligned to SVG path)
-// Y positions calculated to sit perfectly on the quadratic Bezier curve
-// Path: M 100 300 Q 300 220, 500 280 Q 700 340, 900 300
+// Desktop positions (precisely aligned to gentle arc)
+// SVG Path: M 100 300 Q 500 280, 900 300 (viewBox 0 0 1000 600)
+// Y positions calculated using quadratic Bezier formula
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -28,7 +28,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Ticket',
     x: 13,
-    y: 48,
+    y: 50,
   },
   {
     id: '2',
@@ -44,7 +44,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Smartphone',
     x: 31,
-    y: 42,
+    y: 49,
   },
   {
     id: '3',
@@ -60,7 +60,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Plane',
     x: 50,
-    y: 47,
+    y: 48,
   },
   {
     id: '4',
@@ -76,7 +76,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'AlertTriangle',
     x: 69,
-    y: 52,
+    y: 49,
   },
   {
     id: '5',
@@ -93,7 +93,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Calendar',
     x: 87,
-    y: 51,
+    y: 50,
   },
 ]
 

@@ -106,9 +106,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Smoother S-Curve Path spanning full width */}
+        {/* Gentle Arc Path - Simple and Elegant */}
         <motion.path
-          d="M 100 300 Q 300 220, 500 280 Q 700 340, 900 300"
+          d="M 100 300 Q 500 280, 900 300"
           fill="none"
           stroke="url(#lineGradient)"
           strokeWidth="8"
