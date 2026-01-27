@@ -57,7 +57,7 @@ export default function Navigation() {
               transition={{ duration: 0.5 }}
               className="flex items-center gap-3"
             >
-              <div className="relative h-20 w-20">
+              <div className="relative h-[5.5rem] w-[5.5rem]">
                 <Image
                   src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"
