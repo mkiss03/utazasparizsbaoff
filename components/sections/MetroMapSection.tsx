@@ -75,48 +75,69 @@ export default function MetroMapSection() {
   )
 }
 
-// Desktop Version - Clean Horizontal Line
+// Desktop Version - Curved Line with Proper Modal
 function MetroMapDesktop({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden" style={{ height: '400px' }}>
-      {/* Background Map Image with Overlay */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
-        />
-        <div className="absolute inset-0 bg-white/85" />
-      </div>
+    <>
+      <div className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden" style={{ height: '500px' }}>
+        {/* Background Map Image with Overlay */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
+          />
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
 
-      {/* Metro Line - Simple and Visible */}
-      <div className="absolute inset-0 flex items-center px-16">
-        <motion.div
-          className="w-full h-3 rounded-full bg-gradient-to-r from-parisian-beige-400 via-parisian-beige-500 to-parisian-beige-400 shadow-lg"
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1.5, ease: 'easeInOut', delay: 0.2 }}
-          style={{ transformOrigin: 'left' }}
-        />
-      </div>
+        {/* SVG Metro Line - Smooth Curve */}
+        <svg
+          className="absolute inset-0 h-full w-full pointer-events-none"
+          viewBox="0 0 1000 500"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#D4C5A0" />
+              <stop offset="50%" stopColor="#C9B88A" />
+              <stop offset="100%" stopColor="#D4C5A0" />
+            </linearGradient>
+          </defs>
 
-      {/* Station Nodes */}
-      <div className="absolute inset-0 flex items-center justify-between px-16">
+          {/* Smooth Curved Path */}
+          <motion.path
+            d="M 80 280 Q 280 200, 500 250 Q 720 300, 920 250"
+            fill="none"
+            stroke="url(#lineGradient)"
+            strokeWidth="8"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={isInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: 'easeInOut', delay: 0.2 }}
+          />
+        </svg>
+
+        {/* Station Nodes */}
         {stationsDesktop.map((station, index) => (
           <motion.div
             key={station.id}
             initial={{ scale: 0, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.6 + index * 0.1, type: 'spring', bounce: 0.5 }}
-            className="relative flex flex-col items-center"
+            className="absolute z-20"
+            style={{
+              left: `${station.x}%`,
+              top: `${station.y}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
           >
             {/* Station Circle */}
             <motion.button
               onClick={() => setActiveStation(activeStation === station.id ? null : station.id)}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative z-30 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
+              className={`relative z-20 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
                 activeStation === station.id
                   ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-400'
                   : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-300'
@@ -124,7 +145,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
             >
               <span className="font-playfair text-3xl font-bold text-white">{station.letter}</span>
 
-              {/* Pulse Animation when active */}
+              {/* Pulse Animation */}
               {activeStation === station.id && (
                 <motion.div
                   className="absolute inset-0 rounded-full bg-french-blue-400"
@@ -136,8 +157,8 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
             </motion.button>
 
             {/* Station Label - Always Visible Below */}
-            <div className="absolute top-24 w-32 text-center">
-              <p className="text-xs font-bold text-parisian-grey-800 bg-white/90 rounded-lg px-2 py-1.5 shadow-md">
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 w-36 text-center">
+              <p className="text-xs font-bold text-parisian-grey-800 bg-white/95 rounded-lg px-2 py-1.5 shadow-md">
                 {station.title}
               </p>
             </div>
@@ -145,7 +166,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
         ))}
       </div>
 
-      {/* Modal for Active Station */}
+      {/* Modal - Completely Separate Layer */}
       {activeStation && (
         <>
           {/* Backdrop */}
@@ -154,15 +175,18 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveStation(null)}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           />
 
           {/* Modal Content */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl"
+            exit={{ opacity: 0, scale: 0.8, y: 50 }}
+            transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+            className="fixed left-1/2 top-1/2 z-[110] w-[90vw] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl"
+            style={{ position: 'fixed' }}
           >
             <div className="max-h-[85vh] overflow-y-auto p-8">
               {(() => {
@@ -175,31 +199,31 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
                     {/* Close Button */}
                     <button
                       onClick={() => setActiveStation(null)}
-                      className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-2 text-parisian-grey-600 transition-colors hover:bg-parisian-grey-200"
+                      className="absolute right-4 top-4 z-10 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
                     >
-                      <X className="h-5 w-5" />
+                      <X className="h-6 w-6" />
                     </button>
 
                     {/* Icon */}
                     {Icon && (
-                      <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200">
-                        <Icon className="h-8 w-8 text-parisian-beige-600" />
+                      <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
+                        <Icon className="h-10 w-10 text-parisian-beige-600" />
                       </div>
                     )}
 
                     {/* Content */}
-                    <h3 className="mb-3 font-playfair text-3xl font-bold text-parisian-grey-800">
+                    <h3 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800">
                       {station.title}
                     </h3>
-                    <p className="mb-6 text-lg text-parisian-grey-600">
+                    <p className="mb-6 text-xl text-parisian-grey-600 leading-relaxed">
                       {station.description}
                     </p>
 
                     {/* Details */}
-                    <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
+                    <div className="space-y-4 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-8">
                       {station.details.map((detail, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-base text-parisian-grey-700">
-                          <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                        <div key={idx} className="flex items-start gap-4 text-lg text-parisian-grey-700">
+                          <div className="mt-2 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-parisian-beige-500" />
                           <span>{detail}</span>
                         </div>
                       ))}
@@ -211,52 +235,73 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </motion.div>
         </>
       )}
-    </div>
+    </>
   )
 }
 
-// Mobile Version - Vertical Line
+// Mobile Version - Vertical Curved Line
 function MetroMapMobile({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl" style={{ height: '900px' }}>
-      {/* Background Map Image with Overlay */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
-        />
-        <div className="absolute inset-0 bg-white/85" />
-      </div>
+    <>
+      <div className="relative w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl" style={{ height: '900px' }}>
+        {/* Background Map Image with Overlay */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
+          />
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
 
-      {/* Metro Line - Vertical */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center py-16">
-        <motion.div
-          className="h-full w-3 rounded-full bg-gradient-to-b from-parisian-beige-400 via-parisian-beige-500 to-parisian-beige-400 shadow-lg"
-          initial={{ scaleY: 0 }}
-          animate={isInView ? { scaleY: 1 } : {}}
-          transition={{ duration: 1.5, ease: 'easeInOut', delay: 0.2 }}
-          style={{ transformOrigin: 'top' }}
-        />
-      </div>
+        {/* SVG Metro Line - Vertical Curve */}
+        <svg
+          className="absolute inset-0 h-full w-full pointer-events-none"
+          viewBox="0 0 400 800"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <linearGradient id="lineGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#D4C5A0" />
+              <stop offset="50%" stopColor="#C9B88A" />
+              <stop offset="100%" stopColor="#D4C5A0" />
+            </linearGradient>
+          </defs>
 
-      {/* Station Nodes */}
-      <div className="absolute inset-0 flex flex-col items-center justify-around py-16">
+          {/* Smooth Vertical Curved Path */}
+          <motion.path
+            d="M 200 80 Q 250 240, 200 400 Q 150 560, 200 720"
+            fill="none"
+            stroke="url(#lineGradientMobile)"
+            strokeWidth="7"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={isInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: 'easeInOut', delay: 0.2 }}
+          />
+        </svg>
+
+        {/* Station Nodes */}
         {stationsMobile.map((station, index) => (
           <motion.div
             key={station.id}
             initial={{ scale: 0, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.6 + index * 0.1, type: 'spring', bounce: 0.5 }}
-            className="relative flex items-center"
+            className="absolute z-20"
+            style={{
+              left: `${station.x}%`,
+              top: `${station.y}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
           >
             {/* Station Circle */}
             <motion.button
               onClick={() => setActiveStation(activeStation === station.id ? null : station.id)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative z-30 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
+              className={`relative z-20 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
                 activeStation === station.id
                   ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-400'
                   : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-300'
@@ -277,7 +322,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
 
             {/* Station Label - To the right */}
             <div className="absolute left-20 w-32">
-              <p className="text-xs font-bold text-parisian-grey-800 bg-white/90 rounded-lg px-2 py-1.5 shadow-md text-left">
+              <p className="text-xs font-bold text-parisian-grey-800 bg-white/95 rounded-lg px-2 py-1.5 shadow-md text-left">
                 {station.title}
               </p>
             </div>
@@ -285,7 +330,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
         ))}
       </div>
 
-      {/* Modal for Active Station */}
+      {/* Modal - Completely Separate Layer */}
       {activeStation && (
         <>
           {/* Backdrop */}
@@ -294,15 +339,18 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveStation(null)}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm"
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           />
 
           {/* Modal Content */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl"
+            exit={{ opacity: 0, scale: 0.8, y: 50 }}
+            transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+            className="fixed left-1/2 top-1/2 z-[110] w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl"
+            style={{ position: 'fixed' }}
           >
             <div className="max-h-[85vh] overflow-y-auto p-6">
               {(() => {
@@ -315,14 +363,14 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
                     {/* Close Button */}
                     <button
                       onClick={() => setActiveStation(null)}
-                      className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-2 text-parisian-grey-600 transition-colors hover:bg-parisian-grey-200"
+                      className="absolute right-4 top-4 z-10 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
                     >
-                      <X className="h-5 w-5" />
+                      <X className="h-6 w-6" />
                     </button>
 
                     {/* Icon */}
                     {Icon && (
-                      <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200">
+                      <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
                         <Icon className="h-8 w-8 text-parisian-beige-600" />
                       </div>
                     )}
@@ -331,7 +379,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
                     <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800">
                       {station.title}
                     </h3>
-                    <p className="mb-6 text-base text-parisian-grey-600">
+                    <p className="mb-6 text-base text-parisian-grey-600 leading-relaxed">
                       {station.description}
                     </p>
 
@@ -351,7 +399,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
           </motion.div>
         </>
       )}
-    </div>
+    </>
   )
 }
 

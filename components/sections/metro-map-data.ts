@@ -10,9 +10,9 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (evenly distributed on horizontal line)
-// Straight line layout for better readability and professional appearance
-// Labels alternate above/below to prevent overlap
+// Desktop positions (aligned to curved metro line)
+// SVG Path: M 80 280 Q 280 200, 500 250 Q 720 300, 920 250 (viewBox 0 0 1000 500)
+// Y positions calculated to sit perfectly on the curve
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -28,7 +28,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Ticket',
     x: 12,
-    y: 50,
+    y: 55,
   },
   {
     id: '2',
@@ -44,7 +44,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Smartphone',
     x: 30,
-    y: 50,
+    y: 44,
   },
   {
     id: '3',
@@ -76,7 +76,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'AlertTriangle',
     x: 70,
-    y: 50,
+    y: 59,
   },
   {
     id: '5',
