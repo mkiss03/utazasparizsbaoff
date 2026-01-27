@@ -80,7 +80,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative h-[500px] w-full overflow-visible rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl pb-16">
+    <div className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden" style={{ height: '650px' }}>
       {/* Background Map Image with Overlay */}
       <div className="absolute inset-0 overflow-hidden rounded-3xl">
         {/* Paris Map Background Image */}
@@ -95,7 +95,7 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
       {/* SVG Metro Line */}
       <svg
         className="absolute inset-0 h-full w-full pointer-events-none"
-        viewBox="0 0 1000 500"
+        viewBox="0 0 1000 600"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -106,12 +106,12 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Wide S-Curve Path spanning full width */}
+        {/* Smoother S-Curve Path spanning full width */}
         <motion.path
-          d="M 80 250 Q 300 180, 500 235 T 920 250"
+          d="M 100 300 Q 300 220, 500 280 Q 700 340, 900 300"
           fill="none"
           stroke="url(#lineGradient)"
-          strokeWidth="5"
+          strokeWidth="8"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={isInView ? { pathLength: 1 } : {}}
@@ -139,7 +139,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative h-[800px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
+    <div className="relative h-[850px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
       {/* Background Map Image with Overlay */}
       <div className="absolute inset-0">
         {/* Paris Map Background Image */}
@@ -170,7 +170,7 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
           d="M 200 96 Q 240 224, 200 384 Q 160 544, 200 704"
           fill="none"
           stroke="url(#lineGradientMobile)"
-          strokeWidth="5"
+          strokeWidth="7"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={isInView ? { pathLength: 1 } : {}}
@@ -226,13 +226,13 @@ function StationNode({
         onClick={onToggle}
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.9 }}
-        className={`relative flex h-12 w-12 items-center justify-center rounded-full border-3 border-white shadow-lg transition-all ${
+        className={`relative flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg transition-all ${
           isActive
-            ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-2 ring-french-blue-300'
+            ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-300'
             : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-2 hover:ring-parisian-beige-300'
         }`}
       >
-        <span className="font-playfair text-lg font-bold text-white">{station.letter}</span>
+        <span className="font-playfair text-xl font-bold text-white">{station.letter}</span>
 
         {/* Pulse Effect */}
         {isActive && (
@@ -247,12 +247,12 @@ function StationNode({
 
       {/* Station Title (Always Visible) */}
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-full mt-3 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white/95 px-2.5 py-1 text-center text-xs font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm max-w-[140px]"
+        className="pointer-events-none absolute left-1/2 top-full mt-3 -translate-x-1/2 rounded-lg bg-white/95 px-2.5 py-1.5 text-center text-xs font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm max-w-[140px]"
         initial={{ opacity: 0, y: -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 + index * 0.15 }}
       >
-        <span className="line-clamp-2">{station.title}</span>
+        <span className="line-clamp-2 leading-tight">{station.title}</span>
       </motion.div>
 
       {/* Modal Backdrop - Fixed fullscreen */}

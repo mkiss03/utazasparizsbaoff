@@ -10,8 +10,9 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (evenly distributed along wide S-curve)
-// Positioned to sit perfectly on the full-width path
+// Desktop positions (mathematically aligned to SVG path)
+// Y positions calculated to sit perfectly on the quadratic Bezier curve
+// Path: M 100 300 Q 300 220, 500 280 Q 700 340, 900 300
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -26,8 +27,8 @@ export const stationsDesktop: MetroStation[] = [
       '⚠️ FONTOS: Papírjegy már nincs, csak digitális'
     ],
     icon: 'Ticket',
-    x: 12,
-    y: 50,
+    x: 13,
+    y: 48,
   },
   {
     id: '2',
@@ -42,8 +43,8 @@ export const stationsDesktop: MetroStation[] = [
       'Szabály: 1 kártya = 1 ember'
     ],
     icon: 'Smartphone',
-    x: 30,
-    y: 38,
+    x: 31,
+    y: 42,
   },
   {
     id: '3',
@@ -74,8 +75,8 @@ export const stationsDesktop: MetroStation[] = [
       '⚠️ Más után bemenni: A kamerák és ellenőrök figyelik'
     ],
     icon: 'AlertTriangle',
-    x: 70,
-    y: 58,
+    x: 69,
+    y: 52,
   },
   {
     id: '5',
@@ -91,8 +92,8 @@ export const stationsDesktop: MetroStation[] = [
       '🚦 Csúcsidő: 7:30-9:30 és 16:30-18:30 között nagy a tömeg'
     ],
     icon: 'Calendar',
-    x: 88,
-    y: 50,
+    x: 87,
+    y: 51,
   },
 ]
 
