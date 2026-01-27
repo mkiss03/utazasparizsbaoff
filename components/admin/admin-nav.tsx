@@ -11,7 +11,8 @@ import {
   Package,
   ShoppingCart,
   DollarSign,
-  Tag
+  Tag,
+  MessageSquare
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -52,6 +53,12 @@ const allNavItems: NavItem[] = [
     title: 'Blog Kategóriák',
     href: '/admin/blog/categories',
     icon: Tag,
+    type: 'item',
+  },
+  {
+    title: 'Vélemények',
+    href: '/admin/testimonials',
+    icon: MessageSquare,
     type: 'item',
   },
   {

@@ -13,6 +13,15 @@ interface ContactSectionProps {
   subtitle?: string
   locationLabel?: string
   locationValue?: string
+  availabilityTitle?: string
+  formTitle?: string
+  formNameLabel?: string
+  formEmailLabel?: string
+  formMessageLabel?: string
+  formButtonText?: string
+  formButtonSending?: string
+  quoteText?: string
+  quoteAuthor?: string
 }
 
 export default function ContactSection({
@@ -22,6 +31,15 @@ export default function ContactSection({
   subtitle = 'Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!',
   locationLabel = 'Helyszín',
   locationValue = 'Párizs, Franciaország',
+  availabilityTitle = 'Elérhetőségek',
+  formTitle = 'Küldjön üzenetet',
+  formNameLabel = 'Név',
+  formEmailLabel = 'Email',
+  formMessageLabel = 'Üzenet',
+  formButtonText = 'Üzenet küldése',
+  formButtonSending = 'Küldés...',
+  quoteText = 'Párizs mindig jó ötlet. Különösen akkor, ha egy tapasztalt idegenvezetővel fedezi fel.',
+  quoteAuthor = '- Viktória',
 }: ContactSectionProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -110,7 +128,7 @@ export default function ContactSection({
             viewport={{ once: true }}
           >
             <h3 className="mb-8 font-playfair text-3xl font-bold text-parisian-grey-800">
-              Elérhetőségek
+              {availabilityTitle}
             </h3>
 
             <div className="space-y-6">
@@ -148,9 +166,9 @@ export default function ContactSection({
               className="mt-12 rounded-3xl border-l-4 border-parisian-beige-400 bg-parisian-cream-100/80 p-6 backdrop-blur-sm"
             >
               <p className="italic text-parisian-grey-700">
-                &ldquo;Párizs mindig jó ötlet. Különösen akkor, ha egy tapasztalt idegenvezetővel fedezi fel.&rdquo;
+                &ldquo;{quoteText}&rdquo;
               </p>
-              <p className="mt-2 font-semibold text-parisian-grey-800">- Viktória</p>
+              <p className="mt-2 font-semibold text-parisian-grey-800">{quoteAuthor}</p>
             </motion.div>
           </motion.div>
 
@@ -163,13 +181,13 @@ export default function ContactSection({
           >
             <form onSubmit={handleSubmit} className="rounded-3xl border-2 border-parisian-beige-200 bg-white p-8 shadow-lg">
               <h3 className="mb-6 font-playfair text-2xl font-bold text-parisian-grey-800">
-                Küldjön üzenetet
+                {formTitle}
               </h3>
 
               <div className="space-y-6">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-semibold text-parisian-grey-700">
-                    Név
+                    {formNameLabel}
                   </label>
                   <input
                     type="text"
@@ -183,7 +201,7 @@ export default function ContactSection({
 
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-semibold text-parisian-grey-700">
-                    Email
+                    {formEmailLabel}
                   </label>
                   <input
                     type="email"
@@ -197,7 +215,7 @@ export default function ContactSection({
 
                 <div>
                   <label htmlFor="message" className="mb-2 block text-sm font-semibold text-parisian-grey-700">
-                    Üzenet
+                    {formMessageLabel}
                   </label>
                   <textarea
                     id="message"
@@ -240,7 +258,7 @@ export default function ContactSection({
                       : 'bg-parisian-beige-400 hover:bg-parisian-beige-500'
                   }`}
                 >
-                  {isLoading ? 'Küldés...' : 'Üzenet küldése'}
+                  {isLoading ? formButtonSending : formButtonText}
                   <Send className="h-5 w-5" />
                 </motion.button>
               </div>

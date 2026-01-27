@@ -6,6 +6,7 @@ import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import MetroMapSection from '@/components/sections/MetroMapSection'
 import BlogSection from '@/components/sections/BlogSection'
+import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
@@ -29,6 +30,13 @@ export default async function Home() {
     .order('published_at', { ascending: false })
     .limit(3)
 
+  // Fetch testimonials
+  const { data: testimonials } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_visible', true)
+    .order('display_order')
+
   // Fetch static texts
   const { data: staticTexts } = await supabase.from('site_text_content').select('*')
   const textsMap: Record<string, string> = {}
@@ -38,6 +46,7 @@ export default async function Home() {
 
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
+  const testimonialsData = testimonials || []
 
   return (
     <main className="relative bg-parisian-cream-50">
@@ -53,11 +62,22 @@ export default async function Home() {
         description={profileData?.about_description}
         image={profileData?.about_image}
       />
-      <ServicesSection />
+      <ServicesSection
+        groupBookingTitle={textsMap.services_group_booking_title}
+        groupBookingDescription={textsMap.services_group_booking_description}
+        groupBookingButtonText={textsMap.services_group_booking_button}
+        customOfferText={textsMap.services_custom_offer_text}
+        customOfferButtonText={textsMap.services_custom_offer_button}
+      />
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && (
         <ParisFlashcardsPromoSection />
       )}
       <MetroMapSection />
+      <TestimonialsSection
+        title={textsMap.testimonials_title}
+        subtitle={textsMap.testimonials_subtitle}
+        testimonials={testimonialsData}
+      />
       <BlogSection posts={postsData} />
       <ContactSection
         email={profileData?.contact_email}
@@ -66,6 +86,15 @@ export default async function Home() {
         subtitle={textsMap.contact_subtitle}
         locationLabel={textsMap.contact_location_label}
         locationValue={textsMap.contact_location_value}
+        availabilityTitle={textsMap.contact_availability_title}
+        formTitle={textsMap.contact_form_title}
+        formNameLabel={textsMap.contact_form_name_label}
+        formEmailLabel={textsMap.contact_form_email_label}
+        formMessageLabel={textsMap.contact_form_message_label}
+        formButtonText={textsMap.contact_form_button_text}
+        formButtonSending={textsMap.contact_form_button_sending}
+        quoteText={textsMap.contact_quote_text}
+        quoteAuthor={textsMap.contact_quote_author}
       />
       <NewsletterSection />
       <Footer staticTexts={textsMap} />

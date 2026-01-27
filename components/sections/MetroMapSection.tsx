@@ -75,253 +75,405 @@ export default function MetroMapSection() {
   )
 }
 
-// Desktop Version - Horizontal S-Curve
+// Desktop Version - Curved Line with Proper Responsive Layout
 function MetroMapDesktop({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
-      {/* Background Map Image with Overlay */}
-      <div className="absolute inset-0">
-        {/* Paris Map Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
-        />
-        {/* Light overlay so map is visible but doesn't compete with content */}
-        <div className="absolute inset-0 bg-white/85" />
-      </div>
-
-      {/* SVG Metro Line */}
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1000 600"
-        preserveAspectRatio="xMidYMid meet"
+    <>
+      {/* Main Container with Aspect Ratio */}
+      <div
+        className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden"
+        style={{ aspectRatio: '2 / 1' }}
       >
-        <defs>
-          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#EBE0BB" />
-            <stop offset="50%" stopColor="#E6D9AC" />
-            <stop offset="100%" stopColor="#EBE0BB" />
-          </linearGradient>
-        </defs>
-
-        {/* Wide S-Curve Path spanning full width */}
-        <motion.path
-          d="M 50 280 Q 275 200, 500 260 T 950 280"
-          fill="none"
-          stroke="url(#lineGradient)"
-          strokeWidth="6"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={isInView ? { pathLength: 1 } : {}}
-          transition={{ duration: 2, ease: 'easeInOut', delay: 0.3 }}
-        />
-      </svg>
-
-      {/* Station Nodes */}
-      {stationsDesktop.map((station, index) => (
-        <StationNode
-          key={station.id}
-          station={station}
-          isActive={activeStation === station.id}
-          onToggle={() => setActiveStation(activeStation === station.id ? null : station.id)}
-          index={index}
-          isInView={isInView}
-        />
-      ))}
-    </div>
-  )
-}
-
-// Mobile Version - Vertical Winding Line
-function MetroMapMobile({ isInView }: { isInView: boolean }) {
-  const [activeStation, setActiveStation] = useState<string | null>(null)
-
-  return (
-    <div className="relative h-[800px] w-full overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl">
-      {/* Background Map Image with Overlay */}
-      <div className="absolute inset-0">
-        {/* Paris Map Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/ujmetro.png)' }}
-        />
-        {/* Light overlay so map is visible but doesn't compete with content */}
-        <div className="absolute inset-0 bg-white/85" />
-      </div>
-
-      {/* SVG Metro Line */}
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 400 800"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <defs>
-          <linearGradient id="lineGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#EBE0BB" />
-            <stop offset="50%" stopColor="#E6D9AC" />
-            <stop offset="100%" stopColor="#EBE0BB" />
-          </linearGradient>
-        </defs>
-
-        {/* Vertical Smooth S-Curve Path */}
-        <motion.path
-          d="M 200 96 Q 240 224, 200 384 Q 160 544, 200 704"
-          fill="none"
-          stroke="url(#lineGradientMobile)"
-          strokeWidth="5"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={isInView ? { pathLength: 1 } : {}}
-          transition={{ duration: 2, ease: 'easeInOut', delay: 0.3 }}
-        />
-      </svg>
-
-      {/* Station Nodes */}
-      {stationsMobile.map((station, index) => (
-        <StationNode
-          key={station.id}
-          station={station}
-          isActive={activeStation === station.id}
-          onToggle={() => setActiveStation(activeStation === station.id ? null : station.id)}
-          index={index}
-          isInView={isInView}
-        />
-      ))}
-    </div>
-  )
-}
-
-// Station Node Component
-function StationNode({
-  station,
-  isActive,
-  onToggle,
-  index,
-  isInView,
-}: {
-  station: MetroStation
-  isActive: boolean
-  onToggle: () => void
-  index: number
-  isInView: boolean
-}) {
-  const Icon = iconMap[station.icon]
-
-  return (
-    <motion.div
-      initial={{ scale: 0, opacity: 0 }}
-      animate={isInView ? { scale: 1, opacity: 1 } : {}}
-      transition={{ duration: 0.4, delay: 0.5 + index * 0.15, type: 'spring' }}
-      className="absolute z-20"
-      style={{
-        left: `${station.x}%`,
-        top: `${station.y}%`,
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      {/* Station Marker (Circle) */}
-      <motion.button
-        onClick={onToggle}
-        whileHover={{ scale: 1.15 }}
-        whileTap={{ scale: 0.95 }}
-        className={`relative flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg transition-all ${
-          isActive
-            ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-200'
-            : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-200'
-        }`}
-      >
-        <span className="font-playfair text-xl font-bold text-white">{station.letter}</span>
-
-        {/* Pulse Effect */}
-        {isActive && (
-          <motion.div
-            className="absolute inset-0 rounded-full bg-french-blue-400"
-            initial={{ scale: 1, opacity: 0.5 }}
-            animate={{ scale: 1.8, opacity: 0 }}
-            transition={{ duration: 1.5, repeat: Infinity }}
+        {/* Background Map - Fits Container Perfectly */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url(/images/ujmetro.png)',
+              backgroundSize: 'cover'
+            }}
           />
-        )}
-      </motion.button>
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
 
-      {/* Station Title (Always Visible) */}
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white/90 px-3 py-1 text-center text-sm font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm"
-        initial={{ opacity: 0, y: -10 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.7 + index * 0.15 }}
-      >
-        {station.title}
-      </motion.div>
+        {/* SVG Metro Line - Matches Container Aspect Ratio */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 1000 500"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#D4C5A0" />
+              <stop offset="50%" stopColor="#C9B88A" />
+              <stop offset="100%" stopColor="#D4C5A0" />
+            </linearGradient>
+          </defs>
 
-      {/* Modal Backdrop - Fixed fullscreen */}
-      {isActive && (
+          {/* Smooth Curved Path */}
+          <motion.path
+            d="M 80 280 Q 280 200, 500 250 Q 720 300, 920 250"
+            fill="none"
+            stroke="url(#lineGradient)"
+            strokeWidth="8"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={isInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: 'easeInOut', delay: 0.2 }}
+          />
+        </svg>
+
+        {/* Station Nodes - Percentage Based with Center Anchor */}
+        {stationsDesktop.map((station, index) => (
+          <motion.div
+            key={station.id}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={isInView ? { scale: 1, opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.6 + index * 0.1, type: 'spring', bounce: 0.5 }}
+            className="absolute"
+            style={{
+              left: `${station.x}%`,
+              top: `${station.y}%`,
+              transform: 'translate(-50%, -50%)',
+              zIndex: 20,
+            }}
+          >
+            {/* Station Circle */}
+            <motion.button
+              onClick={() => setActiveStation(activeStation === station.id ? null : station.id)}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
+                activeStation === station.id
+                  ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-400'
+                  : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-300'
+              }`}
+            >
+              <span className="font-playfair text-3xl font-bold text-white">{station.letter}</span>
+
+              {/* Pulse Animation */}
+              {activeStation === station.id && (
+                <motion.div
+                  className="absolute inset-0 rounded-full bg-french-blue-400"
+                  initial={{ scale: 1, opacity: 0.6 }}
+                  animate={{ scale: 1.8, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              )}
+            </motion.button>
+
+            {/* Station Label - Positioned Below */}
+            <div
+              className="absolute w-36 text-center pointer-events-none"
+              style={{
+                top: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                marginTop: '0.5rem'
+              }}
+            >
+              <p className="text-xs font-bold text-parisian-grey-800 bg-white/95 rounded-lg px-2 py-1.5 shadow-md">
+                {station.title}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Modal - Completely Isolated with Premium Styling */}
+      {activeStation && (
         <>
-          {/* Dark Backdrop */}
+          {/* Full Screen Backdrop with Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onToggle}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-          />
-
-          {/* Modal Card - Centered and Scrollable */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-3xl bg-white shadow-2xl"
-            style={{ position: 'fixed' }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setActiveStation(null)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              zIndex: 9999,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '1rem'
+            }}
           >
-            <div className="max-h-[85vh] overflow-y-auto">
-              <div className="relative p-6 md:p-8">
-                {/* Close Button */}
-                <button
-                  onClick={onToggle}
-                  className="absolute right-4 top-4 z-10 rounded-full bg-parisian-grey-100 p-2 text-parisian-grey-600 transition-colors hover:bg-parisian-grey-200 hover:text-parisian-grey-800"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+            {/* Modal Card - Premium Animation */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', bounce: 0.25, duration: 0.6 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-3xl bg-white shadow-2xl"
+              style={{
+                width: '100%',
+                maxWidth: '48rem',
+                maxHeight: '85vh',
+                overflow: 'hidden'
+              }}
+            >
+              <div className="max-h-[85vh] overflow-y-auto p-8">
+                {(() => {
+                  const station = stationsDesktop.find(s => s.id === activeStation)
+                  if (!station) return null
+                  const Icon = iconMap[station.icon]
 
-                {/* Icon */}
-                {Icon && (
-                  <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-md">
-                    <Icon className="h-8 w-8 text-parisian-beige-600" />
-                  </div>
-                )}
-
-                {/* Title */}
-                <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800 md:text-3xl">
-                  {station.title}
-                </h3>
-
-                {/* Description */}
-                <p className="mb-6 text-base leading-relaxed text-parisian-grey-600 md:text-lg">
-                  {station.description}
-                </p>
-
-                {/* Details List */}
-                {station.details && station.details.length > 0 && (
-                  <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
-                    {station.details.map((detail, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3 text-sm leading-relaxed text-parisian-grey-700 md:text-base"
+                  return (
+                    <>
+                      {/* Close Button */}
+                      <button
+                        onClick={() => setActiveStation(null)}
+                        className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
+                        style={{ zIndex: 10 }}
                       >
-                        <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
-                        <span>{detail}</span>
+                        <X className="h-6 w-6" />
+                      </button>
+
+                      {/* Icon */}
+                      {Icon && (
+                        <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
+                          <Icon className="h-10 w-10 text-parisian-beige-600" />
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <h3 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800">
+                        {station.title}
+                      </h3>
+                      <p className="mb-6 text-xl text-parisian-grey-600 leading-relaxed">
+                        {station.description}
+                      </p>
+
+                      {/* Details */}
+                      <div className="space-y-4 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-8">
+                        {station.details.map((detail, idx) => (
+                          <div key={idx} className="flex items-start gap-4 text-lg text-parisian-grey-700">
+                            <div className="mt-2 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                            <span>{detail}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </>
+                  )
+                })()}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </>
       )}
-    </motion.div>
+    </>
   )
 }
+
+// Mobile Version - Vertical Curved Line with Responsive Layout
+function MetroMapMobile({ isInView }: { isInView: boolean }) {
+  const [activeStation, setActiveStation] = useState<string | null>(null)
+
+  return (
+    <>
+      {/* Main Container with Aspect Ratio */}
+      <div
+        className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden"
+        style={{ aspectRatio: '1 / 2' }}
+      >
+        {/* Background Map */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url(/images/ujmetro.png)',
+              backgroundSize: 'cover'
+            }}
+          />
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
+
+        {/* SVG Metro Line - Matches Container Aspect Ratio */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 400 800"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <linearGradient id="lineGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#D4C5A0" />
+              <stop offset="50%" stopColor="#C9B88A" />
+              <stop offset="100%" stopColor="#D4C5A0" />
+            </linearGradient>
+          </defs>
+
+          {/* Smooth Vertical Curved Path */}
+          <motion.path
+            d="M 200 80 Q 250 240, 200 400 Q 150 560, 200 720"
+            fill="none"
+            stroke="url(#lineGradientMobile)"
+            strokeWidth="7"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={isInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: 'easeInOut', delay: 0.2 }}
+          />
+        </svg>
+
+        {/* Station Nodes - Percentage Based with Center Anchor */}
+        {stationsMobile.map((station, index) => (
+          <motion.div
+            key={station.id}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={isInView ? { scale: 1, opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.6 + index * 0.1, type: 'spring', bounce: 0.5 }}
+            className="absolute"
+            style={{
+              left: `${station.x}%`,
+              top: `${station.y}%`,
+              transform: 'translate(-50%, -50%)',
+              zIndex: 20,
+            }}
+          >
+            {/* Station Circle */}
+            <motion.button
+              onClick={() => setActiveStation(activeStation === station.id ? null : station.id)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-2xl transition-all ${
+                activeStation === station.id
+                  ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-400'
+                  : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-4 hover:ring-parisian-beige-300'
+              }`}
+            >
+              <span className="font-playfair text-2xl font-bold text-white">{station.letter}</span>
+
+              {/* Pulse Animation */}
+              {activeStation === station.id && (
+                <motion.div
+                  className="absolute inset-0 rounded-full bg-french-blue-400"
+                  initial={{ scale: 1, opacity: 0.6 }}
+                  animate={{ scale: 1.8, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              )}
+            </motion.button>
+
+            {/* Station Label - Positioned to the Right */}
+            <div
+              className="absolute w-32 pointer-events-none"
+              style={{
+                left: '100%',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                marginLeft: '0.5rem'
+              }}
+            >
+              <p className="text-xs font-bold text-parisian-grey-800 bg-white/95 rounded-lg px-2 py-1.5 shadow-md text-left">
+                {station.title}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Modal - Completely Isolated with Premium Styling */}
+      {activeStation && (
+        <>
+          {/* Full Screen Backdrop with Blur */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setActiveStation(null)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              zIndex: 9999,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '1rem'
+            }}
+          >
+            {/* Modal Card - Premium Animation */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', bounce: 0.25, duration: 0.6 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-3xl bg-white shadow-2xl"
+              style={{
+                width: '100%',
+                maxWidth: '32rem',
+                maxHeight: '85vh',
+                overflow: 'hidden'
+              }}
+            >
+              <div className="max-h-[85vh] overflow-y-auto p-6">
+                {(() => {
+                  const station = stationsMobile.find(s => s.id === activeStation)
+                  if (!station) return null
+                  const Icon = iconMap[station.icon]
+
+                  return (
+                    <>
+                      {/* Close Button */}
+                      <button
+                        onClick={() => setActiveStation(null)}
+                        className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
+                        style={{ zIndex: 10 }}
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
+
+                      {/* Icon */}
+                      {Icon && (
+                        <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
+                          <Icon className="h-8 w-8 text-parisian-beige-600" />
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800">
+                        {station.title}
+                      </h3>
+                      <p className="mb-6 text-base text-parisian-grey-600 leading-relaxed">
+                        {station.description}
+                      </p>
+
+                      {/* Details */}
+                      <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
+                        {station.details.map((detail, idx) => (
+                          <div key={idx} className="flex items-start gap-3 text-sm text-parisian-grey-700">
+                            <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                            <span>{detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
+    </>
+  )
+}
+

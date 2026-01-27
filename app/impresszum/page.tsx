@@ -1,13 +1,31 @@
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import { FileText, Mail, Phone, Building2, MapPin } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
   title: 'Impresszum | Utazás Párizsba - Párizsi Idegenvezetés',
   description: 'Jogi információk és kapcsolati adatok - Utazás Párizsba, Szeidl Viktória hivatalos idegenvezető Párizsban',
 }
 
-export default function ImpresszumPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function ImpresszumPage() {
+  const supabase = await createClient()
+
+  // Fetch profile data for email and phone
+  const { data: profile } = await supabase.from('profile').select('contact_email, contact_phone').single()
+
+  // Fetch static texts for footer
+  const { data: staticTextsData } = await supabase.from('site_text_content').select('*')
+  const staticTexts: Record<string, string> = {}
+  staticTextsData?.forEach((item: any) => {
+    staticTexts[item.key] = item.value || ''
+  })
+
+  const contactEmail = profile?.contact_email || 'utazasparizsba@gmail.com'
+  const contactPhone = profile?.contact_phone || '+33 7 53 14 50 35'
+
   return (
     <main className="relative min-h-screen bg-parisian-cream-50">
       <Navigation />
@@ -89,10 +107,10 @@ export default function ImpresszumPage() {
                   <div>
                     <h3 className="mb-1 font-semibold text-parisian-grey-800">E-mail:</h3>
                     <a
-                      href="mailto:viktoria.szeidl@gmail.com"
+                      href={`mailto:${contactEmail}`}
                       className="text-parisian-beige-600 hover:text-parisian-beige-700 transition-colors"
                     >
-                      viktoria.szeidl@gmail.com
+                      {contactEmail}
                     </a>
                   </div>
                 </div>
@@ -102,10 +120,10 @@ export default function ImpresszumPage() {
                   <div>
                     <h3 className="mb-1 font-semibold text-parisian-grey-800">Telefon:</h3>
                     <a
-                      href="tel:+33612345678"
+                      href={`tel:${contactPhone.replace(/\s/g, '')}`}
                       className="text-parisian-beige-600 hover:text-parisian-beige-700 transition-colors"
                     >
-                      +33 6 12 34 56 78
+                      {contactPhone}
                     </a>
                   </div>
                 </div>
@@ -173,7 +191,7 @@ export default function ImpresszumPage() {
         </div>
       </div>
 
-      <Footer />
+      <Footer staticTexts={staticTexts} />
     </main>
   )
 }

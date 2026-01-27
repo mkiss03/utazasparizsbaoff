@@ -26,7 +26,21 @@ interface Service {
   color: string
 }
 
-export default function ServicesSection() {
+interface ServicesSectionProps {
+  groupBookingTitle?: string
+  groupBookingDescription?: string
+  groupBookingButtonText?: string
+  customOfferText?: string
+  customOfferButtonText?: string
+}
+
+export default function ServicesSection({
+  groupBookingTitle = 'Csoportos megrendelés?',
+  groupBookingDescription = 'Nagyobb csoportok, céges rendezvények vagy különleges igények esetén egyedi árkalkulációt biztosítunk. Vegye fel velünk a kapcsolatot, és állítsunk össze Önnek személyre szabott ajánlatot!',
+  groupBookingButtonText = 'Érdekel az egyedi ajánlat',
+  customOfferText = 'Nem találja amit keres? Kérjen egyedi ajánlatot!',
+  customOfferButtonText = 'Egyedi ajánlatkérés',
+}: ServicesSectionProps = {}) {
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -224,11 +238,10 @@ export default function ServicesSection() {
                 <Icons.Users className="h-8 w-8 text-white" />
               </motion.div>
               <h3 className="mb-3 font-playfair text-2xl md:text-3xl font-bold text-parisian-grey-800">
-                Csoportos megrendelés?
+                {groupBookingTitle}
               </h3>
               <p className="mb-6 text-base md:text-lg leading-relaxed text-parisian-grey-700">
-                Nagyobb csoportok, céges rendezvények vagy különleges igények esetén egyedi árkalkulációt biztosítunk.
-                Vegye fel velünk a kapcsolatot, és állítsunk össze Önnek személyre szabott ajánlatot!
+                {groupBookingDescription}
               </p>
               <motion.a
                 href="#contact"
@@ -236,7 +249,7 @@ export default function ServicesSection() {
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center gap-2 rounded-full bg-parisian-beige-400 px-8 py-4 font-montserrat text-base md:text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:bg-parisian-beige-500 hover:shadow-xl"
               >
-                Érdekel az egyedi ajánlat
+                {groupBookingButtonText}
                 <Icons.ArrowRight className="h-5 w-5" />
               </motion.a>
             </div>
@@ -252,7 +265,7 @@ export default function ServicesSection() {
           className="mt-12 text-center"
         >
           <p className="mb-6 text-lg text-parisian-grey-600">
-            Nem találja amit keres? Kérjen egyedi ajánlatot!
+            {customOfferText}
           </p>
           <motion.a
             href="#contact"
@@ -260,7 +273,7 @@ export default function ServicesSection() {
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 rounded-full border-2 border-parisian-beige-400 bg-transparent px-8 py-4 font-montserrat font-semibold text-parisian-grey-700 transition-all duration-300 hover:border-parisian-beige-500 hover:bg-parisian-beige-50"
           >
-            Egyedi ajánlatkérés
+            {customOfferButtonText}
           </motion.a>
         </motion.div>
       </div>

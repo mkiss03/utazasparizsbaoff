@@ -28,8 +28,9 @@ export default function Navigation() {
   const allNavItems = [
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
+    { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Városbérletek', href: '/pricing' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Párizsi Napló', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
   ]
 
@@ -47,18 +48,18 @@ export default function Navigation() {
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex h-20 items-center justify-between">
+          <div className="flex h-24 items-center justify-between">
             {/* Logo */}
             <motion.a
               href="/"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-3"
             >
-              <div className="relative h-16 w-16">
+              <div className="relative h-20 w-20">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"
                   fill
                   className="object-contain"
@@ -131,7 +132,7 @@ export default function Navigation() {
           x: isOpen ? 0 : '100%',
         }}
         transition={{ duration: 0.3 }}
-        className={`fixed right-0 top-20 z-30 h-screen w-full bg-white/98 backdrop-blur-lg shadow-xl md:hidden ${
+        className={`fixed right-0 top-24 z-30 h-screen w-full bg-white/98 backdrop-blur-lg shadow-xl md:hidden ${
           isOpen ? 'pointer-events-auto' : 'pointer-events-none'
         }`}
       >
