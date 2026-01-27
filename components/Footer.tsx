@@ -38,7 +38,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             <div className="flex items-center gap-2 sm:gap-3 mb-4">
               <div className="relative h-10 w-10 sm:h-12 sm:w-12">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"
                   fill
                   className="object-contain"
