@@ -75,12 +75,12 @@ export default function MetroMapSection() {
   )
 }
 
-// Desktop Version - Horizontal S-Curve
+// Desktop Version - Clean Horizontal Line
 function MetroMapDesktop({ isInView }: { isInView: boolean }) {
   const [activeStation, setActiveStation] = useState<string | null>(null)
 
   return (
-    <div className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-hidden" style={{ height: '650px' }}>
+    <div className="relative w-full rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl overflow-visible py-24" style={{ minHeight: '500px' }}>
       {/* Background Map Image with Overlay */}
       <div className="absolute inset-0 overflow-hidden rounded-3xl">
         {/* Paris Map Background Image */}
@@ -94,8 +94,9 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
 
       {/* SVG Metro Line */}
       <svg
-        className="absolute inset-0 h-full w-full pointer-events-none"
-        viewBox="0 0 1000 600"
+        className="absolute left-0 right-0 pointer-events-none"
+        style={{ top: '50%', transform: 'translateY(-50%)', height: '200px' }}
+        viewBox="0 0 1200 200"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -106,12 +107,14 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
           </linearGradient>
         </defs>
 
-        {/* Gentle Arc Path - Simple and Elegant */}
-        <motion.path
-          d="M 100 300 Q 500 280, 900 300"
-          fill="none"
+        {/* Straight Horizontal Metro Line */}
+        <motion.line
+          x1="120"
+          y1="100"
+          x2="1080"
+          y2="100"
           stroke="url(#lineGradient)"
-          strokeWidth="8"
+          strokeWidth="10"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={isInView ? { pathLength: 1 } : {}}
@@ -208,6 +211,7 @@ function StationNode({
   isInView: boolean
 }) {
   const Icon = iconMap[station.icon]
+  const isAbove = index % 2 === 0 // Alternate labels above and below
 
   return (
     <motion.div
@@ -224,15 +228,15 @@ function StationNode({
       {/* Station Marker (Circle) */}
       <motion.button
         onClick={onToggle}
-        whileHover={{ scale: 1.2 }}
-        whileTap={{ scale: 0.9 }}
-        className={`relative flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg transition-all ${
+        whileHover={{ scale: 1.15 }}
+        whileTap={{ scale: 0.95 }}
+        className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-xl transition-all ${
           isActive
             ? 'bg-gradient-to-br from-french-blue-500 to-french-blue-600 ring-4 ring-french-blue-300'
-            : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-2 hover:ring-parisian-beige-300'
+            : 'bg-gradient-to-br from-parisian-beige-400 to-parisian-beige-600 hover:ring-3 hover:ring-parisian-beige-300'
         }`}
       >
-        <span className="font-playfair text-xl font-bold text-white">{station.letter}</span>
+        <span className="font-playfair text-2xl font-bold text-white">{station.letter}</span>
 
         {/* Pulse Effect */}
         {isActive && (
@@ -245,10 +249,12 @@ function StationNode({
         )}
       </motion.button>
 
-      {/* Station Title (Always Visible) */}
+      {/* Station Title (Always Visible) - Alternating Above/Below */}
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-full mt-3 -translate-x-1/2 rounded-lg bg-white/95 px-2.5 py-1.5 text-center text-xs font-semibold text-parisian-grey-800 shadow-md backdrop-blur-sm max-w-[140px]"
-        initial={{ opacity: 0, y: -10 }}
+        className={`pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-lg bg-white/95 px-3 py-2 text-center text-sm font-semibold text-parisian-grey-800 shadow-lg backdrop-blur-sm max-w-[160px] ${
+          isAbove ? 'bottom-full mb-4' : 'top-full mt-4'
+        }`}
+        initial={{ opacity: 0, y: isAbove ? 10 : -10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 + index * 0.15 }}
       >
