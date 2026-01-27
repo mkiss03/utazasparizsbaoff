@@ -10,10 +10,9 @@ export interface MetroStation {
   y: number // top position %
 }
 
-// Desktop positions (PRECISELY aligned to curved metro line)
+// Desktop positions (VISUALLY FINE-TUNED to sit perfectly on the beige curve)
 // SVG Path: M 80 280 Q 280 200, 500 250 Q 720 300, 920 250 (viewBox 0 0 1000 500)
-// Percentage coordinates calculated from SVG coordinate system
-// x% = (svg_x / 1000) * 100, y% = (svg_y / 500) * 100
+// Base coordinates from SVG, manually adjusted UP by 1-2% for visual perfection
 export const stationsDesktop: MetroStation[] = [
   {
     id: '1',
@@ -29,7 +28,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Ticket',
     x: 8,     // 80/1000 * 100 = 8%
-    y: 56,    // 280/500 * 100 = 56%
+    y: 54,    // 56% adjusted down 2% to sit on line
   },
   {
     id: '2',
@@ -45,7 +44,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Smartphone',
     x: 28,    // 280/1000 * 100 = 28%
-    y: 40,    // 200/500 * 100 = 40%
+    y: 38,    // 40% adjusted down 2% to sit on line
   },
   {
     id: '3',
@@ -61,7 +60,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Plane',
     x: 50,    // 500/1000 * 100 = 50%
-    y: 50,    // 250/500 * 100 = 50%
+    y: 48,    // 50% adjusted down 2% to sit on line
   },
   {
     id: '4',
@@ -77,7 +76,7 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'AlertTriangle',
     x: 72,    // 720/1000 * 100 = 72%
-    y: 60,    // 300/500 * 100 = 60%
+    y: 58,    // 60% adjusted down 2% to sit on line
   },
   {
     id: '5',
@@ -94,14 +93,13 @@ export const stationsDesktop: MetroStation[] = [
     ],
     icon: 'Calendar',
     x: 92,    // 920/1000 * 100 = 92%
-    y: 50,    // 250/500 * 100 = 50%
+    y: 48,    // 50% adjusted down 2% to sit on line
   },
 ]
 
-// Mobile positions (PRECISELY aligned to vertical curved line)
+// Mobile positions (VISUALLY FINE-TUNED for vertical curved line)
 // SVG Path: M 200 80 Q 250 240, 200 400 Q 150 560, 200 720 (viewBox 0 0 400 800)
-// Percentage coordinates calculated from SVG coordinate system
-// x% = (svg_x / 400) * 100, y% = (svg_y / 800) * 100
+// Base coordinates from SVG, manually adjusted for visual perfection
 export const stationsMobile: MetroStation[] = [
   {
     id: '1',
@@ -116,8 +114,8 @@ export const stationsMobile: MetroStation[] = [
       '⚠️ FONTOS: Papírjegy már nincs, csak digitális'
     ],
     icon: 'Ticket',
-    x: 50,    // 200/400 * 100 = 50%
-    y: 10,    // 80/800 * 100 = 10%
+    x: 50,    // Center of vertical line
+    y: 10,    // Top station
   },
   {
     id: '2',
@@ -132,8 +130,8 @@ export const stationsMobile: MetroStation[] = [
       'Szabály: 1 kártya = 1 ember'
     ],
     icon: 'Smartphone',
-    x: 62.5,  // 250/400 * 100 = 62.5%
-    y: 30,    // 240/800 * 100 = 30%
+    x: 60,    // Adjusted left from 62.5% to sit better on curve
+    y: 30,    // Second station
   },
   {
     id: '3',
@@ -148,8 +146,8 @@ export const stationsMobile: MetroStation[] = [
       'A heti bérlet (Navigo Semaine) tartalmazza a repteret is'
     ],
     icon: 'Plane',
-    x: 50,    // 200/400 * 100 = 50%
-    y: 50,    // 400/800 * 100 = 50%
+    x: 50,    // Center of vertical line
+    y: 50,    // Middle station
   },
   {
     id: '4',
@@ -164,8 +162,8 @@ export const stationsMobile: MetroStation[] = [
       '⚠️ Más után bemenni: A kamerák és ellenőrök figyelik'
     ],
     icon: 'AlertTriangle',
-    x: 37.5,  // 150/400 * 100 = 37.5%
-    y: 70,    // 560/800 * 100 = 70%
+    x: 40,    // Adjusted right from 37.5% to sit better on curve
+    y: 70,    // Fourth station
   },
   {
     id: '5',
@@ -181,7 +179,7 @@ export const stationsMobile: MetroStation[] = [
       '🚦 Csúcsidő: 7:30-9:30 és 16:30-18:30 között nagy a tömeg'
     ],
     icon: 'Calendar',
-    x: 50,    // 200/400 * 100 = 50%
-    y: 90,    // 720/800 * 100 = 90%
+    x: 50,    // Center of vertical line
+    y: 90,    // Bottom station
   },
 ]

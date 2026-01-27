@@ -182,88 +182,93 @@ function MetroMapDesktop({ isInView }: { isInView: boolean }) {
         ))}
       </div>
 
-      {/* Modal - Completely Isolated from Map Layout */}
+      {/* Modal - Completely Isolated with Premium Styling */}
       {activeStation && (
         <>
-          {/* Backdrop - Fixed to Viewport */}
+          {/* Full Screen Backdrop with Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             onClick={() => setActiveStation(null)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             style={{
               position: 'fixed',
               top: 0,
               left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 100
-            }}
-          />
-
-          {/* Modal Content - Fixed to Viewport */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 50 }}
-            transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
-            className="fixed rounded-3xl bg-white shadow-2xl"
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '90vw',
-              maxWidth: '48rem',
-              zIndex: 110
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              zIndex: 9999,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '1rem'
             }}
           >
-            <div className="max-h-[85vh] overflow-y-auto p-8">
-              {(() => {
-                const station = stationsDesktop.find(s => s.id === activeStation)
-                if (!station) return null
-                const Icon = iconMap[station.icon]
+            {/* Modal Card - Premium Animation */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', bounce: 0.25, duration: 0.6 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-3xl bg-white shadow-2xl"
+              style={{
+                width: '100%',
+                maxWidth: '48rem',
+                maxHeight: '85vh',
+                overflow: 'hidden'
+              }}
+            >
+              <div className="max-h-[85vh] overflow-y-auto p-8">
+                {(() => {
+                  const station = stationsDesktop.find(s => s.id === activeStation)
+                  if (!station) return null
+                  const Icon = iconMap[station.icon]
 
-                return (
-                  <>
-                    {/* Close Button */}
-                    <button
-                      onClick={() => setActiveStation(null)}
-                      className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
-                      style={{ zIndex: 10 }}
-                    >
-                      <X className="h-6 w-6" />
-                    </button>
+                  return (
+                    <>
+                      {/* Close Button */}
+                      <button
+                        onClick={() => setActiveStation(null)}
+                        className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
+                        style={{ zIndex: 10 }}
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
 
-                    {/* Icon */}
-                    {Icon && (
-                      <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
-                        <Icon className="h-10 w-10 text-parisian-beige-600" />
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <h3 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800">
-                      {station.title}
-                    </h3>
-                    <p className="mb-6 text-xl text-parisian-grey-600 leading-relaxed">
-                      {station.description}
-                    </p>
-
-                    {/* Details */}
-                    <div className="space-y-4 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-8">
-                      {station.details.map((detail, idx) => (
-                        <div key={idx} className="flex items-start gap-4 text-lg text-parisian-grey-700">
-                          <div className="mt-2 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-parisian-beige-500" />
-                          <span>{detail}</span>
+                      {/* Icon */}
+                      {Icon && (
+                        <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
+                          <Icon className="h-10 w-10 text-parisian-beige-600" />
                         </div>
-                      ))}
-                    </div>
-                  </>
-                )
-              })()}
-            </div>
+                      )}
+
+                      {/* Content */}
+                      <h3 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800">
+                        {station.title}
+                      </h3>
+                      <p className="mb-6 text-xl text-parisian-grey-600 leading-relaxed">
+                        {station.description}
+                      </p>
+
+                      {/* Details */}
+                      <div className="space-y-4 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-8">
+                        {station.details.map((detail, idx) => (
+                          <div key={idx} className="flex items-start gap-4 text-lg text-parisian-grey-700">
+                            <div className="mt-2 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                            <span>{detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            </motion.div>
           </motion.div>
         </>
       )}
@@ -378,88 +383,93 @@ function MetroMapMobile({ isInView }: { isInView: boolean }) {
         ))}
       </div>
 
-      {/* Modal - Completely Isolated from Map Layout */}
+      {/* Modal - Completely Isolated with Premium Styling */}
       {activeStation && (
         <>
-          {/* Backdrop - Fixed to Viewport */}
+          {/* Full Screen Backdrop with Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             onClick={() => setActiveStation(null)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             style={{
               position: 'fixed',
               top: 0,
               left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 100
-            }}
-          />
-
-          {/* Modal Content - Fixed to Viewport */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 50 }}
-            transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
-            className="fixed rounded-3xl bg-white shadow-2xl"
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '90vw',
-              maxWidth: '32rem',
-              zIndex: 110
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              zIndex: 9999,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '1rem'
             }}
           >
-            <div className="max-h-[85vh] overflow-y-auto p-6">
-              {(() => {
-                const station = stationsMobile.find(s => s.id === activeStation)
-                if (!station) return null
-                const Icon = iconMap[station.icon]
+            {/* Modal Card - Premium Animation */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', bounce: 0.25, duration: 0.6 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-3xl bg-white shadow-2xl"
+              style={{
+                width: '100%',
+                maxWidth: '32rem',
+                maxHeight: '85vh',
+                overflow: 'hidden'
+              }}
+            >
+              <div className="max-h-[85vh] overflow-y-auto p-6">
+                {(() => {
+                  const station = stationsMobile.find(s => s.id === activeStation)
+                  if (!station) return null
+                  const Icon = iconMap[station.icon]
 
-                return (
-                  <>
-                    {/* Close Button */}
-                    <button
-                      onClick={() => setActiveStation(null)}
-                      className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
-                      style={{ zIndex: 10 }}
-                    >
-                      <X className="h-6 w-6" />
-                    </button>
+                  return (
+                    <>
+                      {/* Close Button */}
+                      <button
+                        onClick={() => setActiveStation(null)}
+                        className="absolute right-4 top-4 rounded-full bg-parisian-grey-100 p-3 text-parisian-grey-600 transition-all hover:bg-parisian-grey-200 hover:scale-110"
+                        style={{ zIndex: 10 }}
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
 
-                    {/* Icon */}
-                    {Icon && (
-                      <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
-                        <Icon className="h-8 w-8 text-parisian-beige-600" />
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800">
-                      {station.title}
-                    </h3>
-                    <p className="mb-6 text-base text-parisian-grey-600 leading-relaxed">
-                      {station.description}
-                    </p>
-
-                    {/* Details */}
-                    <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
-                      {station.details.map((detail, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-sm text-parisian-grey-700">
-                          <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
-                          <span>{detail}</span>
+                      {/* Icon */}
+                      {Icon && (
+                        <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-parisian-beige-100 to-parisian-beige-200 shadow-lg">
+                          <Icon className="h-8 w-8 text-parisian-beige-600" />
                         </div>
-                      ))}
-                    </div>
-                  </>
-                )
-              })()}
-            </div>
+                      )}
+
+                      {/* Content */}
+                      <h3 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800">
+                        {station.title}
+                      </h3>
+                      <p className="mb-6 text-base text-parisian-grey-600 leading-relaxed">
+                        {station.description}
+                      </p>
+
+                      {/* Details */}
+                      <div className="space-y-3 rounded-2xl bg-gradient-to-br from-parisian-cream-50 to-parisian-beige-50 p-6">
+                        {station.details.map((detail, idx) => (
+                          <div key={idx} className="flex items-start gap-3 text-sm text-parisian-grey-700">
+                            <div className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-parisian-beige-500" />
+                            <span>{detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            </motion.div>
           </motion.div>
         </>
       )}
