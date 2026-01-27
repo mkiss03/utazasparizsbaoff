@@ -23,7 +23,7 @@ export function AdminHeader() {
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10">
             <Image
-              src="/images/logofix-removebg-preview.png"
+              src="/images/logo.png"
               alt="Utazás Párizsba"
               fill
               className="object-contain"
