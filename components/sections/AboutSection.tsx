@@ -87,20 +87,21 @@ export default function AboutSection({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
-              className="order-2 md:col-start-2 md:row-start-1"
+              className="order-2 md:col-start-2 md:row-start-1 w-full"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
                 className="relative mx-auto md:mx-0"
               >
-                <div className="relative aspect-[3/4] w-full max-w-[400px] md:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
+                <div className="relative aspect-[4/3] md:aspect-[3/4] w-full max-w-full md:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
                   <Image
                     src={imageUrl}
                     alt="Viktória"
                     fill
-                    sizes="(max-width: 768px) 400px, 280px"
-                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 280px"
+                    className="object-cover object-center md:object-top"
+                    priority
                   />
                 </div>
                 {/* Decorative accent */}
