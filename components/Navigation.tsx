@@ -30,7 +30,7 @@ export default function Navigation() {
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Városbérletek', href: '/pricing' },
-    { name: 'Párizsi Napló', href: '/blog' },
+    { name: 'Párizsi naplóm', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
   ]
 

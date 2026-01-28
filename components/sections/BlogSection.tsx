@@ -56,7 +56,7 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
-            Párizsi Napló
+            Párizsi naplóm
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600 md:text-xl">
             Fedezd fel a város titkait, történeteit és varázslatos pillanatait

@@ -162,7 +162,7 @@ export default async function ImpresszumPage() {
                 <div className="rounded-xl border border-parisian-beige-200 bg-parisian-cream-50 p-4">
                   <h3 className="mb-2 font-semibold text-parisian-grey-800">Transzferek</h3>
                   <p className="text-sm text-parisian-grey-600">
-                    Repülőtéri és egyéb transzferek
+                    Repülőtéri és privát transzferek
                   </p>
                 </div>
               </div>

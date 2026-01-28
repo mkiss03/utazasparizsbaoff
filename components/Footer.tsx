@@ -85,7 +85,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </motion.li>
               <motion.li whileHover={{ x: 5 }}>
                 <a href="/blog" className="text-white/80 transition-colors hover:text-white">
-                  Blog
+                  Párizsi naplóm
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 5 }}>

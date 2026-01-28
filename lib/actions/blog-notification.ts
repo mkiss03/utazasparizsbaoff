@@ -141,7 +141,7 @@ export async function sendBlogNotification(post: BlogPost) {
             <body>
               <div class="header">
                 <h1>📝 Új Blogbejegyzés</h1>
-                <p style="color: white; margin: 10px 0 0 0;">Párizsi Napló</p>
+                <p style="color: white; margin: 10px 0 0 0;">Párizsi naplóm</p>
               </div>
               <div class="content">
                 ${post.cover_image ? `<img src="${post.cover_image}" alt="${post.title}" class="post-image" />` : ''}
