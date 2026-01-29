@@ -415,7 +415,7 @@ export default function ServicesSection({
                                   {program.show_price && program.price !== undefined && (
                                     <p className="font-montserrat text-parisian-grey-700">
                                       <span className="font-bold">Ár:</span> {program.price} EUR
-                                      {program.show_max_persons && program.max_persons && ` (max. ${program.max_persons} főre)`}
+                                      {program.show_max_persons && program.max_persons && ` (max. ${program.max_persons} fő)`}
                                     </p>
                                   )}
                                   {program.show_max_persons && program.max_persons && !program.show_price && (
