@@ -94,7 +94,7 @@ export default function AboutSection({
                 transition={{ duration: 0.3 }}
                 className="relative mx-auto md:mx-0"
               >
-                <div className="relative aspect-[4/3] md:aspect-[3/4] w-full max-w-full md:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
+                <div className="relative aspect-[3/4] w-full max-w-full md:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
                   <Image
                     src={imageUrl}
                     alt="Viktória"
@@ -153,7 +153,7 @@ export default function AboutSection({
                   </div>
                   <div>
                     <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
-                      Helyismeret, amit csak egy ott élő ismer
+                      Helyismeret, amit csak egy Párizsban élő ismer
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
                       Megmutatom azokat a helyeket, amiket csak a helyiek ismernek – autentikus kávézókat, rejtett udvarokat és varázslatos utcákat.
@@ -204,7 +204,7 @@ export default function AboutSection({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
               viewport={{ once: true }}
-              className="space-y-4 order-5 md:col-start-2 md:row-start-2 md:row-span-2"
+              className="space-y-4 order-5 mx-auto max-w-xs md:mx-0 md:max-w-full md:col-start-2 md:row-start-2 md:row-span-2"
             >
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
