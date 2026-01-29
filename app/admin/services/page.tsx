@@ -364,7 +364,7 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Program szintű árképzés */}
-                  {program.title.toLowerCase().includes('repülőtéri transzfer') ? (
+                  {program.title.trim().toLowerCase().replace(/\s+/g, ' ').includes('repülőtéri transzfer') ? (
                     // Repülőtéri transzfer - fix szöveg
                     <div className="space-y-3 rounded-lg border-2 border-parisian-beige-300 bg-parisian-beige-50 p-4">
                       <Label className="text-base font-semibold text-parisian-grey-800">
