@@ -67,14 +67,14 @@ export default function ServicesSection({
 
       // Transform tours to services with special display rules
       const transformedServices: Service[] = (tours || []).map((tour: Tour) => {
-        const isTransfer = tour.title.toLowerCase().includes('transzfer') || tour.title.toLowerCase().includes('közlekedés')
+        const isAirportTransfer = tour.title.toLowerCase().includes('repülőtéri transzfer')
         const isProgramOrganization = tour.title.toLowerCase().includes('programszervez')
 
         let duration = ''
         let price = ''
 
-        if (isTransfer) {
-          // Transzfer: Hide all data, show kilometer-based billing note
+        if (isAirportTransfer) {
+          // Repülőtéri transzfer: Show kilometer-based billing note
           duration = ''
           price = 'Kilométer alapú számlázás'
         } else if (isProgramOrganization) {

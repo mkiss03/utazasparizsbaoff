@@ -232,52 +232,6 @@ export default function ServicesPage() {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="price">Ár (EUR)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  value={editingService.price || 0}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      price: parseFloat(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="duration">Időtartam (óra)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  step="0.5"
-                  value={editingService.duration || 3}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      duration: parseFloat(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="max_group_size">Max. létszám</Label>
-                <Input
-                  id="max_group_size"
-                  type="number"
-                  value={editingService.max_group_size || 8}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      max_group_size: parseInt(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="icon_name">Ikon neve</Label>
@@ -540,13 +494,6 @@ export default function ServicesPage() {
                     )}
                   </div>
                   <p className="mt-1 text-navy-400">{service.short_description}</p>
-                  <div className="mt-3 flex gap-4 text-sm text-navy-400">
-                    <span>{service.price} EUR</span>
-                    <span>•</span>
-                    <span>{service.duration} óra</span>
-                    <span>•</span>
-                    <span>Max. {service.max_group_size} fő</span>
-                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
