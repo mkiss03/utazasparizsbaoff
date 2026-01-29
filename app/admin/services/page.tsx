@@ -93,7 +93,17 @@ export default function ServicesPage() {
         ...editingService,
         programs: [
           ...(editingService.programs || []),
-          { title: '', description: '', items: [] }
+          {
+            title: '',
+            description: '',
+            items: [],
+            price: undefined,
+            duration: undefined,
+            max_persons: undefined,
+            show_price: false,
+            show_duration: false,
+            show_max_persons: false
+          }
         ]
       })
     }
@@ -397,6 +407,101 @@ export default function ServicesPage() {
                         </Button>
                       </div>
                     ))}
+                  </div>
+
+                  {/* Program szintű árképzés */}
+                  <div className="space-y-3 rounded-lg border-2 border-parisian-beige-300 bg-parisian-beige-50 p-4">
+                    <Label className="text-base font-semibold text-parisian-grey-800">
+                      Árképzési adatok (opcionális)
+                    </Label>
+                    <p className="text-xs text-parisian-grey-600">
+                      Válaszd ki, hogy mely mezők jelenjenek meg ennél a programnál. Ha egyik sincs bekapcsolva, nem jelenik meg árképzési rész.
+                    </p>
+
+                    {/* Kapcsolók */}
+                    <div className="flex flex-wrap gap-4">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`show-price-${programIdx}`}
+                          checked={program.show_price || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_price', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <Label htmlFor={`show-price-${programIdx}`} className="cursor-pointer text-sm">
+                          Ár megjelenítése
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`show-duration-${programIdx}`}
+                          checked={program.show_duration || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_duration', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <Label htmlFor={`show-duration-${programIdx}`} className="cursor-pointer text-sm">
+                          Időtartam megjelenítése
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`show-persons-${programIdx}`}
+                          checked={program.show_max_persons || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_max_persons', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <Label htmlFor={`show-persons-${programIdx}`} className="cursor-pointer text-sm">
+                          Létszám megjelenítése
+                        </Label>
+                      </div>
+                    </div>
+
+                    {/* Értékek */}
+                    <div className="grid gap-3 md:grid-cols-3">
+                      <div className="space-y-1">
+                        <Label htmlFor={`program-price-${programIdx}`} className="text-sm">
+                          Ár (EUR)
+                        </Label>
+                        <Input
+                          id={`program-price-${programIdx}`}
+                          type="number"
+                          step="0.01"
+                          value={program.price || ''}
+                          onChange={(e) => handleProgramChange(programIdx, 'price', e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={!program.show_price}
+                          placeholder="120"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor={`program-duration-${programIdx}`} className="text-sm">
+                          Időtartam (óra)
+                        </Label>
+                        <Input
+                          id={`program-duration-${programIdx}`}
+                          type="number"
+                          step="0.5"
+                          value={program.duration || ''}
+                          onChange={(e) => handleProgramChange(programIdx, 'duration', e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={!program.show_duration}
+                          placeholder="2.5"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor={`program-persons-${programIdx}`} className="text-sm">
+                          Max. létszám (fő)
+                        </Label>
+                        <Input
+                          id={`program-persons-${programIdx}`}
+                          type="number"
+                          value={program.max_persons || ''}
+                          onChange={(e) => handleProgramChange(programIdx, 'max_persons', e.target.value ? parseInt(e.target.value) : undefined)}
+                          disabled={!program.show_max_persons}
+                          placeholder="4"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
