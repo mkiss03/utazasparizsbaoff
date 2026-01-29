@@ -415,8 +415,8 @@ export default function ServicesSection({
                             </ul>
                           )}
 
-                          {/* Program szintű árképzés */}
-                          {(program.show_price || program.show_duration || program.show_max_persons) && (
+                          {/* Program szintű árképzés - NE jelenjen meg repülőtéri transzfernél */}
+                          {selectedService.price !== 'Kilométer alapú számlázás' && (program.show_price || program.show_duration || program.show_max_persons) && (
                             <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
                               <div className="space-y-1.5 text-sm">
                                 {program.show_duration && program.duration && (
