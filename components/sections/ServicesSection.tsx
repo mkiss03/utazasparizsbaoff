@@ -13,7 +13,11 @@ interface Program {
   description?: string
   items?: string[]
   price?: number
+  duration?: number
+  max_persons?: number
   show_price?: boolean
+  show_duration?: boolean
+  show_max_persons?: boolean
 }
 
 interface Service {
@@ -412,12 +416,25 @@ export default function ServicesSection({
                           )}
 
                           {/* Program szintű árképzés - NE jelenjen meg repülőtéri transzfernél */}
-                          {selectedService.price !== 'Kilométer alapú számlázás' && program.show_price && program.price !== undefined && (
+                          {selectedService.price !== 'Kilométer alapú számlázás' && (program.show_price || program.show_duration || program.show_max_persons) && (
                             <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
                               <div className="space-y-1.5 text-sm">
-                                <p className="font-montserrat text-parisian-grey-700">
-                                  <span className="font-bold">Ár:</span> {program.price} EUR
-                                </p>
+                                {program.show_duration && program.duration && (
+                                  <p className="font-montserrat text-parisian-grey-700">
+                                    <span className="font-bold">Időtartam:</span> kb. {program.duration} óra
+                                  </p>
+                                )}
+                                {program.show_price && program.price !== undefined && (
+                                  <p className="font-montserrat text-parisian-grey-700">
+                                    <span className="font-bold">Ár:</span> {program.price} EUR
+                                    {program.show_max_persons && program.max_persons && ` (max. ${program.max_persons} főre)`}
+                                  </p>
+                                )}
+                                {program.show_max_persons && program.max_persons && !program.show_price && (
+                                  <p className="font-montserrat text-parisian-grey-700">
+                                    <span className="font-bold">Létszám:</span> max. {program.max_persons} fő
+                                  </p>
+                                )}
                               </div>
                             </div>
                           )}
