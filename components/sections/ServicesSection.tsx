@@ -349,6 +349,29 @@ export default function ServicesSection({
                     </p>
                   </motion.div>
 
+                  {/* Service-level pricing and duration info */}
+                  {(selectedService.price || selectedService.duration) && (
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.35 }}
+                      className="mb-8 rounded-2xl border-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-6 shadow-md"
+                    >
+                      <div className="space-y-2">
+                        {selectedService.duration && (
+                          <p className="font-montserrat text-base text-parisian-grey-700">
+                            <span className="font-bold">Időtartam:</span> {selectedService.duration}
+                          </p>
+                        )}
+                        {selectedService.price && (
+                          <p className="font-montserrat text-base text-parisian-grey-700">
+                            <span className="font-bold">Ár:</span> {selectedService.price}
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Programs - csak akkor jelenjen meg, ha van program */}
                   {selectedService.programs && selectedService.programs.length > 0 && (
                     <motion.div
