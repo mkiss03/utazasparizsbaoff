@@ -28,14 +28,10 @@ export interface Program {
   title: string
   description?: string
   items?: string[]
-  // Opcionális árképzési mezők program szinten
+  // Opcionális árképzési mező program szinten
   price?: number
-  duration?: number
-  max_persons?: number
-  // Kapcsolók, hogy melyik mező jelenjen meg
+  // Kapcsoló, hogy az ár jelenjen-e meg
   show_price?: boolean
-  show_duration?: boolean
-  show_max_persons?: boolean
 }
 
 export interface Tour {
