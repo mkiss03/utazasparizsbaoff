@@ -76,7 +76,7 @@ export default function ServicesSection({
         if (isAirportTransfer) {
           // Repülőtéri transzfer: Show kilometer-based billing note
           duration = ''
-          price = 'Kilométer alapú számlázás'
+          price = 'Kilométer alapú árképzés'
         } else if (isProgramOrganization) {
           // Programszervezés: Show only price, no duration or max people
           duration = ''
@@ -84,7 +84,7 @@ export default function ServicesSection({
         } else {
           // Default: Show all information
           duration = tour.duration ? `kb. ${tour.duration} óra` : ''
-          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : ''
+          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} fő)` : ''
         }
 
         return {
@@ -398,13 +398,13 @@ export default function ServicesSection({
                             <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
                               <div className="space-y-1.5 text-sm">
                                 <p className="font-montserrat text-base font-bold text-parisian-grey-800">
-                                  Kilométer alapú számlázás
+                                  Kilométer alapú árképzés
                                 </p>
                               </div>
                             </div>
                           ) : (
                             // Normál árképzés
-                            selectedService.price !== 'Kilométer alapú számlázás' && (program.show_price || program.show_duration || program.show_max_persons) && (
+                            selectedService.price !== 'Kilométer alapú árképzés' && (program.show_price || program.show_duration || program.show_max_persons) && (
                               <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
                                 <div className="space-y-1.5 text-sm">
                                   {program.show_duration && program.duration && (

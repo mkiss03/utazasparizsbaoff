@@ -68,7 +68,7 @@ export default async function ImpresszumPage() {
                 <div>
                   <h3 className="mb-1 font-semibold text-parisian-grey-800">Tevékenység:</h3>
                   <p className="text-parisian-grey-600">
-                    Hivatalos idegenvezető és programszervező Párizsban
+                    Hivatalos idegenvezető és utazásszervező Párizsban
                   </p>
                 </div>
 
@@ -153,7 +153,7 @@ export default async function ImpresszumPage() {
                 </div>
 
                 <div className="rounded-xl border border-parisian-beige-200 bg-parisian-cream-50 p-4">
-                  <h3 className="mb-2 font-semibold text-parisian-grey-800">Programszervezés</h3>
+                  <h3 className="mb-2 font-semibold text-parisian-grey-800">Utazástervezés</h3>
                   <p className="text-sm text-parisian-grey-600">
                     Személyre szabott programok
                   </p>
@@ -175,7 +175,7 @@ export default async function ImpresszumPage() {
               </h2>
               <div className="space-y-3 text-sm text-parisian-grey-700">
                 <p>
-                  Ez a weboldal Szeidl Viktória hivatalos idegenvezetői és programszervezői szolgáltatásainak
+                  Ez a weboldal Szeidl Viktória hivatalos idegenvezetői és utazásszervezői szolgáltatásainak
                   bemutatására szolgál.
                 </p>
                 <p>

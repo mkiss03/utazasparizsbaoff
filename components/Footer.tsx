@@ -50,7 +50,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </h3>
             </div>
             <p className="mb-4 text-sm text-white/90 font-semibold">
-              Hivatalos idegenvezető és programszervező Párizsban
+              Hivatalos idegenvezető és utazásszervező Párizsban
             </p>
             <p className="text-sm text-white/70">
               {description}
@@ -148,7 +148,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             {/* Facebook */}
             <div className="flex gap-4">
               <motion.a
-                href="https://www.facebook.com"
+                href="https://www.facebook.com/profile.php?id=100010226448052"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, rotate: 5 }}
