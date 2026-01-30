@@ -52,45 +52,71 @@ export default function AboutSection({
 
         {/* Main Content - Text-focused layout */}
         <div className="mx-auto max-w-5xl">
-          <div className="grid items-start gap-12 md:grid-cols-[2fr_1fr] lg:gap-16">
-            {/* Left: Main Text Content */}
-            <div className="space-y-8">
-              {/* Introduction Text */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="space-y-6"
-              >
-                {description ? (
-                  <div
-                    className="prose prose-lg max-w-none text-parisian-grey-700"
-                    dangerouslySetInnerHTML={{ __html: description }}
-                  />
-                ) : (
-                  <>
-                    <p className="text-lg leading-relaxed text-parisian-grey-700 md:text-xl">
-                      <span className="font-playfair text-2xl font-semibold text-parisian-grey-800">
-                        Üdvözöllek!
-                      </span>{' '}
-                      Viktória vagyok, és több mint 10 éve élek Párizsban. A francia kultúra és történelem iránti szenvedélyem vezet minden nap, amikor megosztom veled a Fények Városa rejtett kincseit.
-                    </p>
-                    <p className="text-base leading-relaxed text-parisian-grey-600 md:text-lg">
-                      Párizs nem csak egy város számomra – ez az otthonom, a második hazám, ahol minden utca egy történetet mesél, minden sarok egy titkot rejt. Célom, hogy ne csak turistaként, hanem egy helyi szemével fedezd fel ezt a varázslatos várost.
-                    </p>
-                  </>
-                )}
-              </motion.div>
+          <div className="flex flex-col md:grid items-start gap-12 md:grid-cols-[2fr_1fr] lg:gap-16">
+            {/* Introduction Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="space-y-6 order-1 md:col-start-1 md:row-start-1"
+            >
+              {description ? (
+                <div
+                  className="prose prose-lg max-w-none text-parisian-grey-700"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              ) : (
+                <>
+                  <p className="text-lg leading-relaxed text-parisian-grey-700 md:text-xl">
+                    <span className="font-playfair text-2xl font-semibold text-parisian-grey-800">
+                      Üdvözöllek!
+                    </span>{' '}
+                    Viktória vagyok, és több mint 10 éve élek Párizsban. A francia kultúra és történelem iránti szenvedélyem vezet minden nap, amikor megosztom veled a Fények Városa rejtett kincseit.
+                  </p>
+                  <p className="text-base leading-relaxed text-parisian-grey-600 md:text-lg">
+                    Párizs nem csak egy város számomra – ez az otthonom, a második hazám, ahol minden utca egy történetet mesél, minden sarok egy titkot rejt. Célom, hogy ne csak turistaként, hanem egy helyi szemével fedezd fel ezt a varázslatos várost.
+                  </p>
+                </>
+              )}
+            </motion.div>
 
-              {/* What I Offer - Styled Cards */}
+            {/* Profile Photo - appears after intro on mobile, in right column on desktop */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="order-2 md:col-start-2 md:row-start-1 w-full"
+            >
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="space-y-4"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                className="relative mx-auto md:mx-0"
               >
+                <div className="relative aspect-[3/4] w-full max-w-full md:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
+                  <Image
+                    src={imageUrl}
+                    alt="Viktória"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 280px"
+                    className="object-cover object-center md:object-top"
+                    priority
+                  />
+                </div>
+                {/* Decorative accent */}
+                <div className="absolute -right-3 -top-3 -z-10 h-full w-full rounded-3xl bg-parisian-beige-200" />
+              </motion.div>
+            </motion.div>
+
+            {/* What I Offer - Styled Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="space-y-4 order-3 md:col-start-1 md:row-start-2"
+            >
                 <h3 className="mb-6 font-playfair text-2xl font-bold text-parisian-grey-800 md:text-3xl">
                   Amit kínálok
                 </h3>
@@ -127,7 +153,7 @@ export default function AboutSection({
                   </div>
                   <div>
                     <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
-                      Helyi insider tudás
+                      Helyismeret, amit csak egy Párizsban élő ismer
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
                       Megmutatom azokat a helyeket, amiket csak a helyiek ismernek – autentikus kávézókat, rejtett udvarokat és varázslatos utcákat.
@@ -156,58 +182,30 @@ export default function AboutSection({
                 </motion.div>
               </motion.div>
 
-              {/* Closing Statement */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-                viewport={{ once: true }}
-                className="rounded-2xl bg-parisian-beige-50 p-6"
-              >
-                <p className="font-montserrat text-base italic leading-relaxed text-parisian-grey-700">
-                  &ldquo;Párizs mindig jó ötlet – és szeretném, ha a te párizsi élményeid felejthetetlenek lennének.&rdquo;
-                </p>
-                <p className="mt-3 font-montserrat text-sm font-semibold text-parisian-grey-600">
-                  — Viktória
-                </p>
-              </motion.div>
-            </div>
-
-            {/* Right: Small Profile Photo + Stats */}
+            {/* Closing Statement */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
               viewport={{ once: true }}
-              className="space-y-6 mx-auto md:mx-0"
+              className="rounded-2xl bg-parisian-beige-50 p-6 order-4 md:col-start-1 md:row-start-3"
             >
-              {/* Smaller Profile Image */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                className="relative mx-auto md:mx-0"
-              >
-                <div className="relative aspect-[3/4] w-full max-w-full sm:max-w-[280px] overflow-hidden rounded-3xl shadow-xl">
-                  <Image
-                    src={imageUrl}
-                    alt="Viktória"
-                    fill
-                    sizes="(max-width: 640px) 100vw, 280px"
-                    className="object-cover object-top"
-                  />
-                </div>
-                {/* Decorative accent */}
-                <div className="absolute -right-3 -top-3 -z-10 h-full w-full rounded-3xl bg-parisian-beige-200" />
-              </motion.div>
+              <p className="font-montserrat text-base italic leading-relaxed text-parisian-grey-700">
+                &ldquo;Párizs mindig jó ötlet – és szeretném, ha a te párizsi élményeid felejthetetlenek lennének.&rdquo;
+              </p>
+              <p className="mt-3 font-montserrat text-sm font-semibold text-parisian-grey-600">
+                — Viktória
+              </p>
+            </motion.div>
 
-              {/* Quick Stats */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                viewport={{ once: true }}
-                className="space-y-4"
-              >
+            {/* Quick Stats - appears after closing on mobile, in right column on desktop */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              viewport={{ once: true }}
+              className="space-y-4 order-5 mx-auto max-w-xs md:mx-0 md:max-w-full md:col-start-2 md:row-start-2 md:row-span-2"
+            >
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
                     <p className="font-playfair text-3xl font-bold text-parisian-beige-600">10+</p>
@@ -229,7 +227,6 @@ export default function AboutSection({
                   </div>
                 </div>
               </motion.div>
-            </motion.div>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-2 sm:gap-3 mb-4">
-              <div className="relative h-10 w-10 sm:h-12 sm:w-12">
+              <div className="relative h-12 w-12 sm:h-16 sm:w-16">
                 <Image
                   src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"
@@ -50,7 +50,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </h3>
             </div>
             <p className="mb-4 text-sm text-white/90 font-semibold">
-              Hivatalos idegenvezető és programszervező Párizsban
+              Hivatalos idegenvezető és utazásszervező Párizsban
             </p>
             <p className="text-sm text-white/70">
               {description}
@@ -85,7 +85,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </motion.li>
               <motion.li whileHover={{ x: 5 }}>
                 <a href="/blog" className="text-white/80 transition-colors hover:text-white">
-                  Blog
+                  Párizsi naplóm
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 5 }}>
@@ -148,7 +148,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             {/* Facebook */}
             <div className="flex gap-4">
               <motion.a
-                href="https://www.facebook.com"
+                href="https://www.facebook.com/profile.php?id=100010226448052"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, rotate: 5 }}

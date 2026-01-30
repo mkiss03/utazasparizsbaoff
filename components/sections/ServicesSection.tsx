@@ -12,6 +12,12 @@ interface Program {
   title: string
   description?: string
   items?: string[]
+  price?: number
+  duration?: number
+  max_persons?: number
+  show_price?: boolean
+  show_duration?: boolean
+  show_max_persons?: boolean
 }
 
 interface Service {
@@ -61,16 +67,16 @@ export default function ServicesSection({
 
       // Transform tours to services with special display rules
       const transformedServices: Service[] = (tours || []).map((tour: Tour) => {
-        const isTransfer = tour.title.toLowerCase().includes('transzfer') || tour.title.toLowerCase().includes('közlekedés')
+        const isAirportTransfer = tour.title.toLowerCase().includes('repülőtéri transzfer')
         const isProgramOrganization = tour.title.toLowerCase().includes('programszervez')
 
         let duration = ''
         let price = ''
 
-        if (isTransfer) {
-          // Transzfer: Hide all data, show kilometer-based billing note
+        if (isAirportTransfer) {
+          // Repülőtéri transzfer: Show kilometer-based billing note
           duration = ''
-          price = 'Kilométer alapú számlázás'
+          price = 'Kilométer alapú árképzés'
         } else if (isProgramOrganization) {
           // Programszervezés: Show only price, no duration or max people
           duration = ''
@@ -78,7 +84,7 @@ export default function ServicesSection({
         } else {
           // Default: Show all information
           duration = tour.duration ? `kb. ${tour.duration} óra` : ''
-          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} főre)` : ''
+          price = tour.price ? `${tour.price} EUR / szolgáltatás (max. ${tour.max_group_size} fő)` : ''
         }
 
         return {
@@ -385,27 +391,46 @@ export default function ServicesSection({
                               ))}
                             </ul>
                           )}
+
+                          {/* Program szintű árképzés */}
+                          {program.title.trim().toLowerCase().replace(/\s+/g, ' ').includes('repülőtéri transzfer') ? (
+                            // Repülőtéri transzfer - fix szöveg
+                            <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
+                              <div className="space-y-1.5 text-sm">
+                                <p className="font-montserrat text-base font-bold text-parisian-grey-800">
+                                  Kilométer alapú árképzés
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            // Normál árképzés
+                            selectedService.price !== 'Kilométer alapú árképzés' && (program.show_price || program.show_duration || program.show_max_persons) && (
+                              <div className="mt-4 rounded-xl border-t-2 border-parisian-beige-300 bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-50 p-4">
+                                <div className="space-y-1.5 text-sm">
+                                  {program.show_duration && program.duration && (
+                                    <p className="font-montserrat text-parisian-grey-700">
+                                      <span className="font-bold">Időtartam:</span> kb. {program.duration} óra
+                                    </p>
+                                  )}
+                                  {program.show_price && program.price !== undefined && (
+                                    <p className="font-montserrat text-parisian-grey-700">
+                                      <span className="font-bold">Ár:</span> {program.price} EUR
+                                      {program.show_max_persons && program.max_persons && ` (max. ${program.max_persons} fő)`}
+                                    </p>
+                                  )}
+                                  {program.show_max_persons && program.max_persons && !program.show_price && (
+                                    <p className="font-montserrat text-parisian-grey-700">
+                                      <span className="font-bold">Létszám:</span> max. {program.max_persons} fő
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          )}
                         </motion.div>
                       ))}
                     </motion.div>
                   )}
-
-                  {/* Price & Duration */}
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="mb-8 rounded-2xl bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-100 p-6"
-                  >
-                    {selectedService.duration && (
-                      <p className="mb-2 font-montserrat text-base text-parisian-grey-700">
-                        <span className="font-bold">Időtartam:</span> {selectedService.duration}
-                      </p>
-                    )}
-                    <p className="font-montserrat text-base text-parisian-grey-700">
-                      <span className="font-bold">Ár:</span> {selectedService.price}
-                    </p>
-                  </motion.div>
 
                   {/* CTA Button */}
                   <motion.a
