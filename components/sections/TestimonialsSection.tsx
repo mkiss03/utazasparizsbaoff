@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Quote, Star } from 'lucide-react'
+import Image from 'next/image'
 
 export interface Testimonial {
   id: string
@@ -34,6 +35,42 @@ export default function TestimonialsSection({
       <div className="absolute bottom-20 right-0 h-96 w-96 rounded-full bg-french-blue-200 opacity-15 blur-3xl" />
 
       <div className="container relative z-10 mx-auto px-4">
+        {/* Scrapbook Decorative Images - Hidden on mobile, visible on lg+ */}
+        <Image
+          src="/images/kepnezopar1.jpg"
+          alt="Travel memory"
+          width={240}
+          height={180}
+          className="absolute right-8 top-32 z-0 hidden w-56 rotate-6 border-4 border-white shadow-xl lg:block"
+        />
+        <Image
+          src="/images/kepnezopar2.jpg"
+          alt="Travel memory"
+          width={256}
+          height={192}
+          className="absolute left-4 top-96 z-0 hidden w-64 -rotate-3 border-4 border-white shadow-xl lg:block"
+        />
+        <Image
+          src="/images/kepnezopar3.jpg"
+          alt="Travel memory"
+          width={224}
+          height={168}
+          className="absolute right-12 top-[40rem] z-0 hidden w-52 rotate-2 border-4 border-white shadow-xl lg:block"
+        />
+        <Image
+          src="/images/kepnezopar4.jpg"
+          alt="Travel memory"
+          width={240}
+          height={180}
+          className="absolute bottom-80 left-8 z-0 hidden w-56 -rotate-6 border-4 border-white shadow-xl lg:block"
+        />
+        <Image
+          src="/images/kepnezopar5.jpg"
+          alt="Travel memory"
+          width={256}
+          height={192}
+          className="absolute bottom-40 right-4 z-0 hidden w-64 rotate-3 border-4 border-white shadow-xl lg:block"
+        />
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
