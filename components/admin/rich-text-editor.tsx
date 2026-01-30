@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface RichTextEditorProps {
   content: string
@@ -62,6 +62,12 @@ export function RichTextEditor({
       },
     },
   })
+
+  useEffect(() => {
+    if (editor && content && editor.getHTML() !== content) {
+      editor.commands.setContent(content)
+    }
+  }, [content, editor])
 
   const handleImageUpload = async () => {
     const input = document.createElement('input')
