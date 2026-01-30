@@ -146,7 +146,7 @@ export default function TestimonialsSection({
           className="mt-16 text-center"
         >
           <p className="mb-6 text-lg text-parisian-grey-600">
-            Legyen Ön is a következő elégedett vendégünk!
+            Legyél Te is a következő elégedett vendégünk!
           </p>
           <motion.a
             href="#contact"
@@ -154,7 +154,7 @@ export default function TestimonialsSection({
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 px-8 py-4 font-montserrat font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
           >
-            Foglaljon most
+            Foglalj most
           </motion.a>
         </motion.div>
       </div>
