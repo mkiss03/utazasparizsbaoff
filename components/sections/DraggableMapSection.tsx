@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MapPin, TrainFront, Ticket, Compass, X, Check, XCircle, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createClient } from '@/lib/supabase/client';
 import { mapPoints, type MapPoint } from './draggable-map-data';
 
 /**
@@ -187,9 +188,48 @@ export default function DraggableMapSection() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [activePoint, setActivePoint] = useState<MapPoint | null>(null);
+  const [contentData, setContentData] = useState<Record<string, {
+    flipCard: { front: string; back: string };
+    pros: string[];
+    cons: string[];
+    usage: string[];
+    tip: string;
+  }>>(MAP_CONTENT_DATA);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient();
+
+  /**
+   * Fetch flashcard content from database
+   */
+  useEffect(() => {
+    const fetchContent = async () => {
+      const { data, error } = await supabase
+        .from('map_flashcard_content')
+        .select('*');
+
+      if (!error && data && data.length > 0) {
+        const contentMap: typeof contentData = {};
+        data.forEach((item: any) => {
+          contentMap[item.point_id] = {
+            flipCard: {
+              front: item.flip_front,
+              back: item.flip_back,
+            },
+            pros: item.pros || [],
+            cons: item.cons || [],
+            usage: item.usage || [],
+            tip: item.tip,
+          };
+        });
+        setContentData(contentMap);
+      }
+      // If error or no data, fallback to hardcoded MAP_CONTENT_DATA
+    };
+
+    fetchContent();
+  }, []);
 
   /**
    * Get the appropriate icon based on point type
@@ -471,7 +511,7 @@ export default function DraggableMapSection() {
           {/* Enhanced 4-Card Flashcard Modal */}
           <AnimatePresence>
             {activePoint && (() => {
-              const cardData = MAP_CONTENT_DATA[activePoint.id];
+              const cardData = contentData[activePoint.id];
               if (!cardData) return null;
 
               return (

@@ -12,7 +12,8 @@ import {
   ShoppingCart,
   DollarSign,
   Tag,
-  MessageSquare
+  MessageSquare,
+  Map
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -65,6 +66,12 @@ const allNavItems: NavItem[] = [
     title: 'Tartalom',
     href: '/admin/content',
     icon: FileText,
+    type: 'item',
+  },
+  {
+    title: 'Térkép Tartalom',
+    href: '/admin/map-content',
+    icon: Map,
     type: 'item',
   },
   {
