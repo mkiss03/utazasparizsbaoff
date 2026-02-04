@@ -6,14 +6,17 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, Tag as TagIcon } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Calendar, Tag as TagIcon, ChevronDown, ChevronUp } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { Post, BlogCategory } from '@/lib/types/database'
+
+const INITIAL_VISIBLE_COUNT = 10
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [isExpanded, setIsExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
 
@@ -74,31 +77,74 @@ export default function BlogPage() {
         {categories.length > 0 && (
           <div className="border-b border-parisian-beige-200 bg-white">
             <div className="container mx-auto px-4 py-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <TagIcon className="h-5 w-5 text-parisian-grey-600" />
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                    selectedCategory === ''
-                      ? 'bg-parisian-beige-400 text-white shadow-md'
-                      : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
-                  }`}
-                >
-                  Összes
-                </button>
-                {categories.map((category) => (
+              <div className="relative">
+                {/* Tags Container */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <TagIcon className="h-5 w-5 text-parisian-grey-600" />
                   <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => setSelectedCategory('')}
                     className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                      selectedCategory === category.id
+                      selectedCategory === ''
                         ? 'bg-parisian-beige-400 text-white shadow-md'
                         : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
                     }`}
                   >
-                    {category.name}
+                    Összes
                   </button>
-                ))}
+                  <AnimatePresence initial={false}>
+                    {categories
+                      .slice(0, isExpanded ? categories.length : INITIAL_VISIBLE_COUNT)
+                      .map((category) => (
+                        <motion.button
+                          key={category.id}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          transition={{ duration: 0.2 }}
+                          onClick={() => setSelectedCategory(category.id)}
+                          className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
+                            selectedCategory === category.id
+                              ? 'bg-parisian-beige-400 text-white shadow-md'
+                              : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
+                          }`}
+                        >
+                          {category.name}
+                        </motion.button>
+                      ))}
+                  </AnimatePresence>
+                </div>
+
+                {/* Fade-out gradient when collapsed */}
+                {!isExpanded && categories.length > INITIAL_VISIBLE_COUNT && (
+                  <div className="pointer-events-none absolute bottom-0 right-0 h-full w-32 bg-gradient-to-l from-white to-transparent" />
+                )}
+
+                {/* Show More/Less Button */}
+                {categories.length > INITIAL_VISIBLE_COUNT && (
+                  <motion.div
+                    className="mt-4 flex justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <button
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      className="flex items-center gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-parisian-grey-700 transition-all duration-300 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                    >
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp className="h-4 w-4" />
+                          Kevesebb téma
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-4 w-4" />
+                          További témák megjelenítése (+{categories.length - INITIAL_VISIBLE_COUNT})
+                        </>
+                      )}
+                    </button>
+                  </motion.div>
+                )}
               </div>
             </div>
           </div>
