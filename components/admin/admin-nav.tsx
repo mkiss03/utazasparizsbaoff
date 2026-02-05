@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   MapPin,
+  Map,
   FileText,
   PenTool,
   Mail,
@@ -65,6 +66,12 @@ const allNavItems: NavItem[] = [
     title: 'Tartalom',
     href: '/admin/content',
     icon: FileText,
+    type: 'item',
+  },
+  {
+    title: 'Térkép',
+    href: '/admin/map',
+    icon: Map,
     type: 'item',
   },
   {

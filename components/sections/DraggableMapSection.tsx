@@ -286,16 +286,20 @@ export default function DraggableMapSection() {
    */
   const getIcon = (type: MapPoint['type']) => {
     switch (type) {
+      case 'metro':
       case 'transport':
         return TrainFront;
       case 'ticket':
         return Ticket;
       case 'info':
         return Info;
+      case 'safety':
       case 'survival':
         return ShieldCheck;
+      case 'app':
       case 'apps':
         return Smartphone;
+      case 'situation':
       case 'situations':
         return Users;
       default:
@@ -478,6 +482,8 @@ export default function DraggableMapSection() {
               {/* Interactive Point Markers */}
               {mapPointsList.map((point) => {
                 const IconComponent = getIcon(point.type);
+                // Force render of Ticket icon for ticket type
+                const isTicket = point.type === 'ticket';
                 return (
                   <div
                     key={point.id}
@@ -517,7 +523,11 @@ export default function DraggableMapSection() {
                           }
                         `}
                       >
-                        <IconComponent className="w-6 h-6 text-white" />
+                        {isTicket ? (
+                          <Ticket className="w-6 h-6 text-white" />
+                        ) : (
+                          <IconComponent className="w-6 h-6 text-white" />
+                        )}
                       </div>
 
                       {/* Tooltip on Hover */}
@@ -773,6 +783,7 @@ export default function DraggableMapSection() {
           <div className="mt-6 flex flex-wrap gap-4 justify-center">
             {mapPointsList.map((point) => {
               const IconComponent = getIcon(point.type);
+              const isTicket = point.type === 'ticket';
               return (
                 <button
                   key={point.id}
@@ -806,7 +817,11 @@ export default function DraggableMapSection() {
                     }
                   `}
                 >
-                  <IconComponent className="w-4 h-4" />
+                  {isTicket ? (
+                    <Ticket className="w-4 h-4" />
+                  ) : (
+                    <IconComponent className="w-4 h-4" />
+                  )}
                   <span className="text-sm font-medium">{point.title}</span>
                 </button>
               );
