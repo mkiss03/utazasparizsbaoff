@@ -5,9 +5,10 @@
 
 export interface MapPoint {
   id: string;
-  type: 'metro' | 'ticket' | 'navigation' | 'info';
+  type: 'transport' | 'ticket' | 'info' | 'survival' | 'apps' | 'situations';
   title: string;
   content: string;
+  color: string; // Tailwind color class for icon background
   x: number; // Position as percentage (0-100) of image width
   y: number; // Position as percentage (0-100) of image height
 }
@@ -15,34 +16,56 @@ export interface MapPoint {
 export const mapPoints: MapPoint[] = [
   {
     id: 'point-1',
-    type: 'metro',
-    title: 'Metróvonalak',
-    content: 'Párizs metróhálózata sűrű és gyors, 16 vonal köti össze a város minden részét. A metró a legegyszerűbb módja annak, hogy gyorsan eljuss a híres látnivalókhoz. A járatok gyakran közlekednek, és a hálózat jól kiépített.',
-    x: 50,
-    y: 45,
+    type: 'transport',
+    title: 'Mivel lehet utazni?',
+    content: 'Párizs közlekedési lehetőségei: metró, busz, villamos, RER és még sok más! Ismerd meg az összes opciót.',
+    color: 'bg-french-blue-600', // Navy Blue (Brand Primary)
+    x: 30,
+    y: 35,
   },
   {
     id: 'point-2',
     type: 'ticket',
-    title: 'Jegyek és Bérletek',
-    content: 'Milyen jegyet vegyél? A T+ gyűjtőjegy egyszeri utakra ideális, míg a Navigo bérlet hosszabb tartózkodásra ajánlott. A jegyek válthatók automatákból és pénztárakból egyaránt. Figyelem: őrizd meg a jegyed az út végéig!',
-    x: 25,
+    title: 'Jegyek - amit turistaként érdemes tudni',
+    content: 'Milyen jegyet vegyél? Navigo, T+ vagy mobilapp? Minden lényeges információ a jegyvásárlásról.',
+    color: 'bg-parisian-gold-500', // Gold/Ochre (Brand Secondary)
+    x: 50,
     y: 50,
   },
   {
     id: 'point-3',
-    type: 'navigation',
-    title: 'Tájékozódás',
-    content: 'A párizsi metrótérképek egyszerűen érthetőek, színkódolt vonalakkal. Minden állomáson találsz térképeket és digitális információs táblákat. Használd a mobilalkalmazásokat valós idejű frissítésekhez!',
+    type: 'info',
+    title: 'Hasznos tudnivalók',
+    content: 'Tájékozódás, átszállás, üzemidő és egyéb fontos információk a párizsi közlekedésről.',
+    color: 'bg-green-700', // Deep Green (Sage/Forest)
     x: 70,
     y: 35,
   },
   {
     id: 'point-4',
-    type: 'metro',
-    title: 'Fő Csomópontok',
-    content: 'A legnagyobb átszállóállomások: Châtelet-Les Halles, Gare du Nord, és Montparnasse. Ezeken az állomásokon több vonal is keresztezi egymást, így könnyen válthatunk irányokat.',
-    x: 45,
+    type: 'survival',
+    title: 'Kis párizsi túlélőtippek',
+    content: 'Praktikus tanácsok a helyi közlekedéshez: mit kerülj, mire figyelj, hogyan spórolj időt.',
+    color: 'bg-orange-600', // Terra Cotta / Burnt Orange
+    x: 25,
+    y: 60,
+  },
+  {
+    id: 'point-5',
+    type: 'apps',
+    title: 'Ajánlott appok',
+    content: 'A legjobb mobilalkalmazások, amelyek megkönnyítik a párizsi közlekedést.',
+    color: 'bg-slate-700', // Slate / Dark Grey
+    x: 60,
     y: 65,
+  },
+  {
+    id: 'point-6',
+    type: 'situations',
+    title: 'Valós Szituációk',
+    content: 'Példák, történetek és konkrét helyzetek, amikkel találkozhatsz a párizsi közlekedésben.',
+    color: 'bg-blue-600', // Royal Blue
+    x: 45,
+    y: 80,
   },
 ];

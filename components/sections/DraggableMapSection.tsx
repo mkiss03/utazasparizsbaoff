@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { MapPin, TrainFront, Ticket, Compass, X, Check, XCircle, Lightbulb } from 'lucide-react';
+import { MapPin, TrainFront, Ticket, Info, X, Check, Lightbulb, ShieldCheck, Smartphone, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { mapPoints, type MapPoint } from './draggable-map-data';
@@ -18,113 +18,128 @@ const MAP_CONTENT_DATA: Record<string, {
     back: string;
   };
   pros: string[];
-  cons: string[];
   usage: string[];
   tip: string;
 }> = {
-  'point-1': { // Metróvonalak
+  'point-1': { // Mivel lehet utazni?
     flipCard: {
-      front: 'Miért olyan király a párizsi metró?',
-      back: 'A párizsi metró 16 vonallal köti össze a várost, és szinte mindenhova gyorsan eljuthatsz vele. Sűrű hálózat, gyakori járatok - ez az egyik legjobb városi közlekedési rendszer a világon!'
+      front: 'Mivel lehet utazni Párizsban?',
+      back: 'Párizsban rengeteg közlekedési lehetőség áll rendelkezésedre: metró (16 vonal), RER (elővárosi vasút), buszok (több mint 60 vonal), villamosok, és még bicikli/roller is! Kombinálhatod őket, hogy bárhova eljuss.'
     },
     pros: [
-      'Gyors és pontos járatok',
-      'Sűrű hálózat - szinte mindenhova eljutsz',
-      'Gyakori indulások (2-7 percenként)',
-      'Olcsóbb, mint a taxi vagy Uber'
-    ],
-    cons: [
-      'Csúcsidőben nagyon zsúfolt lehet',
-      'Nyáron nincs légkondi (meleg!)',
-      'Néhány vonal éjszaka nem jár',
-      'Lépcsők... sok lépcső (nem minden állomás akadálymentes)'
+      'Metró: 16 vonal, sűrű hálózat, gyakori járatok',
+      'RER: Gyors kapcsolat a külvárosokkal és repülőtérrel',
+      'Buszok: Felszíni közlekedés, látnivalók közben',
+      'Vélib biciklik és e-rollerek bérelhetők'
     ],
     usage: [
-      '🎫 Vegyél jegyet vagy bérletet előre',
-      '🚪 Érvényesítsd a kapuknál (zöld lámpa = OK)',
-      '🗺️ Nézd meg a vonalszámot és a végállomást',
-      '📍 Kövesd a táblákat a peronhoz',
-      '🔔 Figyelj az állomás hangosbemondójára'
+      '🚇 Metró: Leggyorsabb a városon belül',
+      '🚆 RER: Ideális a repülőtérre vagy Versailles-ba',
+      '🚌 Busz: Ha látni szeretnéd a várost útközben',
+      '🚲 Vélib: Rövid távokra tökéletes',
+      '🚶 Gyalog: Sok látnivaló közel van egymáshoz'
     ],
-    tip: 'Viktorika titkos tippje: Töltsd le a Citymapper appot! Valós időben mutatja a metrókat, és alternatív útvonalakat is ad. Csúcsidőben (8-9h, 17-19h) kerüld a Line 1-et és a Line 4-et, ha teheted - tele vannak!'
+    tip: 'Viktória titkos tippje: A Batobus (folyami busz) turistáknak drága, de a pont-pont metró gyorsabb és olcsóbb. Viszont ha van időd, a buszok (pl. 69-es, 96-os vonal) ingyen városnézést adnak útközben!'
   },
-  'point-2': { // Jegyek és Bérletek
+  'point-2': { // Jegyek - amit turistaként érdemes tudni
     flipCard: {
       front: 'Melyik jegyet vegyem Párizsban?',
       back: 'A T+ jegy az alapjegy - egyetlen utazásra metróra, buszra, villamosra. Ha több napot töltesz Párizsban, a Navigo bérlet sokkal kifizetődőbb és kényelmesebb!'
     },
     pros: [
-      'T+ jegy: olcsó, ha csak 1-2 utat teszel',
-      'Navigo: korlátlan utazás 1 hétre',
-      'Automatákból és pénztárakból is vehető',
-      'Gyerekeknek kedvezmény jár'
-    ],
-    cons: [
-      'T+ NEM jó a repülőtérre (oda Navigo vagy külön jegy kell)',
-      'T+ csak 1 zónában érvényes (központi Párizs)',
-      'Navigo heti bérletet hétfőtől vasárnapig lehet használni',
-      'Elveszett jegyet nem pótolnak!'
+      'T+ jegy: 2.10€ egyetlen útra, 10db csomag olcsóbb',
+      'Navigo Découverte: heti bérlet ~30€, korlátlan utazás',
+      'Paris Visite: 1-5 napos turistajegy, zónák szerint',
+      'Gyerekeknek (4-10 év) kedvezmény, 4 év alatt ingyenes'
     ],
     usage: [
       '🏪 Vegyél jegyet metróállomáson (automata vagy pénztár)',
-      '🎫 T+ jegy: nyomd be a kapunál',
+      '🎫 T+ jegy: nyomd be a kapunál, őrizd meg az út végéig',
       '💳 Navigo: érintsd a kártyát a sárga olvasón',
-      '📱 Őrizd meg a jegyed a kijáratig!',
+      '📱 Boomerang app: mobilon is vehetsz jegyet',
       '👮 Ellenőrök bármikor kérhetik - büntetés akár 50€'
     ],
-    tip: 'Viktória titkos tippje: Ha 3+ napot töltesz Párizsban, azonnal vegyél Navigo Découverte bérletet (heti bérlet ~30€). Megtérül már 4-5 utazás után! Vigyél magaddal egy útlevélképet hozzá.'
+    tip: 'Viktória titkos tippje: Ha 3+ napot töltesz Párizsban, azonnal vegyél Navigo Découverte bérletet. Vigyél magaddal egy útlevélképet hozzá! Megtérül már 15 utazás után, és nem kell mindig jegyet venned.'
   },
-  'point-3': { // Tájékozódás
+  'point-3': { // Hasznos tudnivalók
     flipCard: {
-      front: 'Hogyan tájékozódjak a párizsi metróban?',
-      back: 'A párizsi metró színkódolt vonalakkal dolgozik - minden vonal más színű. Az állomásokon mindenhol van térkép, és a cégtáblák világosak. Nem olyan bonyolult, mint elsőre tűnik!'
+      front: 'Mire figyeljek a párizsi közlekedésben?',
+      back: 'A párizsi metró színkódolt vonalakkal dolgozik - minden vonal más színű. Az állomásokon mindenhol van térkép, és a cégtáblák világosak. A "Correspondance" = átszállás, "Sortie" = kijárat!'
     },
     pros: [
       'Színes, egyszerű térképek minden állomáson',
-      'Mobilappok valós idejű infóval',
-      'Jelzőtáblák franciául és angolul',
-      'Az emberek segítőkészek (ha szépen kéred)'
-    ],
-    cons: [
-      'Néhány állomás neve hasonló - figyelj!',
-      'Nagy átszállóállomások zavarba ejtőek lehetnek',
-      'Wifi nem mindenhol van',
-      'Zárvatartáskor nincs előzetes értesítés'
+      'Mobilappok valós idejű infóval (Citymapper, Google Maps)',
+      'Üzemidő: ~5:30-tól 0:30-ig (hétvégén éjjel 2-ig)',
+      'Akadálymentesített állomások: keresd a ♿ szimbólumot'
     ],
     usage: [
-      '🗺️ Használj térképappot (Google Maps, Citymapper)',
-      '🎯 Nézd meg, melyik irány a végállomás neve',
-      '🔄 Átszállásnál kövesd a "Correspondance" táblákat',
-      '🚶 "Sortie" = kijárat',
-      '📍 Nézd meg előre, melyik kijáraton menj ki'
+      '🗺️ Használj térképappot offline módban is (screenshot!)',
+      '🎯 Nézd meg a végállomás nevét (ez az irány)',
+      '🔄 Átszállásnál kövesd a "Correspondance + vonalszám" táblákat',
+      '🚶 "Sortie" = kijárat, nézd meg előre melyik kijárat közelebb van',
+      '📍 Châtelet-Les Halles és Montparnasse nagy - adj magadnak időt!'
     ],
-    tip: 'Viktória titkos tippje: Screenshot-olj le térképeket OFFLINE használatra! A metróban gyakran nincs net. És ha eltévedsz, ne félj megkérdezni valakit - "Pardon, où est...?" = Elnézést, hol van...?'
+    tip: 'Viktória titkos tippje: Screenshot-olj le térképeket OFFLINE használatra! A metróban gyakran nincs net. És ha eltévedsz, ne félj megkérdezni - "Pardon, où est...?" = Elnézést, hol van...?'
   },
-  'point-4': { // Fő Csomópontok
+  'point-4': { // Kis párizsi túlélőtippek
     flipCard: {
-      front: 'Melyek a legfontosabb átszállóállomások?',
-      back: 'Châtelet-Les Halles, Gare du Nord, és Montparnasse - ezek a legnagyobb metró-csomópontok, ahol több vonal keresztezi egymást. Itt könnyű irányt váltani, de zsúfoltak!'
+      front: 'Mik a legfontosabb párizsi közlekedési túlélőtippek?',
+      back: 'Csúcsidőben (8-9h, 17-19h) tömeg van - kerüld, ha teheted! Vigyázz a táskádra (zsebtolvajok!), és ne blokkold a mozgólépcsőt (balra állj, jobbra menj). A helyi szokásokat kövesd!'
     },
     pros: [
-      'Sok vonalhoz gyors hozzáférés',
-      'Üzletek, kávézók az állomásokon',
-      'Gyakori járatok minden irányba',
-      'Központi helyen vannak'
-    ],
-    cons: [
-      'Nagyon zsúfoltak csúcsidőben',
-      'Könnyen eltévedhetsz a folyosókban',
-      'Sok lépcső az átszállásnál',
-      'Turistákkal és zsebtolvajokkal teli lehet'
+      'Tartsd jobbra a mozgólépcsőn (baloldal a siető embereknek)',
+      'Ne dohányozz a metróban vagy buszban (büntetés!)',
+      'Engedd le előbb az embereket, aztán szállj fel',
+      'Nyáron hidratálj - nincs légkondi a metróban'
     ],
     usage: [
-      '🧭 Kövesd a "Correspondance" + vonalszám táblákat',
-      '⏱️ Számolj 5-10 perc átszállási idővel',
-      '👜 Vigyázz a csomagjaidra!',
-      '🚶 Tartsd jobbra a mozgólépcsőn',
-      '📱 Ha eltévedsz, menj vissza a térképhez'
+      '🎒 Mindig vigyázz a táskádra! Főleg turistahelyeken',
+      '⏰ Kerüld a csúcsidőt, ha teheted (8-9h, 17-19h)',
+      '🚇 Line 1 és Line 4 a legzsúfoltabb csúcsban',
+      '🪜 Nagy csomaggal nehéz lehet - sok lépcső van',
+      '🚪 Állj az ajtótól távol, ha nem szállsz le hamarosan'
     ],
     tip: 'Viktória titkos tippje: Châtelet-Les Halles hatalmas labirintus - első alkalommal mindenki eltéved! Ha ott kell átszállnod, adj magadnak extra 10 percet. És óvatosan a táskáddal - ez a zsebtolvajok kedvenc helye!'
+  },
+  'point-5': { // Ajánlott appok
+    flipCard: {
+      front: 'Milyen appokat használjak Párizsban?',
+      back: 'A megfelelő mobilappok megkönnyítik az életед! Valós idejű menetrendek, offline térképek, és jegyvásárlás - minden egy helyen. Ezek nélkül nehezebb lesz tájékozódni!'
+    },
+    pros: [
+      'Citymapper: valós idejű menetrendek, alternatív útvonalak',
+      'RATP/Boomerang: hivatalos app, jegyvásárlás',
+      'Google Maps: offline térkép, pontos útvonalak',
+      'Maps.me: teljesen offline navigáció'
+    ],
+    usage: [
+      '📱 Citymapper: legjobb útvonaltervező, mutatja a késéseket',
+      '🎫 Boomerang (RATP): vegyél mobilon jegyet',
+      '🗺️ Google Maps: töltsd le a térképet offline használatra',
+      '🚇 RATP: menetrend és metróinfók',
+      '🚲 Vélib: bérelj biciklit'
+    ],
+    tip: 'Viktória titkos tippje: Töltsd le a Citymapper appot és a Google Maps offline térképét! Így ha nincs net a metróban, akkor is tudsz tájékozódni. És vegyél egy európai adatcsomagot - megéri!'
+  },
+  'point-6': { // Valós Szituációk
+    flipCard: {
+      front: 'Milyen valós helyzetekkel találkozhatok?',
+      back: 'A párizsi közlekedés néha meglepetésekkel szolgál: sztrájkok, késések, tömeg, vagy épp eltévedsz egy hatalmas állomáson. Ne aggódj - mindenki átéli ezeket! Íme pár tipikus szituáció és megoldás.'
+    },
+    pros: [
+      'Sztrájk: Az appok jelzik, van B terv (busz, taxi, gyalog)',
+      'Eltévedés: Kérdezz meg valakit vagy kövesd a tömеget',
+      'Tömeg: Várj a következő metrót, kevésbé lesz zsúfolt',
+      'Jegyellenőrzés: Ha megvan a jegyed, nyugi - csak mutasd meg'
+    ],
+    usage: [
+      '🚨 Ha sztrájk van: Nézd meg az appban, mely vonalak járnak',
+      '🗺️ Ha eltévedtél: Ne stresszelj, menj vissza a térképhez',
+      '👥 Ha tömeg van: Várj 3-5 percet, jön üresebb metró',
+      '🚪 Ha rossz irányba mentél: Szállj le, menj át az átellenes peronra',
+      '👮 Ha ellenőrök jönnek: Mutasd meg nyugodtan a jegyed'
+    ],
+    tip: 'Viktória titkos tippje: Egyszer a Châtelet-ben 20 percig keresteм a Line 7-et, míg rá nem jöttem, hogy rossz folyosón vagyok. Ne félj megkérdezni az embereket - sokan segítenek, ha látják, hogy turista vagy!'
   }
 };
 
@@ -191,7 +206,6 @@ export default function DraggableMapSection() {
   const [contentData, setContentData] = useState<Record<string, {
     flipCard: { front: string; back: string };
     pros: string[];
-    cons: string[];
     usage: string[];
     tip: string;
   }>>(MAP_CONTENT_DATA);
@@ -218,7 +232,6 @@ export default function DraggableMapSection() {
               back: item.flip_back,
             },
             pros: item.pros || [],
-            cons: item.cons || [],
             usage: item.usage || [],
             tip: item.tip,
           };
@@ -236,12 +249,18 @@ export default function DraggableMapSection() {
    */
   const getIcon = (type: MapPoint['type']) => {
     switch (type) {
-      case 'metro':
+      case 'transport':
         return TrainFront;
       case 'ticket':
         return Ticket;
-      case 'navigation':
-        return Compass;
+      case 'info':
+        return Info;
+      case 'survival':
+        return ShieldCheck;
+      case 'apps':
+        return Smartphone;
+      case 'situations':
+        return Users;
       default:
         return MapPin;
     }
@@ -450,18 +469,18 @@ export default function DraggableMapSection() {
                       <div
                         className={`
                           w-12 h-12 rounded-full
-                          bg-white
+                          ${point.color}
                           shadow-lg
                           flex items-center justify-center
                           transition-all duration-200
                           hover:scale-110
                           ${activePoint?.id === point.id
-                            ? 'ring-4 ring-french-blue-400 scale-110'
+                            ? 'ring-4 ring-white scale-110'
                             : ''
                           }
                         `}
                       >
-                        <IconComponent className="w-6 h-6 text-french-blue-600" />
+                        <IconComponent className="w-6 h-6 text-white" />
                       </div>
 
                       {/* Tooltip on Hover */}
@@ -544,11 +563,11 @@ export default function DraggableMapSection() {
                       <div className="relative p-6 border-b border-parisian-grey-200">
                         <div className="flex items-start gap-4">
                           {/* Icon */}
-                          <div className="w-12 h-12 rounded-full bg-french-blue-100
-                            flex items-center justify-center flex-shrink-0">
+                          <div className={`w-12 h-12 rounded-full ${activePoint.color}
+                            flex items-center justify-center flex-shrink-0`}>
                             {(() => {
                               const IconComponent = getIcon(activePoint.type);
-                              return <IconComponent className="w-6 h-6 text-french-blue-600" />;
+                              return <IconComponent className="w-6 h-6 text-white" />;
                             })()}
                           </div>
 
@@ -596,7 +615,7 @@ export default function DraggableMapSection() {
                           />
                         </motion.div>
 
-                        {/* Card 2: Pros & Cons */}
+                        {/* Card 2: Pros (Full Width) */}
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -605,49 +624,28 @@ export default function DraggableMapSection() {
                           <div className="mb-2">
                             <span className="inline-block px-3 py-1 text-xs font-semibold
                               bg-green-100 text-green-700 rounded-full">
-                              2️⃣ Mikor éri meg?
+                              2️⃣ Amit érdemes tudni
                             </span>
                           </div>
                           <div className="bg-white rounded-xl border-2 border-parisian-grey-200
                             p-6 shadow-sm">
-                            <div className="grid md:grid-cols-2 gap-6">
-                              {/* Pros */}
-                              <div>
-                                <h4 className="flex items-center gap-2 text-lg font-bold
-                                  text-green-700 mb-3">
-                                  <Check className="w-5 h-5" />
-                                  Előnyök
-                                </h4>
-                                <ul className="space-y-2">
-                                  {cardData.pros.map((pro, idx) => (
-                                    <li key={idx} className="flex items-start gap-2">
-                                      <Check className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
-                                      <span className="text-sm text-parisian-grey-700">
-                                        {pro}
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              {/* Cons */}
-                              <div>
-                                <h4 className="flex items-center gap-2 text-lg font-bold
-                                  text-red-700 mb-3">
-                                  <XCircle className="w-5 h-5" />
-                                  Mikor nem ajánlott
-                                </h4>
-                                <ul className="space-y-2">
-                                  {cardData.cons.map((con, idx) => (
-                                    <li key={idx} className="flex items-start gap-2">
-                                      <XCircle className="w-4 h-4 text-red-500 mt-1 flex-shrink-0" />
-                                      <span className="text-sm text-parisian-grey-700">
-                                        {con}
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
+                            {/* Pros - Full Width */}
+                            <div>
+                              <h4 className="flex items-center gap-2 text-lg font-bold
+                                text-green-700 mb-4">
+                                <Check className="w-5 h-5" />
+                                Előnyök
+                              </h4>
+                              <ul className="space-y-3">
+                                {cardData.pros.map((pro, idx) => (
+                                  <li key={idx} className="flex items-start gap-3">
+                                    <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-parisian-grey-700 leading-relaxed">
+                                      {pro}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
                           </div>
                         </motion.div>

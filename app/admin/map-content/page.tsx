@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Save, Plus, Trash2, Check, XCircle, Map } from 'lucide-react'
+import { Save, Plus, Trash2, Check, Map } from 'lucide-react'
 
 interface MapFlashcardContent {
   id: string
@@ -18,7 +18,6 @@ interface MapFlashcardContent {
   flip_front: string
   flip_back: string
   pros: string[]
-  cons: string[]
   usage: string[]
   tip: string
 }
@@ -52,7 +51,6 @@ export default function MapContentPage() {
           flip_front: content.flip_front,
           flip_back: content.flip_back,
           pros: content.pros,
-          cons: content.cons,
           usage: content.usage,
           tip: content.tip,
           updated_at: new Date().toISOString(),
@@ -93,7 +91,7 @@ export default function MapContentPage() {
     setFormData({})
   }
 
-  const addArrayItem = (field: 'pros' | 'cons' | 'usage') => {
+  const addArrayItem = (field: 'pros' | 'usage') => {
     const current = formData[field] || []
     setFormData({
       ...formData,
@@ -101,7 +99,7 @@ export default function MapContentPage() {
     })
   }
 
-  const updateArrayItem = (field: 'pros' | 'cons' | 'usage', index: number, value: string) => {
+  const updateArrayItem = (field: 'pros' | 'usage', index: number, value: string) => {
     const current = [...(formData[field] || [])]
     current[index] = value
     setFormData({
@@ -110,7 +108,7 @@ export default function MapContentPage() {
     })
   }
 
-  const removeArrayItem = (field: 'pros' | 'cons' | 'usage', index: number) => {
+  const removeArrayItem = (field: 'pros' | 'usage', index: number) => {
     const current = [...(formData[field] || [])]
     current.splice(index, 1)
     setFormData({
@@ -158,10 +156,6 @@ export default function MapContentPage() {
                   <Badge className="bg-green-100 text-green-700">
                     <Check className="w-3 h-3 mr-1" />
                     {content.pros?.length || 0} előny
-                  </Badge>
-                  <Badge className="bg-red-100 text-red-700">
-                    <XCircle className="w-3 h-3 mr-1" />
-                    {content.cons?.length || 0} hátrány
                   </Badge>
                   <Badge className="bg-purple-100 text-purple-700">
                     {content.usage?.length || 0} lépés
@@ -258,11 +252,11 @@ export default function MapContentPage() {
               </div>
             </div>
 
-            {/* Card 2: Pros */}
+            {/* Card 2: Pros (Full Width) */}
             <div className="space-y-4 p-4 rounded-lg border-2 border-green-200 bg-green-50">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-lg text-green-900">
-                  ✅ Kártya 2a: Előnyök
+                  ✅ Kártya 2: Előnyök / Amit érdemes tudni
                 </h3>
                 <Button
                   onClick={() => addArrayItem('pros')}
@@ -294,47 +288,6 @@ export default function MapContentPage() {
                 {(!formData.pros || formData.pros.length === 0) && (
                   <p className="text-sm text-parisian-grey-500 italic">
                     Még nincs előny hozzáadva. Kattints a "Új előny" gombra!
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Card 2: Cons */}
-            <div className="space-y-4 p-4 rounded-lg border-2 border-red-200 bg-red-50">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg text-red-900">
-                  ❌ Kártya 2b: Hátrányok / Mikor nem ajánlott
-                </h3>
-                <Button
-                  onClick={() => addArrayItem('cons')}
-                  size="sm"
-                  variant="outline"
-                  className="border-red-300"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Új hátrány
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {(formData.cons || []).map((con, idx) => (
-                  <div key={idx} className="flex gap-2">
-                    <Input
-                      value={con}
-                      onChange={(e) => updateArrayItem('cons', idx, e.target.value)}
-                      placeholder={`Hátrány ${idx + 1}`}
-                    />
-                    <Button
-                      onClick={() => removeArrayItem('cons', idx)}
-                      size="sm"
-                      variant="destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-                {(!formData.cons || formData.cons.length === 0) && (
-                  <p className="text-sm text-parisian-grey-500 italic">
-                    Még nincs hátrány hozzáadva. Kattints a "Új hátrány" gombra!
                   </p>
                 )}
               </div>
