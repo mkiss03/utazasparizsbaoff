@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Save, Trash2 } from 'lucide-react'
-import { MapEditor } from '@/components/admin/MapEditor'
+import { MapPointEditor } from '@/components/admin/MapPointEditor'
 import type { Profile } from '@/lib/types/database'
 
 export default function ContentPage() {
@@ -726,7 +726,7 @@ export default function ContentPage() {
             <CardTitle className="text-parisian-grey-800">Térkép Tartalom</CardTitle>
           </CardHeader>
           <CardContent>
-            <MapEditor />
+            <MapPointEditor />
           </CardContent>
         </Card>
       </div>
