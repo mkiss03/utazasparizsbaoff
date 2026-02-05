@@ -6,7 +6,7 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, Tag as TagIcon } from 'lucide-react'
+import { Calendar, Tag as TagIcon, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Post, BlogCategory } from '@/lib/types/database'
 
@@ -14,6 +14,7 @@ export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [showAllCategories, setShowAllCategories] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
 
@@ -71,38 +72,65 @@ export default function BlogPage() {
         </div>
 
         {/* Category Filter Pills */}
-        {categories.length > 0 && (
-          <div className="border-b border-parisian-beige-200 bg-white">
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <TagIcon className="h-5 w-5 text-parisian-grey-600" />
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                    selectedCategory === ''
-                      ? 'bg-parisian-beige-400 text-white shadow-md'
-                      : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
-                  }`}
-                >
-                  Összes
-                </button>
-                {categories.map((category) => (
+        {categories.length > 0 && (() => {
+          const MAX_VISIBLE = 10
+          const hasMore = categories.length > MAX_VISIBLE
+          const visibleCategories = showAllCategories
+            ? categories
+            : categories.slice(0, MAX_VISIBLE)
+          const hiddenCount = categories.length - MAX_VISIBLE
+
+          return (
+            <div className="border-b border-parisian-beige-200 bg-white">
+              <div className="container mx-auto px-4 py-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <TagIcon className="h-5 w-5 text-parisian-grey-600" />
                   <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => setSelectedCategory('')}
                     className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                      selectedCategory === category.id
+                      selectedCategory === ''
                         ? 'bg-parisian-beige-400 text-white shadow-md'
                         : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
                     }`}
                   >
-                    {category.name}
+                    Összes
                   </button>
-                ))}
+                  {visibleCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
+                        selectedCategory === category.id
+                          ? 'bg-parisian-beige-400 text-white shadow-md'
+                          : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                  {hasMore && (
+                    <button
+                      onClick={() => setShowAllCategories(!showAllCategories)}
+                      className="flex items-center gap-1 rounded-full border-2 border-parisian-beige-300 px-5 py-2 text-sm font-semibold text-parisian-grey-600 transition-all duration-300 hover:border-parisian-beige-400 hover:text-parisian-grey-800"
+                    >
+                      {showAllCategories ? (
+                        <>
+                          Kevesebb
+                          <ChevronUp className="h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          Témák szűrése (+{hiddenCount})
+                          <ChevronDown className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* Posts Grid */}
         <div className="container mx-auto px-4 py-16">
