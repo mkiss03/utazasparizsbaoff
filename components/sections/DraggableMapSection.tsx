@@ -152,25 +152,28 @@ function FlipCard({ front, back }: { front: string; back: string }) {
 
   return (
     <div
-      className="relative h-48 cursor-pointer perspective-1000"
+      className="relative h-48 cursor-pointer"
+      style={{ perspective: '1000px' }}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <motion.div
-        className="relative w-full h-full transition-transform duration-500 transform-style-3d"
+        className="relative w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
       >
         {/* Front Side */}
         <div
-          className="absolute inset-0 backface-hidden rounded-xl p-6
-            bg-gradient-to-br from-french-blue-500 to-french-blue-700
+          className="absolute inset-0 rounded-xl p-6
+            bg-[#0A1A2F]
             flex items-center justify-center text-center shadow-lg"
+          style={{ backfaceVisibility: 'hidden' }}
         >
           <div>
             <p className="text-xl font-bold text-white leading-relaxed">
               {front}
             </p>
-            <p className="text-sm text-french-blue-100 mt-3">
+            <p className="text-sm text-white/60 mt-3">
               🔄 Kattints a válaszért
             </p>
           </div>
@@ -178,13 +181,12 @@ function FlipCard({ front, back }: { front: string; back: string }) {
 
         {/* Back Side */}
         <div
-          className="absolute inset-0 backface-hidden rounded-xl p-6
-            bg-gradient-to-br from-parisian-grey-50 to-white
-            border-2 border-french-blue-200
+          className="absolute inset-0 rounded-xl p-6
+            bg-[#0A1A2F]
             flex items-center justify-center text-center shadow-lg"
-          style={{ transform: 'rotateY(180deg)' }}
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <p className="text-base text-parisian-grey-700 leading-relaxed">
+          <p className="text-base text-white leading-relaxed">
             {back}
           </p>
         </div>
