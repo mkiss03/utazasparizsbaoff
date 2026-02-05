@@ -50,14 +50,14 @@ export default function NewsletterForm() {
       <form onSubmit={handleSubmit} className="relative">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" />
+            <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email cím..."
               disabled={status === 'loading' || status === 'success'}
-              className="w-full rounded-full border-2 border-white/30 bg-white/10 py-4 pl-12 pr-4 text-white placeholder:text-white/60 backdrop-blur-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-white/20 disabled:bg-white/5"
+              className="w-full rounded-full border-2 border-parisian-beige-300 bg-white py-4 pl-12 pr-4 text-slate-900 placeholder:text-slate-400 focus:border-parisian-beige-500 focus:outline-none focus:ring-2 focus:ring-parisian-beige-200 disabled:bg-slate-50"
               required
             />
           </div>
@@ -66,11 +66,11 @@ export default function NewsletterForm() {
             disabled={status === 'loading' || status === 'success'}
             whileHover={{ scale: status === 'loading' || status === 'success' ? 1 : 1.05 }}
             whileTap={{ scale: status === 'loading' || status === 'success' ? 1 : 0.95 }}
-            className="flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-semibold text-parisian-beige-500 shadow-lg transition-all hover:bg-white/90 hover:shadow-xl disabled:cursor-not-allowed disabled:bg-white/50"
+            className="flex items-center justify-center gap-2 rounded-full bg-parisian-beige-500 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:bg-parisian-beige-600 hover:shadow-xl disabled:cursor-not-allowed disabled:bg-parisian-beige-300"
           >
             {status === 'loading' ? (
               <>
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-parisian-beige-500 border-t-transparent" />
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 <span>Küldés...</span>
               </>
             ) : status === 'success' ? (
@@ -93,7 +93,7 @@ export default function NewsletterForm() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`mt-3 text-center text-sm font-medium ${
-              status === 'error' ? 'text-red-100' : 'text-white'
+              status === 'error' ? 'text-red-600' : 'text-green-700'
             }`}
           >
             {message}
@@ -102,9 +102,9 @@ export default function NewsletterForm() {
       </form>
 
       {/* Privacy Note */}
-      <p className="mt-4 text-center text-xs text-white/70">
+      <p className="mt-4 text-center text-xs text-slate-500">
         Feliratkozással elfogadja az{' '}
-        <a href="/adatvedelem" className="underline hover:text-white transition-colors">
+        <a href="/adatvedelem" className="underline hover:text-slate-700 transition-colors">
           adatvédelmi nyilatkozatunkat
         </a>
         . Bármikor leiratkozhat.

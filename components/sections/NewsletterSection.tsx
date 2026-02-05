@@ -8,8 +8,8 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function NewsletterSection() {
   const [content, setContent] = useState({
-    title: 'Maradjon Kapcsolatban',
-    description: 'Iratkozzon fel, hogy ne maradjon le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
+    title: 'Maradj Kapcsolatban',
+    description: 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
   })
 
   useEffect(() => {
@@ -22,8 +22,8 @@ export default function NewsletterSection() {
 
       if (data && !error) {
         setContent({
-          title: data.newsletter_title || 'Maradjon Kapcsolatban',
-          description: data.newsletter_description || 'Iratkozzon fel, hogy ne maradjon le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
+          title: data.newsletter_title || 'Maradj Kapcsolatban',
+          description: data.newsletter_description || 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
         })
       }
     }
@@ -32,10 +32,10 @@ export default function NewsletterSection() {
   }, [])
 
   return (
-    <section id="newsletter" className="relative overflow-hidden bg-gradient-to-br from-parisian-beige-300 via-parisian-beige-400 to-parisian-beige-500 py-20 md:py-32">
+    <section id="newsletter" className="relative overflow-hidden bg-[#FAF7F2] py-20 md:py-32">
       {/* Decorative Elements */}
-      <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 rounded-full bg-white opacity-10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-parisian-beige-600 opacity-20 blur-3xl" />
+      <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 rounded-full bg-parisian-beige-300 opacity-20 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-parisian-beige-400 opacity-15 blur-3xl" />
 
       <div className="container relative z-10 mx-auto px-4">
         {/* Icon & Title */}
@@ -51,15 +51,15 @@ export default function NewsletterSection() {
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.6, type: 'spring' }}
             viewport={{ once: true }}
-            className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm"
+            className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-parisian-beige-400/20"
           >
-            <Mail className="h-10 w-10 text-white" />
+            <Mail className="h-10 w-10 text-parisian-beige-600" />
           </motion.div>
 
-          <h2 className="mb-4 font-playfair text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+          <h2 className="mb-4 font-playfair text-4xl font-bold text-slate-900 md:text-5xl lg:text-6xl">
             {content.title}
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-white/90">
+          <p className="mx-auto max-w-2xl text-lg text-slate-700">
             {content.description}
           </p>
 
@@ -69,18 +69,18 @@ export default function NewsletterSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/80"
+            className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-600"
           >
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5 text-parisian-beige-500" />
               <span>Exkluzív túra ajánlatok</span>
             </div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5 text-parisian-beige-500" />
               <span>Párizsi insider tippek</span>
             </div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-white" />
+              <Sparkles className="h-5 w-5 text-parisian-beige-500" />
               <span>Havonta 1-2 email</span>
             </div>
           </motion.div>
