@@ -30,8 +30,7 @@ export default function Navigation() {
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Városbérletek', href: '/pricing' },
-    { name: 'Galéria', href: '/galeria' },
-    { name: 'Párizsi Napló', href: '/blog' },
+    { name: 'Párizsi naplóm', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
   ]
 
@@ -58,7 +57,7 @@ export default function Navigation() {
               transition={{ duration: 0.5 }}
               className="flex items-center gap-3"
             >
-              <div className="relative h-20 w-20">
+              <div className="relative h-[5.5rem] w-[5.5rem]">
                 <Image
                   src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"

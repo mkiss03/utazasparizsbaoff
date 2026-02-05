@@ -32,10 +32,10 @@ export default function NewsletterSection() {
   }, [])
 
   return (
-    <section id="newsletter" className="relative overflow-hidden bg-[#FAF7F2] py-20 md:py-32">
+    <section id="newsletter" className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 md:py-32">
       {/* Decorative Elements */}
-      <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 rounded-full bg-parisian-beige-300 opacity-20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-parisian-beige-400 opacity-15 blur-3xl" />
+      <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 rounded-full bg-parisian-gold-500 opacity-10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-french-blue-600 opacity-20 blur-3xl" />
 
       <div className="container relative z-10 mx-auto px-4">
         {/* Icon & Title */}

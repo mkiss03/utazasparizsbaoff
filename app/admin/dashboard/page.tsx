@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MapPin, Image, FileText, Euro } from 'lucide-react'
+import { MapPin, Image, FileText, Euro, Map } from 'lucide-react'
 import Link from 'next/link'
 import type { Tour } from '@/lib/types/database'
 
@@ -119,6 +119,20 @@ export default function DashboardPage() {
                 </h3>
                 <p className="text-sm text-navy-400">
                   Hero, Rólam szekció frissítése
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/admin/map-content"
+              className="flex items-center gap-3 rounded-lg border-2 border-champagne-300 p-4 transition-all hover:border-gold-400 hover:bg-gold-50"
+            >
+              <Map className="h-6 w-6 text-gold-500" />
+              <div>
+                <h3 className="font-semibold text-navy-500">
+                  Térkép Tartalom
+                </h3>
+                <p className="text-sm text-navy-400">
+                  Interaktív térkép flashcard szerkesztése
                 </p>
               </div>
             </Link>

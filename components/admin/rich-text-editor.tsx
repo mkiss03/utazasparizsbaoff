@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface RichTextEditorProps {
   content: string
@@ -63,8 +63,9 @@ export function RichTextEditor({
     },
   })
 
+  // Update editor content when the content prop changes
   useEffect(() => {
-    if (editor && content && editor.getHTML() !== content) {
+    if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content)
     }
   }, [content, editor])

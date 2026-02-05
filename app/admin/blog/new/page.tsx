@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RichTextEditor } from '@/components/admin/rich-text-editor'
 import { ArrowLeft, Save, Eye } from 'lucide-react'
 import type { Post, BlogCategory } from '@/lib/types/database'
+import { sendBlogNotification } from '@/lib/actions/blog-notification'
 
 export default function NewBlogPostPage() {
   const router = useRouter()
@@ -53,10 +54,29 @@ export default function NewBlogPostPage() {
         .select()
 
       if (error) throw error
-      return result
+      return { result, isPublished: data.is_published }
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
+
+      // Send blog notification if published
+      if (data.isPublished && data.result && data.result.length > 0) {
+        const post = data.result[0]
+        try {
+          await sendBlogNotification({
+            id: post.id,
+            title: post.title,
+            excerpt: post.excerpt,
+            slug: post.slug,
+            cover_image: post.cover_image
+          })
+          console.log('Blog notification sent successfully')
+        } catch (error) {
+          console.error('Failed to send blog notification:', error)
+          // Don't block the success flow if notification fails
+        }
+      }
+
       router.push('/admin/blog')
     },
   })

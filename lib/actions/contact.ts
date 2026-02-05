@@ -40,9 +40,9 @@ export async function sendContactEmail(formData: ContactFormData) {
 
     // Send email to site owner
     const { data, error } = await resend.emails.send({
-      from: 'Utazás Párizsba <onboarding@resend.dev>', // You'll need to configure a verified domain
-      to: ['mkiss0516@gmail.com'],
-      replyTo: formData.email,
+      from: 'Párizsi Útitárs <info@utazasparizsba.com>',
+      to: ['utazasparizsba@gmail.com'],
+      replyTo: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'utazasparizsba@gmail.com',
       subject: `Új kapcsolatfelvételi üzenet tőle: ${formData.name}`,
       html: `
         <!DOCTYPE html>
