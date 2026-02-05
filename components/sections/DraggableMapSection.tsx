@@ -205,6 +205,7 @@ export default function DraggableMapSection() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [activePoint, setActivePoint] = useState<MapPoint | null>(null);
+  const [mapPointsList, setMapPointsList] = useState<MapPoint[]>(mapPoints);
   const [contentData, setContentData] = useState<Record<string, {
     flipCard: { front: string; back: string };
     pros: string[];
@@ -215,6 +216,40 @@ export default function DraggableMapSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
+
+  /**
+   * Fetch map points from Supabase
+   */
+  useEffect(() => {
+    const fetchMapPoints = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('map_points')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        if (!error && data && data.length > 0) {
+          // Map Supabase data to MapPoint format
+          const points = data.map((item: any) => ({
+            id: item.id,
+            type: item.type || 'metro',
+            title: item.title,
+            content: item.description,
+            color: item.color || 'bg-french-blue-600',
+            x: item.x,
+            y: item.y,
+          }));
+          setMapPointsList(points);
+        }
+      } catch (err) {
+        console.error('Error fetching map points:', err);
+        // Fallback to hardcoded points
+        setMapPointsList(mapPoints);
+      }
+    };
+
+    fetchMapPoints();
+  }, [supabase]);
 
   /**
    * Fetch flashcard content from database
@@ -244,7 +279,7 @@ export default function DraggableMapSection() {
     };
 
     fetchContent();
-  }, []);
+  }, [supabase]);
 
   /**
    * Get the appropriate icon based on point type
@@ -441,7 +476,7 @@ export default function DraggableMapSection() {
               />
 
               {/* Interactive Point Markers */}
-              {mapPoints.map((point) => {
+              {mapPointsList.map((point) => {
                 const IconComponent = getIcon(point.type);
                 return (
                   <div
@@ -736,7 +771,7 @@ export default function DraggableMapSection() {
 
           {/* Map Legend */}
           <div className="mt-6 flex flex-wrap gap-4 justify-center">
-            {mapPoints.map((point) => {
+            {mapPointsList.map((point) => {
               const IconComponent = getIcon(point.type);
               return (
                 <button
