@@ -29,8 +29,8 @@ export const mapPoints: MapPoint[] = [
     title: 'Jegyek - amit turistaként érdemes tudni',
     content: 'Milyen jegyet vegyél? Navigo, T+ vagy mobilapp? Minden lényeges információ a jegyvásárlásról.',
     color: 'bg-parisian-gold-500', // Gold/Ochre (Brand Secondary)
-    x: 50,
-    y: 50,
+    x: 35,
+    y: 55,
   },
   {
     id: 'point-3',
