@@ -117,6 +117,21 @@ const config: Config = {
   },
   plugins: [
     require('@tailwindcss/typography'),
+    // Add 3D transform utilities for flip card effect
+    function({ addUtilities }: any) {
+      const newUtilities = {
+        '.perspective-1000': {
+          perspective: '1000px',
+        },
+        '.transform-style-3d': {
+          transformStyle: 'preserve-3d',
+        },
+        '.backface-hidden': {
+          backfaceVisibility: 'hidden',
+        },
+      }
+      addUtilities(newUtilities)
+    },
   ],
 };
 export default config;

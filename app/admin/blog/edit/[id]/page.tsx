@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RichTextEditor } from '@/components/admin/rich-text-editor'
 import { ArrowLeft, Save, Eye, EyeOff, FileText } from 'lucide-react'
 import type { Post, BlogCategory, PostStatus } from '@/lib/types/database'
+import { sendBlogNotification } from '@/lib/actions/blog-notification'
 
 export default function EditBlogPostPage() {
   const router = useRouter()
@@ -74,6 +75,7 @@ export default function EditBlogPostPage() {
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<Post> & { status: PostStatus }) => {
       const isPublishing = data.status === 'published'
+      const wasNotPublished = !post?.is_published && !post?.published_at
       const postData = {
         ...data,
         is_published: isPublishing,
@@ -89,10 +91,34 @@ export default function EditBlogPostPage() {
         .eq('id', postId)
 
       if (error) throw error
+
+      return {
+        isPublishing,
+        wasNotPublished,
+        postData: { ...data, id: postId }
+      }
     },
-    onSuccess: () => {
+    onSuccess: async (result) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
+
+      // Send blog notification only if this is a new publication (not an update to already published post)
+      if (result.isPublishing && result.wasNotPublished) {
+        try {
+          await sendBlogNotification({
+            id: result.postData.id,
+            title: result.postData.title || '',
+            excerpt: result.postData.excerpt,
+            slug: result.postData.slug || '',
+            cover_image: result.postData.cover_image
+          })
+          console.log('Blog notification sent successfully')
+        } catch (error) {
+          console.error('Failed to send blog notification:', error)
+          // Don't block the success flow if notification fails
+        }
+      }
+
       router.push('/admin/blog')
     },
   })
