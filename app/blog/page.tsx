@@ -153,8 +153,8 @@ export default function BlogPage() {
                 )}
               </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* Posts Grid */}
         <div className="container mx-auto px-4 py-16">
