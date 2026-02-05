@@ -1,71 +1,86 @@
 /**
- * Points of Interest Data for Interactive Map
- * Positions are in percentages (0-100) relative to the full map image size
+ * Map Point type matching the Supabase `map_points` table schema.
  */
-
 export interface MapPoint {
   id: string;
-  type: 'transport' | 'ticket' | 'info' | 'survival' | 'apps' | 'situations';
   title: string;
-  content: string;
-  color: string; // Tailwind color class for icon background
-  x: number; // Position as percentage (0-100) of image width
-  y: number; // Position as percentage (0-100) of image height
+  x: number;
+  y: number;
+  type: 'transport' | 'ticket' | 'info' | 'survival' | 'apps' | 'situations' | 'situation';
+  color: string;
+  question: string;
+  answer: string;
+  details: string;
 }
 
-export const mapPoints: MapPoint[] = [
+/**
+ * Fallback points used when the database is empty or unavailable.
+ */
+export const fallbackMapPoints: MapPoint[] = [
   {
     id: 'point-1',
     type: 'transport',
     title: 'Mivel lehet utazni?',
-    content: 'Párizs közlekedési lehetőségei: metró, busz, villamos, RER és még sok más! Ismerd meg az összes opciót.',
-    color: 'bg-french-blue-600', // Navy Blue (Brand Primary)
+    color: 'bg-french-blue-600',
     x: 30,
     y: 35,
+    question: 'Mivel lehet utazni Párizsban?',
+    answer: 'Metró, RER, busz, villamos, bicikli és roller – kombinálhatod őket, hogy bárhova eljuss.',
+    details: '',
   },
   {
     id: 'point-2',
     type: 'ticket',
-    title: 'Jegyek - amit turistaként érdemes tudni',
-    content: 'Milyen jegyet vegyél? Navigo, T+ vagy mobilapp? Minden lényeges információ a jegyvásárlásról.',
-    color: 'bg-parisian-gold-500', // Gold/Ochre (Brand Secondary)
+    title: 'Jegyek',
+    color: 'bg-parisian-gold-500',
     x: 35,
     y: 55,
+    question: 'Melyik jegyet vegyem Párizsban?',
+    answer: 'A T+ jegy egyetlen útra jó. Ha több napot töltesz itt, a Navigo bérlet sokkal kifizetődőbb!',
+    details: '',
   },
   {
     id: 'point-3',
     type: 'info',
     title: 'Hasznos tudnivalók',
-    content: 'Tájékozódás, átszállás, üzemidő és egyéb fontos információk a párizsi közlekedésről.',
-    color: 'bg-green-700', // Deep Green (Sage/Forest)
+    color: 'bg-green-700',
     x: 70,
     y: 35,
+    question: 'Mire figyeljek a párizsi közlekedésben?',
+    answer: '"Correspondance" = átszállás, "Sortie" = kijárat. Minden vonal más színű.',
+    details: '',
   },
   {
     id: 'point-4',
     type: 'survival',
-    title: 'Kis párizsi túlélőtippek',
-    content: 'Praktikus tanácsok a helyi közlekedéshez: mit kerülj, mire figyelj, hogyan spórolj időt.',
-    color: 'bg-orange-600', // Terra Cotta / Burnt Orange
+    title: 'Túlélőtippek',
+    color: 'bg-orange-600',
     x: 25,
     y: 60,
+    question: 'Mik a legfontosabb túlélőtippek?',
+    answer: 'Csúcsidőben (8-9h, 17-19h) tömeg van. Vigyázz a táskádra és tartsd jobbra a mozgólépcsőn!',
+    details: '',
   },
   {
     id: 'point-5',
     type: 'apps',
     title: 'Ajánlott appok',
-    content: 'A legjobb mobilalkalmazások, amelyek megkönnyítik a párizsi közlekedést.',
-    color: 'bg-slate-700', // Slate / Dark Grey
+    color: 'bg-slate-700',
     x: 60,
     y: 65,
+    question: 'Milyen appokat használjak?',
+    answer: 'Citymapper, Google Maps offline, Boomerang (RATP) – ezek a legfontosabbak.',
+    details: '',
   },
   {
     id: 'point-6',
     type: 'situations',
     title: 'Valós Szituációk',
-    content: 'Példák, történetek és konkrét helyzetek, amikkel találkozhatsz a párizsi közlekedésben.',
-    color: 'bg-blue-600', // Royal Blue
+    color: 'bg-blue-600',
     x: 45,
     y: 80,
+    question: 'Milyen valós helyzetekkel találkozhatok?',
+    answer: 'Sztrájk, eltévedés, tömeg – ne aggódj, mindenki átéli! Az appok segítenek B tervet találni.',
+    details: '',
   },
 ];

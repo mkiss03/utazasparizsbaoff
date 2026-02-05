@@ -63,15 +63,15 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'Tartalom',
-    href: '/admin/content',
-    icon: FileText,
-    type: 'item',
-  },
-  {
     title: 'Térkép',
     href: '/admin/map',
     icon: Map,
+    type: 'item',
+  },
+  {
+    title: 'Tartalom',
+    href: '/admin/content',
+    icon: FileText,
     type: 'item',
   },
   {
