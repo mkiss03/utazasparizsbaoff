@@ -4,19 +4,15 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Calendar, Filter, ChevronDown, ChevronUp } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { BlogHero } from '@/components/blog/BlogHero'
+import { BlogFilter } from '@/components/blog/BlogFilter'
+import { PostGrid } from '@/components/blog/PostGrid'
 import type { Post, BlogCategory } from '@/lib/types/database'
-
-const INITIAL_VISIBLE_COUNT = 10
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('')
-  const [isExpanded, setIsExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
 
@@ -33,7 +29,7 @@ export default function BlogPage() {
       .select('*')
       .order('name')
 
-    // Fetch published posts only
+    // Fetch posts
     const { data: postsData } = await supabase
       .from('posts')
       .select('*')
@@ -45,14 +41,7 @@ export default function BlogPage() {
     setIsLoading(false)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('hu-HU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
+  // Filter logic
   const filteredPosts = selectedCategory
     ? posts.filter(post => post.category_id === selectedCategory)
     : posts
@@ -61,170 +50,26 @@ export default function BlogPage() {
     <>
       <Navigation />
       <main className="min-h-screen bg-gradient-to-b from-parisian-cream-100 to-parisian-beige-100">
-        {/* Hero */}
-        <div className="bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50 py-20 md:py-32">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="mb-4 font-playfair text-5xl font-bold text-parisian-grey-800 md:text-6xl lg:text-7xl">
-              Párizsi naplóm
-            </h1>
-            <p className="mx-auto max-w-2xl text-xl text-parisian-grey-600">
-              Történetek, élmények és titkos helyek a fények városából
-            </p>
-          </div>
-        </div>
+        
+        {/* 1. Hero Section */}
+        <BlogHero />
 
-        {/* Category Filter Pills */}
-        {categories.length > 0 && (
-          <div className="border-b border-parisian-beige-200 bg-white">
-            <div className="container mx-auto px-4 py-6">
-              <div className="relative">
-                {/* Filter Button (when collapsed) */}
-                {!isExpanded && (
-                  <motion.div
-                    className="flex justify-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <button
-                      onClick={() => setIsExpanded(true)}
-                      className="flex items-center gap-3 rounded-full px-8 py-3 text-base font-semibold
-                        bg-parisian-beige-400 text-white shadow-lg
-                        hover:bg-parisian-beige-500 hover:shadow-xl
-                        transition-all duration-300"
-                    >
-                      <Filter className="h-5 w-5" />
-                      Témák szűrése
-                    </button>
-                  </motion.div>
-                )}
+        {/* 2. Filter Section */}
+        <BlogFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
 
-                {/* Tags Container (when expanded) */}
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                      <Filter className="h-5 w-5 text-parisian-grey-600" />
-                      <button
-                        onClick={() => setSelectedCategory('')}
-                        className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                          selectedCategory === ''
-                            ? 'bg-parisian-beige-400 text-white shadow-md'
-                            : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
-                        }`}
-                      >
-                        Összes
-                      </button>
-                      <AnimatePresence initial={false}>
-                        {categories.map((category) => (
-                          <motion.button
-                            key={category.id}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.2 }}
-                            onClick={() => setSelectedCategory(category.id)}
-                            className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                              selectedCategory === category.id
-                                ? 'bg-parisian-beige-400 text-white shadow-md'
-                                : 'bg-parisian-beige-100 text-parisian-grey-700 hover:bg-parisian-beige-200'
-                            }`}
-                          >
-                            {category.name}
-                          </motion.button>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-
-                    {/* Collapse Button */}
-                    <div className="flex justify-center">
-                      <button
-                        onClick={() => setIsExpanded(false)}
-                        className="flex items-center gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-parisian-grey-700 transition-all duration-300 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
-                      >
-                        <ChevronUp className="h-4 w-4" />
-                        Elrejt
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Posts Grid */}
+        {/* 3. Post Grid */}
         <div className="container mx-auto px-4 py-16">
-          {isLoading ? (
-            <div className="text-center">
-              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-parisian-beige-200 border-t-parisian-beige-500" />
-              <p className="mt-4 text-parisian-grey-600">Betöltés...</p>
-            </div>
-          ) : filteredPosts.length === 0 ? (
-            <div className="rounded-3xl bg-white p-12 text-center shadow-xl">
-              <h2 className="font-playfair text-2xl font-bold text-parisian-grey-800">
-                {selectedCategory ? 'Nincs bejegyzés ebben a kategóriában' : 'Hamarosan...'}
-              </h2>
-              <p className="mt-2 text-parisian-grey-600">
-                {selectedCategory ? 'Próbálj ki egy másik kategóriát!' : 'Dolgozunk az első bejegyzéseken!'}
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {filteredPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <Link href={`/blog/${post.slug}`}>
-                    <article className="group overflow-hidden rounded-3xl bg-white shadow-xl transition-all duration-500 hover:scale-105 hover:shadow-2xl">
-                      {/* Cover Image */}
-                      {post.cover_image && (
-                        <div className="relative aspect-[16/10] overflow-hidden">
-                          <Image
-                            src={post.cover_image}
-                            alt={post.title}
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-parisian-grey-800/50 to-transparent" />
-                        </div>
-                      )}
-
-                      {/* Content */}
-                      <div className="p-6">
-                        {/* Date */}
-                        <div className="mb-3 flex items-center gap-2 text-sm text-parisian-grey-600">
-                          <Calendar className="h-4 w-4 text-parisian-beige-500" />
-                          <span>
-                            {formatDate(post.published_at || post.created_at)}
-                          </span>
-                        </div>
-
-                        {/* Title */}
-                        <h2 className="mb-3 font-playfair text-2xl font-bold text-parisian-grey-800 transition-colors group-hover:text-parisian-beige-500">
-                          {post.title}
-                        </h2>
-
-                        {/* Excerpt */}
-                        {post.excerpt && (
-                          <p className="line-clamp-3 text-parisian-grey-600">
-                            {post.excerpt}
-                          </p>
-                        )}
-                      </div>
-                    </article>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          )}
+          <PostGrid 
+            posts={filteredPosts} 
+            isLoading={isLoading} 
+            selectedCategory={selectedCategory}
+          />
         </div>
+
       </main>
       <Footer />
     </>
