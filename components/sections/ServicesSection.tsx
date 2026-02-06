@@ -12,6 +12,13 @@ interface Program {
   title: string
   description?: string
   items?: string[]
+  show_price?: boolean
+  show_duration?: boolean
+  show_group_size?: boolean
+  custom_badge_text?: string
+  price?: number
+  duration?: number
+  group_size?: number
 }
 
 interface Service {
@@ -24,6 +31,10 @@ interface Service {
   duration: string
   price: string
   color: string
+  // Raw values for program badges
+  rawPrice: number
+  rawDuration: number
+  rawGroupSize: number
 }
 
 interface ServicesSectionProps {
@@ -90,7 +101,10 @@ export default function ServicesSection({
           programs: tour.programs || [],
           duration,
           price,
-          color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500'
+          color: tour.color_gradient || 'from-parisian-beige-400 to-parisian-beige-500',
+          rawPrice: tour.price || 0,
+          rawDuration: tour.duration || 0,
+          rawGroupSize: tour.max_group_size || 0
         }
       })
 
@@ -351,42 +365,85 @@ export default function ServicesSection({
                       transition={{ delay: 0.4 }}
                       className="mb-8 space-y-6"
                     >
-                      {selectedService.programs.map((program, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ x: -20, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: 0.5 + idx * 0.1 }}
-                          className="rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 shadow-md"
-                        >
-                          <h4 className="mb-3 font-montserrat text-lg font-bold text-parisian-grey-800">
-                            {program.title}
-                          </h4>
-                          {program.description && (
-                            <p className="mb-3 text-sm leading-relaxed text-parisian-grey-600">
-                              {program.description}
-                            </p>
-                          )}
-                          {program.items && program.items.length > 0 && (
-                            <ul className="space-y-2">
-                              {program.items.map((item, itemIdx) => (
-                                <motion.li
-                                  key={itemIdx}
-                                  initial={{ x: -10, opacity: 0 }}
-                                  animate={{ x: 0, opacity: 1 }}
-                                  transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
-                                  className="flex items-start gap-3"
-                                >
-                                  <div className="mt-1.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-200">
-                                    <div className="h-2 w-2 rounded-full bg-parisian-beige-500" />
+                      {selectedService.programs.map((program, idx) => {
+                        // Determine what to show in the program footer
+                        const showAnyBadge = program.show_price || program.show_duration || program.show_group_size || program.custom_badge_text
+                        const programPrice = program.price ?? selectedService.rawPrice
+                        const programDuration = program.duration ?? selectedService.rawDuration
+                        const programGroupSize = program.group_size ?? selectedService.rawGroupSize
+
+                        return (
+                          <motion.div
+                            key={idx}
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 + idx * 0.1 }}
+                            className="rounded-2xl border-2 border-parisian-beige-200 bg-gradient-to-br from-white to-parisian-cream-50 p-6 shadow-md"
+                          >
+                            <h4 className="mb-3 font-montserrat text-lg font-bold text-parisian-grey-800">
+                              {program.title}
+                            </h4>
+                            {program.description && (
+                              <p className="mb-3 text-sm leading-relaxed text-parisian-grey-600">
+                                {program.description}
+                              </p>
+                            )}
+                            {program.items && program.items.length > 0 && (
+                              <ul className="space-y-2">
+                                {program.items.map((item, itemIdx) => (
+                                  <motion.li
+                                    key={itemIdx}
+                                    initial={{ x: -10, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.6 + idx * 0.1 + itemIdx * 0.05 }}
+                                    className="flex items-start gap-3"
+                                  >
+                                    <div className="mt-1.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-200">
+                                      <div className="h-2 w-2 rounded-full bg-parisian-beige-500" />
+                                    </div>
+                                    <span className="text-sm leading-relaxed text-parisian-grey-600">{item}</span>
+                                  </motion.li>
+                                ))}
+                              </ul>
+                            )}
+
+                            {/* Program-specific badges */}
+                            {showAnyBadge && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.7 + idx * 0.1 }}
+                                className="mt-4 pt-4 border-t border-parisian-beige-200"
+                              >
+                                {program.custom_badge_text ? (
+                                  <p className="text-sm font-semibold text-parisian-beige-600 italic">
+                                    {program.custom_badge_text}
+                                  </p>
+                                ) : (
+                                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-parisian-grey-700">
+                                    {program.show_duration && programDuration > 0 && (
+                                      <span>
+                                        <span className="font-semibold">Időtartam:</span> kb. {programDuration} óra
+                                      </span>
+                                    )}
+                                    {program.show_price && programPrice > 0 && (
+                                      <span>
+                                        <span className="font-semibold">Ár:</span> {programPrice} EUR
+                                        {program.show_group_size && programGroupSize > 0 && ` (max. ${programGroupSize} fő)`}
+                                      </span>
+                                    )}
+                                    {program.show_group_size && !program.show_price && programGroupSize > 0 && (
+                                      <span>
+                                        <span className="font-semibold">Létszám:</span> max. {programGroupSize} fő
+                                      </span>
+                                    )}
                                   </div>
-                                  <span className="text-sm leading-relaxed text-parisian-grey-600">{item}</span>
-                                </motion.li>
-                              ))}
-                            </ul>
-                          )}
-                        </motion.div>
-                      ))}
+                                )}
+                              </motion.div>
+                            )}
+                          </motion.div>
+                        )
+                      })}
                     </motion.div>
                   )}
 

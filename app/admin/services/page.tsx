@@ -398,6 +398,100 @@ export default function ServicesPage() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Program Footer Badges */}
+                  <div className="mt-4 pt-4 border-t border-parisian-beige-200">
+                    <Label className="text-sm font-semibold text-navy-500 mb-3 block">
+                      Blokk alján megjelenő infó
+                    </Label>
+
+                    {/* Custom text option (for special cases like "Kilométer alapú számlázás") */}
+                    <div className="space-y-2 mb-3">
+                      <Label htmlFor={`program-custom-badge-${programIdx}`} className="text-xs text-navy-400">
+                        Egyedi szöveg (ha kitöltöd, a checkboxok nem számítanak)
+                      </Label>
+                      <Input
+                        id={`program-custom-badge-${programIdx}`}
+                        value={program.custom_badge_text || ''}
+                        onChange={(e) => handleProgramChange(programIdx, 'custom_badge_text', e.target.value)}
+                        placeholder="pl.: Kilométer alapú számlázás"
+                      />
+                    </div>
+
+                    {/* Checkboxes for standard badges */}
+                    <div className="flex flex-wrap gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={program.show_price || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_price', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <span className="text-sm text-navy-600">Ár</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={program.show_duration || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_duration', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <span className="text-sm text-navy-600">Időtartam</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={program.show_group_size || false}
+                          onChange={(e) => handleProgramChange(programIdx, 'show_group_size', e.target.checked)}
+                          className="h-4 w-4 rounded border-parisian-beige-400"
+                        />
+                        <span className="text-sm text-navy-600">Létszám</span>
+                      </label>
+                    </div>
+
+                    {/* Optional custom values */}
+                    {(program.show_price || program.show_duration || program.show_group_size) && (
+                      <div className="mt-3 grid grid-cols-3 gap-3">
+                        {program.show_price && (
+                          <div className="space-y-1">
+                            <Label className="text-xs text-navy-400">Egyedi ár (EUR)</Label>
+                            <Input
+                              type="number"
+                              value={program.price || ''}
+                              onChange={(e) => handleProgramChange(programIdx, 'price', e.target.value ? parseFloat(e.target.value) : undefined)}
+                              placeholder="Szolg. ár"
+                            />
+                          </div>
+                        )}
+                        {program.show_duration && (
+                          <div className="space-y-1">
+                            <Label className="text-xs text-navy-400">Egyedi időtartam (óra)</Label>
+                            <Input
+                              type="number"
+                              step="0.5"
+                              value={program.duration || ''}
+                              onChange={(e) => handleProgramChange(programIdx, 'duration', e.target.value ? parseFloat(e.target.value) : undefined)}
+                              placeholder="Szolg. idő"
+                            />
+                          </div>
+                        )}
+                        {program.show_group_size && (
+                          <div className="space-y-1">
+                            <Label className="text-xs text-navy-400">Egyedi létszám</Label>
+                            <Input
+                              type="number"
+                              value={program.group_size || ''}
+                              onChange={(e) => handleProgramChange(programIdx, 'group_size', e.target.value ? parseInt(e.target.value) : undefined)}
+                              placeholder="Szolg. max"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <p className="text-xs text-navy-400 mt-2">
+                      Ha üresen hagyod az egyedi értékeket, a szolgáltatás fő adatai jelennek meg.
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

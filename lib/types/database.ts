@@ -28,6 +28,15 @@ export interface Program {
   title: string
   description?: string
   items?: string[]
+  // Program-specific pricing/info badges
+  show_price?: boolean
+  show_duration?: boolean
+  show_group_size?: boolean
+  custom_badge_text?: string  // e.g., "Kilométer alapú számlázás"
+  // Optional custom values (if not set, uses service-level values)
+  price?: number
+  duration?: number
+  group_size?: number
 }
 
 export interface Tour {
