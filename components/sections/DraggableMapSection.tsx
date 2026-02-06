@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { MapPin, TrainFront, Ticket, Info, X, ShieldCheck, Smartphone, Users, MessageCircle } from 'lucide-react';
+import { MapPin, TrainFront, Ticket, Info, X, Shield, Smartphone, Users, MessageCircle, Check, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { fallbackMapPoints, type MapPoint } from './draggable-map-data';
@@ -95,24 +95,50 @@ export default function DraggableMapSection() {
   /**
    * Get the appropriate icon based on point type
    */
-  const getIcon = (type: MapPoint['type']) => {
+  const getIcon = (type: MapPoint['type'] | string) => {
     switch (type) {
-      case 'transport':
-        return TrainFront;
       case 'ticket':
         return Ticket;
+      case 'metro':
+      case 'transport':
+        return TrainFront;
       case 'info':
         return Info;
+      case 'safety':
       case 'survival':
-        return ShieldCheck;
+        return Shield;
+      case 'app':
       case 'apps':
         return Smartphone;
-      case 'situations':
-        return Users;
       case 'situation':
+      case 'situations':
         return MessageCircle;
       default:
         return MapPin;
+    }
+  };
+
+  /**
+   * Get color classes based on color field
+   */
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case 'yellow':
+        return 'bg-amber-400 text-amber-900';
+      case 'blue':
+        return 'bg-blue-600 text-white';
+      case 'green':
+        return 'bg-emerald-500 text-white';
+      case 'red':
+        return 'bg-rose-500 text-white';
+      case 'purple':
+        return 'bg-purple-600 text-white';
+      default:
+        // If color is already a Tailwind class (like bg-french-blue-600), use it
+        if (color.startsWith('bg-')) {
+          return `${color} text-white`;
+        }
+        return 'bg-slate-900 text-white';
     }
   };
 
@@ -236,6 +262,7 @@ export default function DraggableMapSection() {
               {/* Interactive Point Markers */}
               {points.map((point) => {
                 const IconComponent = getIcon(point.type);
+                const colorClasses = getColorClasses(point.color);
                 return (
                   <div
                     key={point.id}
@@ -249,11 +276,11 @@ export default function DraggableMapSection() {
                       onTouchStart={(e) => e.stopPropagation()}
                     >
                       <div className={`
-                        w-12 h-12 rounded-full ${point.color} shadow-lg
+                        w-12 h-12 rounded-full ${colorClasses} shadow-lg
                         flex items-center justify-center transition-all duration-200 hover:scale-110
                         ${activePoint?.id === point.id ? 'ring-4 ring-white scale-110' : ''}
                       `}>
-                        <IconComponent className="w-6 h-6 text-white" />
+                        <IconComponent className="w-6 h-6" />
                       </div>
                       <div className={`
                         absolute left-1/2 -translate-x-1/2 bottom-full mb-2
@@ -311,11 +338,11 @@ export default function DraggableMapSection() {
                     {/* Deep Blue Header */}
                     <div className="relative bg-slate-900 p-6">
                       <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-full ${activePoint.color}
+                        <div className={`w-12 h-12 rounded-full ${getColorClasses(activePoint.color)}
                           flex items-center justify-center flex-shrink-0`}>
                           {(() => {
                             const IconComp = getIcon(activePoint.type);
-                            return <IconComp className="w-6 h-6 text-white" />;
+                            return <IconComp className="w-6 h-6" />;
                           })()}
                         </div>
                         <div className="flex-1">
@@ -339,21 +366,93 @@ export default function DraggableMapSection() {
 
                     {/* Light Body */}
                     <div className="bg-gray-50 p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                      {/* Flip Card */}
-                      {activePoint.question && (
-                        <FlipCard
-                          front={activePoint.question}
-                          back={activePoint.answer || ''}
-                        />
-                      )}
+                      {/* Rich Content for Ticket Type */}
+                      {activePoint.type === 'ticket' ? (
+                        <div className="space-y-4">
+                          {/* Section A - Előnyök (Green) */}
+                          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                              <h4 className="font-bold text-emerald-800 text-lg">Előnyök</h4>
+                            </div>
+                            <ul className="space-y-2">
+                              {[
+                                'T+ jegy: olcsó, ha csak 1-2 utat teszel',
+                                'Navigo: korlátlan utazás 1 hétre',
+                                'Automatákból és pénztárakból is vehető',
+                                'Gyerekeknek kedvezmény jár'
+                              ].map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-2 text-emerald-900">
+                                  <Check className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                                  <span className="text-sm">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
 
-                      {/* Details Section */}
-                      {activePoint.details && (
-                        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                            {activePoint.details}
-                          </p>
+                          {/* Section B - Hogyan használd (Purple) */}
+                          <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">!</span>
+                              </div>
+                              <h4 className="font-bold text-purple-800 text-lg">Hogyan használd</h4>
+                            </div>
+                            <ol className="space-y-2">
+                              {[
+                                'Vegyél jegyet metróállomáson (automata vagy pénztár)',
+                                'T+ jegy: nyomd be a kapunál',
+                                'Navigo: érintsd a kártyát a sárga olvasón',
+                                'Őrizd meg a jegyed a kijáratig!',
+                                'Ellenőrök bármikor kérhetik - büntetés akár 50€'
+                              ].map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-purple-900">
+                                  <span className="w-5 h-5 rounded-full bg-purple-200 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                                    {idx + 1}
+                                  </span>
+                                  <span className="text-sm">{item}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+
+                          {/* Section C - Viktória titkos tippje (Yellow) */}
+                          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+                                <Lightbulb className="w-5 h-5 text-amber-900" />
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-amber-800 text-lg mb-2">Viktória titkos tippje</h4>
+                                <p className="text-sm text-amber-900 leading-relaxed">
+                                  Ha 3+ napot töltesz Párizsban, azonnal vegyél <strong>Navigo Découverte</strong> bérletet (heti bérlet ~30€).
+                                  Megtérül már 4-5 utazás után! Vigyél magaddal egy útlevélképet hozzá.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                      ) : (
+                        <>
+                          {/* Flip Card for other types */}
+                          {activePoint.question && (
+                            <FlipCard
+                              front={activePoint.question}
+                              back={activePoint.answer || ''}
+                            />
+                          )}
+
+                          {/* Details Section */}
+                          {activePoint.details && (
+                            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                                {activePoint.details}
+                              </p>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
 
