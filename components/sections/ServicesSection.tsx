@@ -366,8 +366,14 @@ export default function ServicesSection({
                       className="mb-8 space-y-6"
                     >
                       {selectedService.programs.map((program, idx) => {
+                        // Auto-detect "Repülőtéri transzfer" for custom badge
+                        const isAirportTransfer = program.title.toLowerCase().includes('repülőtéri transzfer') ||
+                          program.title.toLowerCase().includes('repülőtéri transzfer')
+                        const autoCustomBadge = isAirportTransfer ? 'Kilométer alapú számlázás' : null
+
                         // Determine what to show in the program footer
-                        const showAnyBadge = program.show_price || program.show_duration || program.show_group_size || program.custom_badge_text
+                        const customBadgeText = program.custom_badge_text || autoCustomBadge
+                        const showAnyBadge = program.show_price || program.show_duration || program.show_group_size || customBadgeText
                         const programPrice = program.price ?? selectedService.rawPrice
                         const programDuration = program.duration ?? selectedService.rawDuration
                         const programGroupSize = program.group_size ?? selectedService.rawGroupSize
@@ -415,9 +421,9 @@ export default function ServicesSection({
                                 transition={{ delay: 0.7 + idx * 0.1 }}
                                 className="mt-4 pt-4 border-t border-parisian-beige-200"
                               >
-                                {program.custom_badge_text ? (
+                                {customBadgeText ? (
                                   <p className="text-sm font-semibold text-parisian-beige-600 italic">
-                                    {program.custom_badge_text}
+                                    {customBadgeText}
                                   </p>
                                 ) : (
                                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-parisian-grey-700">
@@ -446,23 +452,6 @@ export default function ServicesSection({
                       })}
                     </motion.div>
                   )}
-
-                  {/* Price & Duration */}
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="mb-8 rounded-2xl bg-gradient-to-r from-parisian-beige-50 to-parisian-cream-100 p-6"
-                  >
-                    {selectedService.duration && (
-                      <p className="mb-2 font-montserrat text-base text-parisian-grey-700">
-                        <span className="font-bold">Időtartam:</span> {selectedService.duration}
-                      </p>
-                    )}
-                    <p className="font-montserrat text-base text-parisian-grey-700">
-                      <span className="font-bold">Ár:</span> {selectedService.price}
-                    </p>
-                  </motion.div>
 
                   {/* CTA Button */}
                   <motion.a
