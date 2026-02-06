@@ -365,94 +365,81 @@ export default function DraggableMapSection() {
                     </div>
 
                     {/* Light Body */}
-                    <div className="bg-gray-50 p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                      {/* Rich Content for Ticket Type */}
-                      {activePoint.type === 'ticket' ? (
-                        <div className="space-y-4">
-                          {/* Section A - Előnyök (Green) */}
-                          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                                <Check className="w-4 h-4 text-white" />
-                              </div>
-                              <h4 className="font-bold text-emerald-800 text-lg">Előnyök</h4>
-                            </div>
-                            <ul className="space-y-2">
-                              {[
-                                'T+ jegy: olcsó, ha csak 1-2 utat teszel',
-                                'Navigo: korlátlan utazás 1 hétre',
-                                'Automatákból és pénztárakból is vehető',
-                                'Gyerekeknek kedvezmény jár'
-                              ].map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-2 text-emerald-900">
-                                  <Check className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
-                                  <span className="text-sm">{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                    <div className="bg-gray-50 p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                      {/* Flip Card - Always shown for all types */}
+                      {activePoint.question && (
+                        <FlipCard
+                          front={activePoint.question}
+                          back={activePoint.answer || ''}
+                        />
+                      )}
 
-                          {/* Section B - Hogyan használd (Purple) */}
-                          <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">!</span>
-                              </div>
-                              <h4 className="font-bold text-purple-800 text-lg">Hogyan használd</h4>
+                      {/* Section A - Előnyök (Green) - Only if pros exists */}
+                      {activePoint.pros && activePoint.pros.trim() && (
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                              <Check className="w-4 h-4 text-white" />
                             </div>
-                            <ol className="space-y-2">
-                              {[
-                                'Vegyél jegyet metróállomáson (automata vagy pénztár)',
-                                'T+ jegy: nyomd be a kapunál',
-                                'Navigo: érintsd a kártyát a sárga olvasón',
-                                'Őrizd meg a jegyed a kijáratig!',
-                                'Ellenőrök bármikor kérhetik - büntetés akár 50€'
-                              ].map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-3 text-purple-900">
-                                  <span className="w-5 h-5 rounded-full bg-purple-200 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                                    {idx + 1}
-                                  </span>
-                                  <span className="text-sm">{item}</span>
-                                </li>
-                              ))}
-                            </ol>
+                            <h4 className="font-bold text-emerald-800 text-lg">Előnyök</h4>
                           </div>
+                          <ul className="space-y-2">
+                            {activePoint.pros.split('\n').filter(line => line.trim()).map((item, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-emerald-900">
+                                <Check className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                                <span className="text-sm">{item.trim()}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
-                          {/* Section C - Viktória titkos tippje (Yellow) */}
-                          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-                            <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
-                                <Lightbulb className="w-5 h-5 text-amber-900" />
-                              </div>
-                              <div>
-                                <h4 className="font-bold text-amber-800 text-lg mb-2">Viktória titkos tippje</h4>
-                                <p className="text-sm text-amber-900 leading-relaxed">
-                                  Ha 3+ napot töltesz Párizsban, azonnal vegyél <strong>Navigo Découverte</strong> bérletet (heti bérlet ~30€).
-                                  Megtérül már 4-5 utazás után! Vigyél magaddal egy útlevélképet hozzá.
-                                </p>
-                              </div>
+                      {/* Section B - Hogyan használd (Purple) - Only if usage_steps exists */}
+                      {activePoint.usage_steps && activePoint.usage_steps.trim() && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">!</span>
+                            </div>
+                            <h4 className="font-bold text-purple-800 text-lg">Hogyan használd</h4>
+                          </div>
+                          <ol className="space-y-2">
+                            {activePoint.usage_steps.split('\n').filter(line => line.trim()).map((item, idx) => (
+                              <li key={idx} className="flex items-start gap-3 text-purple-900">
+                                <span className="w-5 h-5 rounded-full bg-purple-200 text-purple-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-sm">{item.trim()}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+
+                      {/* Section C - Viktória titkos tippje (Yellow) - Only if tip exists */}
+                      {activePoint.tip && activePoint.tip.trim() && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+                              <Lightbulb className="w-5 h-5 text-amber-900" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-amber-800 text-lg mb-2">Viktória titkos tippje</h4>
+                              <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-line">
+                                {activePoint.tip}
+                              </p>
                             </div>
                           </div>
                         </div>
-                      ) : (
-                        <>
-                          {/* Flip Card for other types */}
-                          {activePoint.question && (
-                            <FlipCard
-                              front={activePoint.question}
-                              back={activePoint.answer || ''}
-                            />
-                          )}
+                      )}
 
-                          {/* Details Section */}
-                          {activePoint.details && (
-                            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                                {activePoint.details}
-                              </p>
-                            </div>
-                          )}
-                        </>
+                      {/* Details Section - fallback for legacy content */}
+                      {activePoint.details && activePoint.details.trim() && !activePoint.pros && !activePoint.usage_steps && !activePoint.tip && (
+                        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                            {activePoint.details}
+                          </p>
+                        </div>
                       )}
                     </div>
 

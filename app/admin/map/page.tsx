@@ -38,6 +38,9 @@ export default function AdminMapPage() {
         question: point.question,
         answer: point.answer,
         details: point.details,
+        pros: point.pros || null,
+        usage_steps: point.usage_steps || null,
+        tip: point.tip || null,
       }
 
       if (point.id) {
@@ -90,6 +93,9 @@ export default function AdminMapPage() {
       question: point.question,
       answer: point.answer,
       details: point.details,
+      pros: point.pros || '',
+      usage_steps: point.usage_steps || '',
+      tip: point.tip || '',
     })
     setIsEditing(true)
   }

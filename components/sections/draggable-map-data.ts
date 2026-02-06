@@ -6,11 +6,15 @@ export interface MapPoint {
   title: string;
   x: number;
   y: number;
-  type: 'transport' | 'ticket' | 'info' | 'survival' | 'apps' | 'situations' | 'situation';
+  type: 'transport' | 'ticket' | 'info' | 'survival' | 'apps' | 'situations' | 'situation' | 'metro' | 'safety' | 'app';
   color: string;
   question: string;
   answer: string;
   details: string;
+  // Rich content sections (newline-separated for lists)
+  pros?: string;        // "Előnyök" - each line is a list item
+  usage_steps?: string; // "Hogyan használd" - each line is a numbered step
+  tip?: string;         // "Viktória titkos tippje" - single text block
 }
 
 /**

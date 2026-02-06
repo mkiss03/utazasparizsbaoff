@@ -38,6 +38,10 @@ export interface MapPointFormData {
   question: string
   answer: string
   details: string
+  // Rich content sections
+  pros?: string
+  usage_steps?: string
+  tip?: string
 }
 
 interface MapPointEditorProps {
@@ -56,6 +60,9 @@ const emptyForm: MapPointFormData = {
   question: '',
   answer: '',
   details: '',
+  pros: '',
+  usage_steps: '',
+  tip: '',
 }
 
 export default function MapPointEditor({ point, onSave, onCancel, isSaving }: MapPointEditorProps) {
@@ -181,14 +188,70 @@ export default function MapPointEditor({ point, onSave, onCancel, isSaving }: Ma
 
       {/* Details */}
       <div className="space-y-2">
-        <Label htmlFor="details">Részletek (kártya alatt)</Label>
+        <Label htmlFor="details">Részletek (régi mező, opcionális)</Label>
         <Textarea
           id="details"
           value={form.details}
           onChange={(e) => setForm({ ...form, details: e.target.value })}
-          placeholder="Bővebb leírás, ami a flip kártya alatt jelenik meg..."
+          placeholder="Csak akkor jelenik meg, ha nincs kitöltve az alábbi 3 szekció..."
+          rows={3}
+        />
+      </div>
+
+      {/* Divider for rich sections */}
+      <div className="border-t-2 border-dashed border-parisian-beige-300 pt-6 mt-6">
+        <h3 className="text-lg font-bold text-navy-500 mb-4">Gazdag tartalom szekciók</h3>
+        <p className="text-sm text-slate-500 mb-4">
+          Ezek a szekciók a flip kártya alatt jelennek meg. Minden szekció opcionális - csak akkor jelenik meg, ha ki van töltve.
+        </p>
+      </div>
+
+      {/* Pros (Előnyök) */}
+      <div className="space-y-2">
+        <Label htmlFor="pros" className="flex items-center gap-2">
+          <span className="w-4 h-4 rounded-full bg-emerald-500" />
+          Előnyök (soronként egy elem)
+        </Label>
+        <Textarea
+          id="pros"
+          value={form.pros || ''}
+          onChange={(e) => setForm({ ...form, pros: e.target.value })}
+          placeholder="T+ jegy: olcsó, ha csak 1-2 utat teszel&#10;Navigo: korlátlan utazás 1 hétre&#10;Automatákból és pénztárakból is vehető"
+          rows={4}
+        />
+        <p className="text-xs text-slate-400">Minden sor egy pipával jelölt lista elem lesz.</p>
+      </div>
+
+      {/* Usage Steps (Hogyan használd) */}
+      <div className="space-y-2">
+        <Label htmlFor="usage_steps" className="flex items-center gap-2">
+          <span className="w-4 h-4 rounded-full bg-purple-500" />
+          Hogyan használd (soronként egy lépés)
+        </Label>
+        <Textarea
+          id="usage_steps"
+          value={form.usage_steps || ''}
+          onChange={(e) => setForm({ ...form, usage_steps: e.target.value })}
+          placeholder="Vegyél jegyet metróállomáson&#10;T+ jegy: nyomd be a kapunál&#10;Navigo: érintsd a kártyát&#10;Őrizd meg a jegyed!"
           rows={5}
         />
+        <p className="text-xs text-slate-400">Minden sor automatikusan számozva lesz (1, 2, 3...).</p>
+      </div>
+
+      {/* Tip (Viktória titkos tippje) */}
+      <div className="space-y-2">
+        <Label htmlFor="tip" className="flex items-center gap-2">
+          <span className="w-4 h-4 rounded-full bg-amber-400" />
+          Viktória titkos tippje
+        </Label>
+        <Textarea
+          id="tip"
+          value={form.tip || ''}
+          onChange={(e) => setForm({ ...form, tip: e.target.value })}
+          placeholder="Ha 3+ napot töltesz Párizsban, azonnal vegyél Navigo Découverte bérletet..."
+          rows={3}
+        />
+        <p className="text-xs text-slate-400">Egy összefüggő szövegblokk, villanykörte ikonnal.</p>
       </div>
 
       {/* Actions */}
