@@ -235,3 +235,39 @@ export interface Testimonial {
   created_at: string
   updated_at: string
 }
+
+// ============================================
+// DISTRICT GUIDE TYPES (Paris Arrondissements)
+// ============================================
+
+export type ContentLayout = 'standard' | 'rich_ticket' | 'rich_list'
+
+export interface DistrictGuide {
+  id: string
+  district_number: number // 1-20
+  title: string
+  subtitle?: string
+  description?: string
+  highlights?: string[]
+  content_layout: ContentLayout
+  sort_order: number
+  is_active: boolean
+
+  // Rich content fields
+  main_attraction?: string
+  local_tips?: string
+  best_for?: string[] // e.g., ['Turisták', 'Kultúra', 'Vásárlás']
+  avoid_tips?: string
+
+  // Visual customization
+  accent_color?: string // Tailwind color name
+  icon_name?: string // Lucide icon name
+
+  // Media
+  cover_image_url?: string
+  gallery_images?: string[]
+
+  // Timestamps
+  created_at: string
+  updated_at: string
+}

@@ -13,7 +13,8 @@ import {
   ShoppingCart,
   DollarSign,
   Tag,
-  MessageSquare
+  MessageSquare,
+  Compass
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -66,6 +67,12 @@ const allNavItems: NavItem[] = [
     title: 'Térkép',
     href: '/admin/map',
     icon: Map,
+    type: 'item',
+  },
+  {
+    title: 'Kerületek',
+    href: '/admin/districts',
+    icon: Compass,
     type: 'item',
   },
   {
