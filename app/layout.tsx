@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/query-provider";
+import BoatTourModal from "@/components/BoatTourModal";
 
 export const metadata: Metadata = {
   title: "Utazás Párizsba - Párizsi Idegenvezetés",
@@ -32,6 +33,7 @@ export default function RootLayout({
         <QueryProvider>
           {children}
         </QueryProvider>
+        <BoatTourModal />
       </body>
     </html>
   );
