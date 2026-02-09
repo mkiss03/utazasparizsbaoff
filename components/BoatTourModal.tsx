@@ -478,11 +478,10 @@ export default function BoatTourModal() {
 
                   {/* Right Side - Content */}
                   <div
-                    className="flex-1 flex flex-col overflow-hidden"
-                    style={{ backgroundColor: '#FAF7F2' }}
+                    className="flex-1 flex flex-col overflow-hidden relative z-10 bg-[#FAF7F2]"
                   >
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10 bg-[#FAF7F2]">
                       <AnimatePresence mode="wait" custom={direction}>
                         <motion.div
                           key={currentStep}
@@ -492,6 +491,7 @@ export default function BoatTourModal() {
                           animate="center"
                           exit="exit"
                           transition={{ duration: 0.25, ease: 'easeInOut' }}
+                          className="w-full bg-[#FAF7F2]"
                         >
                           <CurrentStepComponent />
                         </motion.div>
