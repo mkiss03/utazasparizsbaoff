@@ -428,50 +428,248 @@ export default function BoatTourModal() {
                 {/* Split Layout */}
                 <div className="flex flex-col md:flex-row h-full max-h-[90vh]">
 
-                  {/* Left Side - Moving Window Image */}
+                  {/* Left Side - Journey Visualization */}
                   <div
-                    className="relative w-full md:w-2/5 h-36 md:h-auto min-h-[144px] md:min-h-[520px] overflow-hidden flex-shrink-0"
-                    style={{ backgroundColor: '#FAF7F2' }}
+                    className="relative w-full md:w-2/5 h-36 md:h-auto min-h-[144px] md:min-h-[520px] overflow-hidden flex-shrink-0 bg-[#FAF7F2] z-10"
                   >
-                    {/* Panning Background - Slow horizontal pan */}
-                    <motion.div
-                      className="absolute inset-0 w-[115%] h-full"
-                      style={{
-                        backgroundImage: `url('/images/paris-boat.jpg')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundColor: '#FAF7F2',
-                      }}
-                      animate={{
-                        x: ['0%', '-15%'],
-                      }}
-                      transition={{
-                        x: {
-                          duration: 20,
-                          repeat: Infinity,
-                          ease: 'linear',
-                        },
-                      }}
-                    />
+                    {/* Journey Path Container */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {/* Mobile: Horizontal layout */}
+                      <div className="md:hidden relative w-full h-full px-8 py-6">
+                        {/* Horizontal dashed path */}
+                        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+                          <path
+                            d="M 10% 50% Q 30% 35%, 50% 50% T 90% 50%"
+                            fill="none"
+                            stroke="#fcd34d"
+                            strokeWidth="2"
+                            strokeDasharray="8 6"
+                            strokeLinecap="round"
+                          />
+                        </svg>
 
-                    {/* Subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#FAF7F2]/30 md:bg-gradient-to-r md:from-transparent md:to-[#FAF7F2]/20" />
+                        {/* Checkpoint dots - horizontal */}
+                        {[10, 36, 64, 90].map((pos, idx) => (
+                          <motion.div
+                            key={idx}
+                            className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white shadow-sm transition-colors duration-300 ${
+                              idx + 1 <= currentStep ? 'bg-amber-500' : 'bg-amber-200'
+                            }`}
+                            style={{ left: `${pos}%`, marginLeft: '-6px' }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2 + idx * 0.1 }}
+                          />
+                        ))}
 
-                    {/* Floating brand badge */}
-                    <div className="absolute bottom-3 left-3 md:bottom-6 md:left-6">
+                        {/* Boat - horizontal movement */}
+                        <motion.div
+                          className="absolute top-1/2 -translate-y-1/2"
+                          initial={{ left: '10%' }}
+                          animate={{
+                            left: `${[10, 36, 64, 90][currentStep - 1]}%`,
+                          }}
+                          transition={{ duration: 0.5, ease: 'easeInOut' }}
+                          style={{ marginLeft: '-20px', marginTop: '-24px' }}
+                        >
+                          {/* Floating boat animation */}
+                          <motion.div
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                          >
+                            <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center shadow-lg border-3 border-white">
+                              <Ship className="w-5 h-5 text-white" />
+                            </div>
+                          </motion.div>
+
+                          {/* Wave effect */}
+                          <motion.div
+                            className="absolute -bottom-1 left-1/2 -translate-x-1/2"
+                            animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.8, 1.1, 0.8] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                          >
+                            <svg width="32" height="8" viewBox="0 0 32 8">
+                              <path
+                                d="M0 4 Q8 0, 16 4 T32 4"
+                                fill="none"
+                                stroke="#fbbf24"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                          </motion.div>
+                        </motion.div>
+                      </div>
+
+                      {/* Desktop: Vertical layout */}
+                      <div className="hidden md:flex relative w-full h-full flex-col items-center py-12 px-8">
+                        {/* Curved vertical path SVG */}
+                        <svg
+                          className="absolute inset-0 w-full h-full"
+                          viewBox="0 0 100 100"
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M 50 8 Q 35 25, 50 35 T 50 65 Q 65 75, 50 92"
+                            fill="none"
+                            stroke="#fcd34d"
+                            strokeWidth="0.8"
+                            strokeDasharray="3 2"
+                            strokeLinecap="round"
+                            vectorEffect="non-scaling-stroke"
+                          />
+                        </svg>
+
+                        {/* Checkpoint dots with labels */}
+                        {[
+                          { top: '10%', label: 'Indulás' },
+                          { top: '35%', label: 'Előnyök' },
+                          { top: '65%', label: 'Neked szól' },
+                          { top: '90%', label: 'Jegyvétel' },
+                        ].map((checkpoint, idx) => (
+                          <motion.div
+                            key={idx}
+                            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3"
+                            style={{ top: checkpoint.top }}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + idx * 0.1 }}
+                          >
+                            {/* Dot */}
+                            <div
+                              className={`w-4 h-4 rounded-full border-2 border-white shadow-md transition-all duration-300 ${
+                                idx + 1 <= currentStep
+                                  ? 'bg-amber-500 scale-110'
+                                  : 'bg-amber-200'
+                              }`}
+                            />
+                            {/* Label */}
+                            <span
+                              className={`absolute left-8 whitespace-nowrap text-sm font-medium transition-colors duration-300 ${
+                                idx + 1 <= currentStep ? 'text-slate-700' : 'text-slate-400'
+                              }`}
+                            >
+                              {checkpoint.label}
+                            </span>
+                          </motion.div>
+                        ))}
+
+                        {/* The Boat Hero - Animated along the path */}
+                        <motion.div
+                          className="absolute left-1/2 -translate-x-1/2"
+                          initial={{ top: '10%' }}
+                          animate={{
+                            top: ['10%', '35%', '65%', '90%'][currentStep - 1],
+                          }}
+                          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                          style={{ marginLeft: '-28px' }}
+                        >
+                          {/* Floating/bobbing animation wrapper */}
+                          <motion.div
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{
+                              duration: 2.5,
+                              repeat: Infinity,
+                              ease: 'easeInOut',
+                            }}
+                          >
+                            {/* Boat container */}
+                            <div className="relative">
+                              {/* Glow effect */}
+                              <div className="absolute inset-0 bg-amber-400/30 rounded-full blur-xl scale-150" />
+
+                              {/* Main boat icon */}
+                              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-xl border-4 border-white">
+                                <Ship className="w-7 h-7 text-white drop-shadow-sm" />
+                              </div>
+
+                              {/* Wave elements */}
+                              <motion.div
+                                className="absolute -bottom-2 left-1/2 -translate-x-1/2"
+                                animate={{
+                                  opacity: [0.5, 1, 0.5],
+                                  scale: [0.9, 1.1, 0.9],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  ease: 'easeInOut',
+                                }}
+                              >
+                                <svg width="48" height="12" viewBox="0 0 48 12">
+                                  <path
+                                    d="M0 6 Q12 2, 24 6 T48 6"
+                                    fill="none"
+                                    stroke="#fbbf24"
+                                    strokeWidth="2.5"
+                                    strokeLinecap="round"
+                                  />
+                                </svg>
+                              </motion.div>
+
+                              {/* Secondary wave */}
+                              <motion.div
+                                className="absolute -bottom-4 left-1/2 -translate-x-1/2"
+                                animate={{
+                                  opacity: [0.3, 0.6, 0.3],
+                                  scale: [1, 1.2, 1],
+                                }}
+                                transition={{
+                                  duration: 2.5,
+                                  repeat: Infinity,
+                                  ease: 'easeInOut',
+                                  delay: 0.3,
+                                }}
+                              >
+                                <svg width="56" height="10" viewBox="0 0 56 10">
+                                  <path
+                                    d="M0 5 Q14 1, 28 5 T56 5"
+                                    fill="none"
+                                    stroke="#fcd34d"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                  />
+                                </svg>
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+
+                        {/* Decorative floating bubbles */}
+                        {[
+                          { left: '20%', top: '25%', delay: 0 },
+                          { left: '75%', top: '45%', delay: 0.5 },
+                          { left: '30%', top: '70%', delay: 1 },
+                        ].map((bubble, idx) => (
+                          <motion.div
+                            key={idx}
+                            className="absolute w-2 h-2 rounded-full bg-amber-300/40"
+                            style={{ left: bubble.left, top: bubble.top }}
+                            animate={{
+                              y: [0, -10, 0],
+                              opacity: [0.3, 0.6, 0.3],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: 'easeInOut',
+                              delay: bubble.delay,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom branding badge */}
+                    <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4">
                       <motion.div
-                        initial={{ opacity: 0, y: 15 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.35 }}
-                        className="flex items-center gap-2 md:gap-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-2 md:px-4 md:py-2 shadow-lg"
+                        transition={{ delay: 0.5 }}
+                        className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md"
                       >
-                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-amber-500 flex items-center justify-center">
-                          <Ship className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                        </div>
-                        <div className="hidden sm:block">
-                          <p className="text-slate-900 font-semibold text-sm">Szajna túra</p>
-                          <p className="text-amber-600 text-xs">Párizs szívében</p>
-                        </div>
+                        <Anchor className="w-4 h-4 text-amber-500" />
+                        <span className="text-xs font-medium text-slate-600">Szajna túra</span>
                       </motion.div>
                     </div>
                   </div>
