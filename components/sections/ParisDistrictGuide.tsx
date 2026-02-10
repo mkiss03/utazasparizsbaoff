@@ -209,12 +209,13 @@ export default function ParisDistrictGuide() {
             className="relative"
           >
             <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-stone-200">
-              <ParisArrondissementsSVG
-                activeDistrict={hoveredDistrict || activeDistrict?.district_number || null}
-                onDistrictClick={handleMapClick}
-                onDistrictHover={setHoveredDistrict}
-                className="w-full"
-              />
+              <div className="w-full">
+                <ParisArrondissementsSVG
+                  activeDistrict={hoveredDistrict || activeDistrict?.district_number || null}
+                  onDistrictClick={handleMapClick}
+                  onDistrictHover={setHoveredDistrict}
+                />
+              </div>
 
               {/* Map Legend */}
               <div className="mt-4 flex items-center justify-center gap-6 text-sm">

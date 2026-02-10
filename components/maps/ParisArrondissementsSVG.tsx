@@ -89,7 +89,8 @@ export default function ParisArrondissementsSVG({
     <svg
       viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
       preserveAspectRatio="xMidYMid meet"
-      className={`w-full h-auto ${className}`}
+      className={`w-full h-auto block ${className}`}
+      style={{ maxWidth: '100%' }}
     >
       {/* Background */}
       <rect x="0" y="0" width={VIEW_WIDTH} height={VIEW_HEIGHT} fill="#FAF7F2" />
