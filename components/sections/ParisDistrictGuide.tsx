@@ -33,7 +33,7 @@ const fallbackDistricts: DistrictGuide[] = [
     main_attraction: 'Az Eiffel-torony - Párizs ikonikus szimbóluma',
     local_tips: 'A legjobb kilátás a Trocadéróról van. Kerüld a csúcsidőt (10-14 óra)!',
     best_for: ['Turisták', 'Romantika', 'Fotózás'],
-    accent_color: 'amber',
+    accent_color: 'slate',
     icon_name: 'Ticket',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -51,7 +51,7 @@ const fallbackDistricts: DistrictGuide[] = [
     main_attraction: 'Sacré-Cœur bazilika és a páratlan kilátás',
     local_tips: 'Reggel érkezz, mielőtt megérkeznek a turistacsoportok. A funiculaire megspórolja a lépcsőzést!',
     best_for: ['Művészet', 'Romantika', 'Kilátás'],
-    accent_color: 'amber',
+    accent_color: 'slate',
     icon_name: 'Star',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -69,7 +69,7 @@ const fallbackDistricts: DistrictGuide[] = [
     main_attraction: 'Notre-Dame katedrális (felújítás alatt)',
     local_tips: 'A falafel a Rue des Rosiers-n kötelező! Vasárnap délelőtt a legnyugisabb.',
     best_for: ['Történelem', 'Gasztronómia', 'Séta'],
-    accent_color: 'amber',
+    accent_color: 'slate',
     icon_name: 'MapPin',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -164,9 +164,9 @@ export default function ParisDistrictGuide() {
       <section className="py-16 bg-[#FAF7F2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse flex flex-col items-center">
-            <div className="h-8 bg-amber-200 rounded w-64 mb-4" />
-            <div className="h-4 bg-amber-100 rounded w-96 mb-8" />
-            <div className="w-full h-96 bg-amber-50 rounded-2xl" />
+            <div className="h-8 bg-stone-200 rounded w-64 mb-4" />
+            <div className="h-4 bg-stone-100 rounded w-96 mb-8" />
+            <div className="w-full h-96 bg-stone-50 rounded-2xl" />
           </div>
         </div>
       </section>
@@ -187,7 +187,7 @@ export default function ParisDistrictGuide() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="inline-flex items-center gap-2 text-amber-600 font-semibold text-sm uppercase tracking-wider mb-3">
+          <span className="inline-flex items-center gap-2 text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3">
             <Map className="w-4 h-4" />
             Kerületi Útmutató
           </span>
@@ -208,7 +208,7 @@ export default function ParisDistrictGuide() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-amber-100">
+            <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-stone-200">
               <ParisArrondissementsSVG
                 activeDistrict={hoveredDistrict || activeDistrict?.district_number || null}
                 onDistrictClick={handleMapClick}
@@ -219,15 +219,15 @@ export default function ParisDistrictGuide() {
               {/* Map Legend */}
               <div className="mt-4 flex items-center justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-amber-500" />
+                  <div className="w-4 h-4 rounded bg-slate-800" />
                   <span className="text-slate-600">Aktív</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-amber-300" />
+                  <div className="w-4 h-4 rounded bg-stone-300" />
                   <span className="text-slate-600">Megtekintett</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-slate-100 border border-slate-300" />
+                  <div className="w-4 h-4 rounded bg-white border border-slate-300" />
                   <span className="text-slate-600">Nem aktív</span>
                 </div>
               </div>
@@ -247,10 +247,10 @@ export default function ParisDistrictGuide() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-amber-100"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-stone-200"
               >
-                {/* Card Header */}
-                <div className="bg-gradient-to-r from-amber-500 to-amber-400 p-6 text-white">
+                {/* Card Header - Navy gradient */}
+                <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-6 text-white">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
@@ -258,7 +258,7 @@ export default function ParisDistrictGuide() {
                           const Icon = getIcon(activeDistrict?.icon_name)
                           return <Icon className="w-5 h-5" />
                         })()}
-                        <span className="text-amber-100 text-sm font-medium">
+                        <span className="text-slate-300 text-sm font-medium">
                           {activeIndex + 1} / {districts.length}
                         </span>
                       </div>
@@ -266,7 +266,7 @@ export default function ParisDistrictGuide() {
                         {activeDistrict?.title}
                       </h3>
                       {activeDistrict?.subtitle && (
-                        <p className="text-amber-100">{activeDistrict.subtitle}</p>
+                        <p className="text-slate-300">{activeDistrict.subtitle}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
@@ -288,14 +288,14 @@ export default function ParisDistrictGuide() {
                   {activeDistrict?.best_for && activeDistrict.best_for.length > 0 && (
                     <div className="mb-6">
                       <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        <Sparkles className="w-4 h-4 text-slate-600" />
                         Ideális, ha...
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {activeDistrict.best_for.map((tag, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-amber-50 text-amber-700 border border-amber-200"
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-stone-100 text-slate-700 border border-stone-200"
                           >
                             {tag}
                           </span>
@@ -308,7 +308,7 @@ export default function ParisDistrictGuide() {
                   {activeDistrict?.highlights && activeDistrict.highlights.length > 0 && (
                     <div className="mb-6">
                       <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Star className="w-4 h-4 text-amber-500" />
+                        <Star className="w-4 h-4 text-slate-600" />
                         Fő látnivalók
                       </h4>
                       <div className="grid grid-cols-2 gap-2">
@@ -317,7 +317,7 @@ export default function ParisDistrictGuide() {
                             key={idx}
                             className="flex items-center gap-2 text-sm text-slate-600"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                             {highlight}
                           </div>
                         ))}
@@ -327,9 +327,9 @@ export default function ParisDistrictGuide() {
 
                   {/* Local Tips */}
                   {activeDistrict?.local_tips && (
-                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                    <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
                       <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4 text-amber-500" />
+                        <Lightbulb className="w-4 h-4 text-slate-600" />
                         Viktória tippje
                       </h4>
                       <p className="text-sm text-slate-600">{activeDistrict.local_tips}</p>
@@ -351,8 +351,8 @@ export default function ParisDistrictGuide() {
                   {activeDistrict?.content_layout === 'rich_ticket' && activeDistrict?.main_attraction && (
                     <div className="mt-6 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 text-white">
                       <div className="flex items-center gap-3 mb-3">
-                        <Ticket className="w-5 h-5 text-amber-400" />
-                        <span className="text-amber-400 font-semibold text-sm uppercase tracking-wider">
+                        <Ticket className="w-5 h-5 text-stone-300" />
+                        <span className="text-stone-300 font-semibold text-sm uppercase tracking-wider">
                           Fő attrakció
                         </span>
                       </div>
@@ -366,7 +366,7 @@ export default function ParisDistrictGuide() {
                   <button
                     onClick={() => navigate('prev')}
                     disabled={activeIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-stone-100 text-slate-700 hover:bg-stone-200"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Előző
@@ -374,7 +374,7 @@ export default function ParisDistrictGuide() {
                   <button
                     onClick={() => navigate('next')}
                     disabled={activeIndex === districts.length - 1}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-amber-500 text-white hover:bg-amber-400"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-slate-800 text-white hover:bg-slate-700"
                   >
                     Következő
                     <ChevronRight className="w-4 h-4" />
@@ -392,7 +392,7 @@ export default function ParisDistrictGuide() {
           viewport={{ once: true }}
           className="mt-12"
         >
-          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-amber-100">
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-stone-200">
             <h4 className="text-sm font-semibold text-slate-900 mb-4 text-center">
               Felfedezési útvonal
             </h4>
@@ -418,10 +418,10 @@ export default function ParisDistrictGuide() {
                       <motion.div
                         animate={{
                           scale: idx === activeIndex ? 1.3 : 1,
-                          backgroundColor: idx === activeIndex ? '#f59e0b' : idx < activeIndex ? '#fcd34d' : '#e2e8f0',
+                          backgroundColor: idx === activeIndex ? '#1e293b' : idx < activeIndex ? '#a8a29e' : '#e7e5e4',
                         }}
                         className={`w-4 h-4 rounded-full border-2 border-white shadow-sm transition-all ${
-                          idx === activeIndex ? 'ring-4 ring-amber-200' : ''
+                          idx === activeIndex ? 'ring-4 ring-stone-200' : ''
                         }`}
                       />
 
@@ -429,21 +429,21 @@ export default function ParisDistrictGuide() {
                       <span
                         className={`mt-2 text-xs font-medium whitespace-nowrap transition-colors ${
                           idx === activeIndex
-                            ? 'text-amber-600'
+                            ? 'text-slate-800'
                             : 'text-slate-400 group-hover:text-slate-600'
                         }`}
                       >
                         {district.district_number}. ker.
                       </span>
 
-                      {/* Active indicator ship */}
+                      {/* Active indicator */}
                       {idx === activeIndex && (
                         <motion.div
                           initial={{ opacity: 0, y: -5 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="absolute -top-6"
                         >
-                          <MapPin className="w-4 h-4 text-amber-500 fill-amber-500" />
+                          <MapPin className="w-4 h-4 text-slate-800 fill-slate-800" />
                         </motion.div>
                       )}
                     </button>
@@ -452,7 +452,7 @@ export default function ParisDistrictGuide() {
                     {idx < districts.length - 1 && (
                       <div
                         className={`w-12 md:w-20 h-0.5 mx-1 transition-colors ${
-                          idx < activeIndex ? 'bg-amber-300' : 'bg-slate-200'
+                          idx < activeIndex ? 'bg-stone-400' : 'bg-stone-200'
                         }`}
                       />
                     )}
@@ -464,9 +464,9 @@ export default function ParisDistrictGuide() {
             {/* Progress indicator */}
             <div className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-500">
               <span>{activeIndex + 1}</span>
-              <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+              <div className="w-24 h-1.5 bg-stone-200 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-amber-500 rounded-full"
+                  className="h-full bg-slate-800 rounded-full"
                   animate={{
                     width: `${((activeIndex + 1) / districts.length) * 100}%`,
                   }}
