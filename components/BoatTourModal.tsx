@@ -97,7 +97,7 @@ export default function BoatTourModal() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-amber-500 font-semibold text-sm uppercase tracking-wider mb-3"
+          className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
         >
           1 / 4
         </motion.p>
@@ -108,7 +108,7 @@ export default function BoatTourModal() {
           className="font-playfair text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight"
         >
           Szajnai hajózás –<br />
-          <span className="text-amber-500">Szabadság és élmény</span>
+          <span className="text-slate-700">Szabadság és élmény</span>
         </motion.h2>
       </div>
 
@@ -130,7 +130,7 @@ export default function BoatTourModal() {
       >
         <button
           onClick={() => paginate(1)}
-          className="group inline-flex items-center gap-3 bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-400/30"
+          className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all shadow-lg shadow-slate-900/25 hover:shadow-slate-700/30"
         >
           Induljunk
           <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -154,7 +154,7 @@ export default function BoatTourModal() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-amber-500 font-semibold text-sm uppercase tracking-wider mb-3"
+            className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
           >
             2 / 4 – Előnyök
           </motion.p>
@@ -175,9 +175,9 @@ export default function BoatTourModal() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + idx * 0.08 }}
-              className="flex items-start gap-3 p-3 rounded-xl bg-white/60 border border-amber-100"
+              className="flex items-start gap-3 p-3 rounded-xl bg-white/60 border border-slate-200"
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
                 <feature.icon className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -196,7 +196,7 @@ export default function BoatTourModal() {
         >
           <button
             onClick={() => paginate(1)}
-            className="group inline-flex items-center gap-3 bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-amber-500/25"
+            className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-slate-900/25"
           >
             Tovább
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -220,7 +220,7 @@ export default function BoatTourModal() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-amber-500 font-semibold text-sm uppercase tracking-wider mb-3"
+            className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
           >
             3 / 4 – Neked szól
           </motion.p>
@@ -241,10 +241,10 @@ export default function BoatTourModal() {
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 + idx * 0.1 }}
-              className="flex items-center gap-3 p-4 bg-white/70 rounded-xl border border-amber-100"
+              className="flex items-center gap-3 p-4 bg-white/70 rounded-xl border border-slate-200"
             >
-              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
-                <reason.icon className="w-4 h-4 text-amber-600" />
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center">
+                <reason.icon className="w-4 h-4 text-slate-700" />
               </div>
               <p className="text-slate-700 font-medium">{reason.text}</p>
             </motion.div>
@@ -255,9 +255,9 @@ export default function BoatTourModal() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200"
+          className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200"
         >
-          <Anchor className="w-6 h-6 text-amber-600 flex-shrink-0" />
+          <Anchor className="w-6 h-6 text-slate-700 flex-shrink-0" />
           <div>
             <p className="font-semibold text-slate-900">Bateaux Parisiens</p>
             <p className="text-sm text-slate-600">Hivatalos partnerem 1956 óta</p>
@@ -271,7 +271,7 @@ export default function BoatTourModal() {
         >
           <button
             onClick={() => paginate(1)}
-            className="group inline-flex items-center gap-3 bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-amber-500/25"
+            className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-slate-900/25"
           >
             Lássuk az árakat
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -288,7 +288,7 @@ export default function BoatTourModal() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-amber-500 font-semibold text-sm uppercase tracking-wider mb-3"
+          className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
         >
           4 / 4 – Jegyvétel
         </motion.p>
@@ -307,19 +307,19 @@ export default function BoatTourModal() {
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl p-5 md:p-6 border border-amber-200 shadow-sm"
+        className="bg-white rounded-2xl p-5 md:p-6 border border-slate-200 shadow-sm"
       >
         <div className="flex items-end justify-center gap-6 md:gap-10 mb-5">
           <div className="text-center">
             <p className="text-slate-600 text-sm mb-1">Felnőtt</p>
             <p className="text-4xl md:text-5xl font-bold text-slate-900">
-              17<span className="text-xl md:text-2xl text-amber-500">€</span>
+              17<span className="text-xl md:text-2xl text-slate-700">€</span>
             </p>
           </div>
-          <div className="h-10 w-px bg-amber-200" />
+          <div className="h-10 w-px bg-slate-200" />
           <div className="text-center">
             <p className="text-slate-600 text-sm mb-1">Gyermek</p>
-            <p className="text-3xl md:text-4xl font-bold text-amber-500">
+            <p className="text-3xl md:text-4xl font-bold text-slate-700">
               8<span className="text-lg md:text-xl">€</span>
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function BoatTourModal() {
           transition={{ delay: 0.35 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-4 rounded-full font-bold text-lg transition-all shadow-lg shadow-amber-500/30"
+          className="w-full bg-slate-900 hover:bg-slate-700 text-white py-4 rounded-full font-bold text-lg transition-all shadow-lg shadow-slate-900/30"
         >
           Jegyet kérek
         </motion.button>
@@ -381,7 +381,7 @@ export default function BoatTourModal() {
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 px-4 py-3 text-slate-900 shadow-xl shadow-amber-500/30 transition-all duration-300 hover:scale-105 md:px-6 md:py-4"
+            className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full bg-slate-900 hover:bg-slate-700 px-4 py-3 text-white shadow-xl shadow-slate-900/30 transition-all duration-300 hover:scale-105 md:px-6 md:py-4"
           >
             <Ship className="h-5 w-5 md:h-6 md:w-6" />
             <span className="hidden font-semibold md:inline">Hajózás Párizsban</span>
@@ -441,7 +441,7 @@ export default function BoatTourModal() {
                           <path
                             d="M 10% 50% Q 30% 35%, 50% 50% T 90% 50%"
                             fill="none"
-                            stroke="#fcd34d"
+                            stroke="#94a3b8"
                             strokeWidth="2"
                             strokeDasharray="8 6"
                             strokeLinecap="round"
@@ -453,7 +453,7 @@ export default function BoatTourModal() {
                           <motion.div
                             key={idx}
                             className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white shadow-sm transition-colors duration-300 ${
-                              idx + 1 <= currentStep ? 'bg-amber-500' : 'bg-amber-200'
+                              idx + 1 <= currentStep ? 'bg-slate-900' : 'bg-slate-300'
                             }`}
                             style={{ left: `${pos}%`, marginLeft: '-6px' }}
                             initial={{ scale: 0 }}
@@ -477,7 +477,7 @@ export default function BoatTourModal() {
                             animate={{ y: [0, -4, 0] }}
                             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                           >
-                            <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center shadow-lg border-3 border-white">
+                            <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center shadow-lg border-3 border-white">
                               <Ship className="w-5 h-5 text-white" />
                             </div>
                           </motion.div>
@@ -492,7 +492,7 @@ export default function BoatTourModal() {
                               <path
                                 d="M0 4 Q8 0, 16 4 T32 4"
                                 fill="none"
-                                stroke="#fbbf24"
+                                stroke="#475569"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                               />
@@ -512,7 +512,7 @@ export default function BoatTourModal() {
                           <path
                             d="M 50 8 Q 35 25, 50 35 T 50 65 Q 65 75, 50 92"
                             fill="none"
-                            stroke="#fcd34d"
+                            stroke="#94a3b8"
                             strokeWidth="0.8"
                             strokeDasharray="3 2"
                             strokeLinecap="round"
@@ -539,8 +539,8 @@ export default function BoatTourModal() {
                             <div
                               className={`w-4 h-4 rounded-full border-2 border-white shadow-md transition-all duration-300 ${
                                 idx + 1 <= currentStep
-                                  ? 'bg-amber-500 scale-110'
-                                  : 'bg-amber-200'
+                                  ? 'bg-slate-900 scale-110'
+                                  : 'bg-slate-300'
                               }`}
                             />
                             {/* Label */}
@@ -576,10 +576,10 @@ export default function BoatTourModal() {
                             {/* Boat container */}
                             <div className="relative">
                               {/* Glow effect */}
-                              <div className="absolute inset-0 bg-amber-400/30 rounded-full blur-xl scale-150" />
+                              <div className="absolute inset-0 bg-slate-400/30 rounded-full blur-xl scale-150" />
 
                               {/* Main boat icon */}
-                              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-xl border-4 border-white">
+                              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-xl border-4 border-white">
                                 <Ship className="w-7 h-7 text-white drop-shadow-sm" />
                               </div>
 
@@ -600,7 +600,7 @@ export default function BoatTourModal() {
                                   <path
                                     d="M0 6 Q12 2, 24 6 T48 6"
                                     fill="none"
-                                    stroke="#fbbf24"
+                                    stroke="#475569"
                                     strokeWidth="2.5"
                                     strokeLinecap="round"
                                   />
@@ -625,7 +625,7 @@ export default function BoatTourModal() {
                                   <path
                                     d="M0 5 Q14 1, 28 5 T56 5"
                                     fill="none"
-                                    stroke="#fcd34d"
+                                    stroke="#64748b"
                                     strokeWidth="1.5"
                                     strokeLinecap="round"
                                   />
@@ -643,7 +643,7 @@ export default function BoatTourModal() {
                         ].map((bubble, idx) => (
                           <motion.div
                             key={idx}
-                            className="absolute w-2 h-2 rounded-full bg-amber-300/40"
+                            className="absolute w-2 h-2 rounded-full bg-slate-300/40"
                             style={{ left: bubble.left, top: bubble.top }}
                             animate={{
                               y: [0, -10, 0],
@@ -668,7 +668,7 @@ export default function BoatTourModal() {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md"
                       >
-                        <Anchor className="w-4 h-4 text-amber-500" />
+                        <Anchor className="w-4 h-4 text-slate-700" />
                         <span className="text-xs font-medium text-slate-600">Szajna túra</span>
                       </motion.div>
                     </div>
@@ -698,15 +698,15 @@ export default function BoatTourModal() {
 
                     {/* Progress Bar with Ship Icon */}
                     <div
-                      className="p-4 md:p-5 border-t border-amber-100"
+                      className="p-4 md:p-5 border-t border-slate-200"
                       style={{ backgroundColor: '#FAF7F2' }}
                     >
                       <div className="relative h-6">
                         {/* Track background */}
-                        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 bg-amber-100 rounded-full">
+                        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 bg-slate-200 rounded-full">
                           {/* Filled track */}
                           <motion.div
-                            className="h-full bg-amber-500 rounded-full"
+                            className="h-full bg-slate-900 rounded-full"
                             initial={{ width: '0%' }}
                             animate={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
                             transition={{ duration: 0.35, ease: 'easeOut' }}
@@ -721,9 +721,9 @@ export default function BoatTourModal() {
                               onClick={() => goToStep(step)}
                               className={`relative z-10 w-3 h-3 rounded-full transition-all duration-300 ${
                                 step <= currentStep
-                                  ? 'bg-amber-500'
-                                  : 'bg-amber-200'
-                              } ${step === currentStep ? 'scale-125 ring-2 ring-amber-300 ring-offset-2' : 'hover:scale-110'}`}
+                                  ? 'bg-slate-900'
+                                  : 'bg-slate-300'
+                              } ${step === currentStep ? 'scale-125 ring-2 ring-slate-400 ring-offset-2' : 'hover:scale-110'}`}
                               style={{
                                 ringOffsetColor: '#FAF7F2',
                               }}
@@ -741,7 +741,7 @@ export default function BoatTourModal() {
                           transition={{ duration: 0.35, ease: 'easeOut' }}
                           style={{ marginLeft: '-10px' }}
                         >
-                          <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center shadow-md border-2 border-white">
+                          <div className="w-5 h-5 rounded-full bg-slate-900 flex items-center justify-center shadow-md border-2 border-white">
                             <Ship className="w-2.5 h-2.5 text-white" />
                           </div>
                         </motion.div>

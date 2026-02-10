@@ -9,9 +9,34 @@ interface ParisArrondissementsSVGProps {
   className?: string
 }
 
-// Exact polygon coordinates from official Paris arrondissements SVG
-// Original coordinate system preserved for accuracy
-const districtPolygons: Record<number, string> = {
+// Original geographic bounds from the SVG file
+const BOUNDS = {
+  minX: 2.22422457,
+  minY: 48.81575715,
+  width: 0.243034997,
+  height: 0.0858946299999985,
+}
+
+// Target viewBox dimensions (matching original SVG proportions)
+const VIEW_WIDTH = 1000
+const VIEW_HEIGHT = 537
+
+// Convert geographic coordinates to SVG coordinates
+function convertCoords(geoPoints: string): string {
+  return geoPoints
+    .split(' ')
+    .map((point) => {
+      const [geoX, geoY] = point.split(',').map(Number)
+      const svgX = ((geoX - BOUNDS.minX) / BOUNDS.width) * VIEW_WIDTH
+      // Flip Y axis (geographic Y increases northward, SVG Y increases downward)
+      const svgY = VIEW_HEIGHT - ((geoY - BOUNDS.minY) / BOUNDS.height) * VIEW_HEIGHT
+      return `${svgX.toFixed(1)},${svgY.toFixed(1)}`
+    })
+    .join(' ')
+}
+
+// Original polygon coordinates from official Paris arrondissements SVG (geographic)
+const geoPolygons: Record<number, string> = {
   1: "2.344559181,48.8539929 2.332852283,48.85930633 2.320781394,48.86307866 2.325768441,48.86954617 2.327877417,48.86986381 2.350848136,48.86334445 2.350088494,48.86195533",
   2: "2.350848136,48.86334445 2.327877417,48.86986381 2.347826239,48.87063069 2.354114163,48.8692798 2.350848136,48.86334445",
   3: "2.368415354,48.85574003 2.350088494,48.86195533 2.350848136,48.86334445 2.354114163,48.8692798 2.363856759,48.86743437 2.368415354,48.85574003",
@@ -34,9 +59,14 @@ const districtPolygons: Record<number, string> = {
   20: "2.415973775,48.84662837 2.399073509,48.84809156 2.377012647,48.87191932 2.410694437,48.87847513 2.413277246,48.87311881 2.415319163,48.85517799 2.416339717,48.84923827",
 }
 
+// Convert all geographic polygons to SVG coordinates
+const districtPolygons: Record<number, string> = Object.fromEntries(
+  Object.entries(geoPolygons).map(([k, v]) => [parseInt(k), convertCoords(v)])
+)
+
 // Calculate center points for each district
 function calculateCenter(points: string): { x: number; y: number } {
-  const coords = points.split(' ').map(p => {
+  const coords = points.split(' ').map((p) => {
     const [x, y] = p.split(',').map(Number)
     return { x, y }
   })
@@ -55,105 +85,110 @@ export default function ParisArrondissementsSVG({
   onDistrictHover,
   className = '',
 }: ParisArrondissementsSVGProps) {
-  // Use original SVG coordinate system
-  const viewBox = "2.22422457 48.81575715 0.243034997 0.0858946299999985"
-
   return (
     <svg
-      viewBox={viewBox}
+      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
       preserveAspectRatio="xMidYMid meet"
-      className={`w-full h-full ${className}`}
-      style={{ maxWidth: '100%', maxHeight: '100%' }}
+      className={`w-full h-auto ${className}`}
     >
       {/* Background */}
-      <rect
-        x="2.22422457"
-        y="48.81575715"
-        width="0.243034997"
-        height="0.0858946299999985"
-        fill="#FAF7F2"
+      <rect x="0" y="0" width={VIEW_WIDTH} height={VIEW_HEIGHT} fill="#FAF7F2" />
+
+      {/* Seine River (stylized curve) */}
+      <path
+        d="M 50 320 Q 200 280, 400 300 Q 550 320, 700 270 Q 850 220, 950 240"
+        fill="none"
+        stroke="#cbd5e1"
+        strokeWidth="12"
+        strokeLinecap="round"
+        opacity="0.4"
       />
 
-      {/* Flip Y-axis to match standard map orientation (north up) */}
-      <g transform="translate(0,97.71740893) scale(1,-1)">
-        {/* Seine River (stylized) */}
-        <path
-          d="M 2.24 48.855 Q 2.30 48.860, 2.35 48.850 Q 2.40 48.845, 2.45 48.835"
-          fill="none"
-          stroke="#cbd5e1"
-          strokeWidth="0.003"
-          strokeLinecap="round"
-          opacity="0.5"
-        />
+      {/* District polygons */}
+      {Object.entries(districtPolygons).map(([district, points]) => {
+        const districtNum = parseInt(district)
+        const isActive = activeDistrict === districtNum
 
-        {/* District polygons */}
-        {Object.entries(districtPolygons).map(([district, points]) => {
-          const districtNum = parseInt(district)
-          const isActive = activeDistrict === districtNum
+        return (
+          <motion.polygon
+            key={district}
+            points={points}
+            initial={false}
+            animate={{
+              fill: isActive ? '#1e293b' : '#ffffff',
+            }}
+            whileHover={{
+              fill: isActive ? '#1e293b' : '#f5f5f4',
+            }}
+            transition={{ duration: 0.2 }}
+            stroke="#94a3b8"
+            strokeWidth={isActive ? 2.5 : 1.5}
+            style={{
+              cursor: 'pointer',
+              filter: isActive ? 'drop-shadow(0 4px 8px rgba(30, 41, 59, 0.3))' : 'none',
+            }}
+            onClick={() => onDistrictClick(districtNum)}
+            onMouseEnter={() => onDistrictHover?.(districtNum)}
+            onMouseLeave={() => onDistrictHover?.(null)}
+          />
+        )
+      })}
 
-          return (
-            <motion.polygon
-              key={district}
-              points={points}
-              initial={false}
-              animate={{
-                fill: isActive ? '#1e293b' : '#ffffff',
-              }}
-              whileHover={{
-                fill: isActive ? '#1e293b' : '#f5f5f4',
-              }}
-              transition={{ duration: 0.2 }}
-              stroke="#94a3b8"
-              strokeWidth={isActive ? 0.0025 : 0.0015}
-              style={{
-                cursor: 'pointer',
-                filter: isActive ? 'drop-shadow(0 0.002px 0.003px rgba(30, 41, 59, 0.4))' : 'none',
-              }}
+      {/* District number labels */}
+      {Object.entries(districtCenters).map(([district, center]) => {
+        const districtNum = parseInt(district)
+        const isActive = activeDistrict === districtNum
+
+        return (
+          <g key={`label-${district}`}>
+            {/* Background circle */}
+            <motion.circle
+              cx={center.x}
+              cy={center.y}
+              r={isActive ? 18 : 14}
+              fill={isActive ? '#1e293b' : '#ffffff'}
+              stroke={isActive ? '#ffffff' : '#94a3b8'}
+              strokeWidth={isActive ? 2 : 1}
+              style={{ cursor: 'pointer' }}
               onClick={() => onDistrictClick(districtNum)}
-              onMouseEnter={() => onDistrictHover?.(districtNum)}
-              onMouseLeave={() => onDistrictHover?.(null)}
             />
-          )
-        })}
+            <text
+              x={center.x}
+              y={center.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              className="pointer-events-none select-none"
+              style={{
+                fontSize: isActive ? '12px' : '10px',
+                fontWeight: 600,
+                fill: isActive ? '#ffffff' : '#475569',
+              }}
+            >
+              {district}
+            </text>
+          </g>
+        )
+      })}
 
-        {/* District number labels */}
-        {Object.entries(districtCenters).map(([district, center]) => {
-          const districtNum = parseInt(district)
-          const isActive = activeDistrict === districtNum
+      {/* Title */}
+      <text
+        x={VIEW_WIDTH / 2}
+        y="30"
+        textAnchor="middle"
+        style={{ fontSize: '20px', fontWeight: 600, fill: '#1e293b' }}
+      >
+        Párizs Kerületei
+      </text>
 
-          return (
-            <g key={`label-${district}`}>
-              {/* Background circle */}
-              <motion.circle
-                cx={center.x}
-                cy={center.y}
-                r={isActive ? 0.006 : 0.0045}
-                fill={isActive ? '#1e293b' : '#ffffff'}
-                stroke={isActive ? '#ffffff' : '#94a3b8'}
-                strokeWidth={isActive ? 0.0008 : 0.0005}
-                style={{ cursor: 'pointer' }}
-                onClick={() => onDistrictClick(districtNum)}
-              />
-              {/* Number text - needs to be flipped back since parent is flipped */}
-              <g transform={`translate(${center.x}, ${center.y}) scale(1,-1)`}>
-                <text
-                  x="0"
-                  y="0"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="pointer-events-none select-none"
-                  style={{
-                    fontSize: isActive ? '0.004px' : '0.003px',
-                    fontWeight: 600,
-                    fill: isActive ? '#ffffff' : '#475569',
-                  }}
-                >
-                  {district}
-                </text>
-              </g>
-            </g>
-          )
-        })}
+      {/* Compass */}
+      <g transform={`translate(${VIEW_WIDTH - 40}, ${VIEW_HEIGHT - 40})`}>
+        <circle r="18" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+        <text x="0" y="-4" textAnchor="middle" fontSize="10" fill="#64748b" fontWeight="600">
+          É
+        </text>
+        <text x="0" y="10" textAnchor="middle" fontSize="8" fill="#94a3b8">
+          D
+        </text>
       </g>
     </svg>
   )
