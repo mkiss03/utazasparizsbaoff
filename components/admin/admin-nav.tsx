@@ -14,7 +14,8 @@ import {
   DollarSign,
   Tag,
   MessageSquare,
-  Compass
+  Compass,
+  Ship,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -73,6 +74,12 @@ const allNavItems: NavItem[] = [
     title: 'Kerületek',
     href: '/admin/districts',
     icon: Compass,
+    type: 'item',
+  },
+  {
+    title: 'Hajózás Varázsló',
+    href: '/admin/cruise-wizard',
+    icon: Ship,
     type: 'item',
   },
   {

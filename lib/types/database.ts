@@ -271,3 +271,203 @@ export interface DistrictGuide {
   created_at: string
   updated_at: string
 }
+
+// ============================================
+// CRUISE WIZARD TYPES (Seine Boat Tour Modal)
+// ============================================
+
+export interface WizardStep {
+  id: string
+  title: string
+  subtitle?: string
+  description: string
+  label: string // Timeline label (e.g., "Indulás")
+  features?: WizardFeature[]
+  ctaText: string
+  ctaLink?: string
+  order: number
+}
+
+export interface WizardFeature {
+  icon: string // Lucide icon name
+  text: string
+  subtext?: string
+}
+
+export interface WizardButtonStyles {
+  backgroundColor: string
+  hoverBackgroundColor: string
+  textColor: string
+  borderRadius: number // 0-50 px
+  shadow?: string
+}
+
+export interface WizardTypographyStyles {
+  headingColor: string
+  bodyTextColor: string
+  stepCounterColor: string
+  labelColor: string
+  fontFamily?: string
+}
+
+export interface WizardTimelineStyles {
+  lineColorActive: string
+  lineColorInactive: string
+  dotColorActive: string
+  dotColorInactive: string
+  dotSize: number
+  boatIconColor: string
+}
+
+export interface WizardCardStyles {
+  backgroundColor: string
+  gradientEnabled: boolean
+  gradientFrom?: string
+  gradientTo?: string
+  gradientDirection?: 'to-r' | 'to-l' | 'to-t' | 'to-b' | 'to-br' | 'to-bl' | 'to-tr' | 'to-tl'
+  borderColor: string
+  borderRadius: number
+  shadowIntensity: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+}
+
+export interface WizardPricingStyles {
+  adultPriceColor: string
+  childPriceColor: string
+  currencyColor: string
+  dividerColor: string
+}
+
+export interface WizardStyles {
+  card: WizardCardStyles
+  button: WizardButtonStyles
+  typography: WizardTypographyStyles
+  timeline: WizardTimelineStyles
+  pricing: WizardPricingStyles
+  // Journey visualization (left panel)
+  journeyPathColor: string
+  journeyWaveColor: string
+  journeyBoatBackground: string
+}
+
+export interface WizardPricing {
+  adultPrice: number
+  childPrice: number
+  currency: string
+  privacyNote: string
+}
+
+export interface WizardConfig {
+  id: string
+  name: string // Config name for admin reference
+  steps: WizardStep[]
+  styles: WizardStyles
+  pricing: WizardPricing
+  // FAB (Floating Action Button) settings
+  fabText: string
+  fabIcon: string
+  fabPosition: 'bottom-left' | 'bottom-right'
+  // Meta
+  isActive: boolean
+  created_at: string
+  updated_at: string
+}
+
+// Default configuration factory
+export const createDefaultWizardConfig = (): Omit<WizardConfig, 'id' | 'created_at' | 'updated_at'> => ({
+  name: 'Seine Cruise Wizard',
+  steps: [
+    {
+      id: 'step-1',
+      title: 'Szajnai hajózás',
+      subtitle: 'Szabadság és élmény',
+      description: 'Felejtsd el a sorban állást! Párizsban élő idegenvezetőként olyan jegyet kínálok neked, ami nem korlátoz.',
+      label: 'Indulás',
+      ctaText: 'Induljunk',
+      order: 1,
+    },
+    {
+      id: 'step-2',
+      title: 'Miért ez a legjobb választás?',
+      description: 'Fedezd fel az előnyöket, amelyek miatt ez a jegy különleges.',
+      label: 'Előnyök',
+      features: [
+        { icon: 'Calendar', text: 'Teljes rugalmasság', subtext: 'Nincs fix időpont' },
+        { icon: 'Clock', text: '1 évig érvényes', subtext: 'Bármikor felhasználható' },
+        { icon: 'QrCode', text: 'Azonnali digitális jegy', subtext: 'Nincs nyomtatás' },
+        { icon: 'MapPin', text: 'Klasszikus útvonal', subtext: 'Eiffel, Louvre, Notre-Dame' },
+      ],
+      ctaText: 'Tovább',
+      order: 2,
+    },
+    {
+      id: 'step-3',
+      title: 'Ez a jegy neked szól, ha...',
+      description: 'Tökéletes választás, ha szereted a szabadságot.',
+      label: 'Neked szól',
+      features: [
+        { icon: 'Calendar', text: 'Nem szereted a menetrendeket' },
+        { icon: 'Sun', text: 'Csak akkor hajóznál, ha kisüt a nap' },
+        { icon: 'Headphones', text: 'Szeretnéd megismerni Párizs titkait' },
+      ],
+      ctaText: 'Lássuk az árakat',
+      order: 3,
+    },
+    {
+      id: 'step-4',
+      title: 'Árak és foglalás',
+      description: 'Válaszd ki a neked megfelelő jegyet.',
+      label: 'Jegyvétel',
+      ctaText: 'Jegyet kérek',
+      ctaLink: '#contact',
+      order: 4,
+    },
+  ],
+  styles: {
+    card: {
+      backgroundColor: '#FAF7F2',
+      gradientEnabled: false,
+      borderColor: '#e7e5e4',
+      borderRadius: 24,
+      shadowIntensity: '2xl',
+    },
+    button: {
+      backgroundColor: '#0f172a',
+      hoverBackgroundColor: '#334155',
+      textColor: '#ffffff',
+      borderRadius: 9999,
+    },
+    typography: {
+      headingColor: '#0f172a',
+      bodyTextColor: '#475569',
+      stepCounterColor: '#64748b',
+      labelColor: '#64748b',
+    },
+    timeline: {
+      lineColorActive: '#0f172a',
+      lineColorInactive: '#e2e8f0',
+      dotColorActive: '#0f172a',
+      dotColorInactive: '#cbd5e1',
+      dotSize: 12,
+      boatIconColor: '#0f172a',
+    },
+    pricing: {
+      adultPriceColor: '#0f172a',
+      childPriceColor: '#334155',
+      currencyColor: '#64748b',
+      dividerColor: '#e2e8f0',
+    },
+    journeyPathColor: '#94a3b8',
+    journeyWaveColor: '#475569',
+    journeyBoatBackground: '#0f172a',
+  },
+  pricing: {
+    adultPrice: 17,
+    childPrice: 8,
+    currency: '€',
+    privacyNote: 'A megrendeléssel elfogadod az adatvédelmi tájékoztatómat.',
+  },
+  fabText: 'Hajózás Párizsban',
+  fabIcon: 'Ship',
+  fabPosition: 'bottom-left',
+  isActive: true,
+})
