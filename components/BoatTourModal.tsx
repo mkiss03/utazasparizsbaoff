@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Ship,
@@ -13,8 +13,44 @@ import {
   Headphones,
   ArrowRight,
   RotateCcw,
-  Anchor
+  Anchor,
+  Star,
+  Heart,
+  Sparkles,
+  Zap,
+  Coffee,
+  Camera,
+  Music,
+  Gift,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import {
+  WizardConfig,
+  WizardStep,
+  WizardStyles,
+  WizardPricing,
+  WizardFeature,
+  createDefaultWizardConfig,
+} from '@/lib/types/database'
+
+// Icon mapping
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Calendar,
+  Clock,
+  QrCode,
+  MapPin,
+  Sun,
+  Headphones,
+  Star,
+  Heart,
+  Sparkles,
+  Zap,
+  Coffee,
+  Camera,
+  Music,
+  Gift,
+  Ship,
+}
 
 export default function BoatTourModal() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,7 +58,73 @@ export default function BoatTourModal() {
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(0)
 
-  const totalSteps = 4
+  // Config state (loaded from database)
+  const [config, setConfig] = useState<{
+    steps: WizardStep[]
+    styles: WizardStyles
+    pricing: WizardPricing
+    fabText: string
+    fabPosition: 'bottom-left' | 'bottom-right'
+    isActive: boolean
+  } | null>(null)
+
+  const totalSteps = config?.steps.length || 4
+
+  // Load config from database
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('cruise_wizard_configs')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error loading wizard config:', error)
+        }
+
+        if (data) {
+          setConfig({
+            steps: data.steps || [],
+            styles: data.styles || createDefaultWizardConfig().styles,
+            pricing: data.pricing || createDefaultWizardConfig().pricing,
+            fabText: data.fab_text || 'Hajózás Párizsban',
+            fabPosition: data.fab_position || 'bottom-left',
+            isActive: data.is_active ?? true,
+          })
+        } else {
+          // Use default config if nothing in database
+          const defaultConfig = createDefaultWizardConfig()
+          setConfig({
+            steps: defaultConfig.steps,
+            styles: defaultConfig.styles,
+            pricing: defaultConfig.pricing,
+            fabText: defaultConfig.fabText,
+            fabPosition: defaultConfig.fabPosition,
+            isActive: defaultConfig.isActive,
+          })
+        }
+      } catch (err) {
+        console.error('Failed to load wizard config:', err)
+        // Fall back to defaults
+        const defaultConfig = createDefaultWizardConfig()
+        setConfig({
+          steps: defaultConfig.steps,
+          styles: defaultConfig.styles,
+          pricing: defaultConfig.pricing,
+          fabText: defaultConfig.fabText,
+          fabPosition: defaultConfig.fabPosition,
+          isActive: defaultConfig.isActive,
+        })
+      }
+    }
+
+    loadConfig()
+  }, [])
 
   // Delay showing the FAB
   useEffect(() => {
@@ -63,10 +165,11 @@ export default function BoatTourModal() {
 
     // Wait for modal close animation, then scroll
     setTimeout(() => {
-      const contactSection = document.getElementById('contact')
-        || document.getElementById('foglalas')
-        || document.getElementById('form')
-        || document.querySelector('[data-section="contact"]')
+      const contactSection =
+        document.getElementById('contact') ||
+        document.getElementById('foglalas') ||
+        document.getElementById('form') ||
+        document.querySelector('[data-section="contact"]')
 
       if (contactSection) {
         contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -90,289 +193,222 @@ export default function BoatTourModal() {
     }),
   }
 
-  // Step 1: Introduction
-  const Step1 = () => (
-    <div className="space-y-6">
-      <div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
-        >
-          1 / 4
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="font-playfair text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight"
-        >
-          Szajnai hajózás –<br />
-          <span className="text-slate-700">Szabadság és élmény</span>
-        </motion.h2>
-      </div>
+  // Get icon component by name
+  const getIcon = (iconName: string) => iconMap[iconName] || Star
 
-      <motion.p
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-slate-600 text-base md:text-lg leading-relaxed"
-      >
-        Felejtsd el a sorban állást! Párizsban élő idegenvezetőként olyan jegyet
-        kínálok neked, ami nem korlátoz.
-      </motion.p>
+  // Don't render if config not loaded or not active
+  if (!config || !config.isActive) {
+    return null
+  }
 
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="pt-2"
-      >
-        <button
-          onClick={() => paginate(1)}
-          className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all shadow-lg shadow-slate-900/25 hover:shadow-slate-700/30"
-        >
-          Induljunk
-          <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-        </button>
-      </motion.div>
-    </div>
-  )
+  const { steps, styles, pricing, fabText, fabPosition } = config
+  const activeStep = steps[currentStep - 1]
 
-  // Step 2: Benefits/Features
-  const Step2 = () => {
-    const features = [
-      { icon: Calendar, text: 'Teljes rugalmasság', sub: 'Nincs fix időpont' },
-      { icon: Clock, text: '1 évig érvényes', sub: 'Bármikor felhasználható' },
-      { icon: QrCode, text: 'Azonnali digitális jegy', sub: 'Nincs nyomtatás' },
-      { icon: MapPin, text: 'Klasszikus útvonal', sub: 'Eiffel, Louvre, Notre-Dame' },
-    ]
+  // Generate background style for card
+  const cardBackground = styles.card.gradientEnabled
+    ? `linear-gradient(${styles.card.gradientDirection?.replace('to-', 'to ') || 'to bottom right'}, ${styles.card.gradientFrom || styles.card.backgroundColor}, ${styles.card.gradientTo || styles.card.backgroundColor})`
+    : styles.card.backgroundColor
+
+  // Render step content dynamically
+  const renderStepContent = () => {
+    if (!activeStep) return null
+
+    const isLastStep = currentStep === totalSteps
+    const stepIndex = currentStep - 1
 
     return (
       <div className="space-y-5">
+        {/* Step Counter */}
         <div>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
+            className="font-semibold text-sm uppercase tracking-wider mb-3"
+            style={{ color: styles.typography.stepCounterColor }}
           >
-            2 / 4 – Előnyök
+            {currentStep} / {totalSteps}
+            {activeStep.label && ` – ${activeStep.label}`}
           </motion.p>
+
           <motion.h2
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="font-playfair text-xl md:text-2xl lg:text-3xl font-bold text-slate-900"
+            className="font-playfair text-xl md:text-2xl lg:text-3xl font-bold leading-tight"
+            style={{ color: styles.typography.headingColor }}
           >
-            Miért ez a legjobb választás?
+            {activeStep.title}
+            {activeStep.subtitle && (
+              <>
+                <br />
+                <span style={{ color: styles.typography.bodyTextColor }}>{activeStep.subtitle}</span>
+              </>
+            )}
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {features.map((feature, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 15 }}
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-base md:text-lg leading-relaxed"
+          style={{ color: styles.typography.bodyTextColor }}
+        >
+          {activeStep.description}
+        </motion.p>
+
+        {/* Features (if any) */}
+        {activeStep.features && activeStep.features.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {activeStep.features.map((feature: WizardFeature, idx: number) => {
+              const FeatureIcon = getIcon(feature.icon)
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 + idx * 0.08 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-white/60 border"
+                  style={{ borderColor: styles.card.borderColor }}
+                >
+                  <div
+                    className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: styles.button.backgroundColor }}
+                  >
+                    <FeatureIcon className="w-5 h-5" style={{ color: styles.button.textColor }} />
+                  </div>
+                  <div>
+                    <p className="font-semibold" style={{ color: styles.typography.headingColor }}>
+                      {feature.text}
+                    </p>
+                    {feature.subtext && (
+                      <p className="text-sm" style={{ color: styles.typography.bodyTextColor }}>
+                        {feature.subtext}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Pricing Card (Last Step) */}
+        {isLastStep && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-2xl p-5 md:p-6 border shadow-sm"
+            style={{ borderColor: styles.card.borderColor, backgroundColor: 'white' }}
+          >
+            <div className="flex items-end justify-center gap-6 md:gap-10 mb-5">
+              <div className="text-center">
+                <p className="text-sm mb-1" style={{ color: styles.typography.bodyTextColor }}>
+                  Felnőtt
+                </p>
+                <p className="text-4xl md:text-5xl font-bold" style={{ color: styles.pricing.adultPriceColor }}>
+                  {pricing.adultPrice}
+                  <span className="text-xl md:text-2xl" style={{ color: styles.pricing.currencyColor }}>
+                    {pricing.currency}
+                  </span>
+                </p>
+              </div>
+              <div className="h-10 w-px" style={{ backgroundColor: styles.pricing.dividerColor }} />
+              <div className="text-center">
+                <p className="text-sm mb-1" style={{ color: styles.typography.bodyTextColor }}>
+                  Gyermek
+                </p>
+                <p className="text-3xl md:text-4xl font-bold" style={{ color: styles.pricing.childPriceColor }}>
+                  {pricing.childPrice}
+                  <span className="text-lg md:text-xl">{pricing.currency}</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Main CTA Button */}
+            <motion.button
+              onClick={handleOrderClick}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + idx * 0.08 }}
-              className="flex items-start gap-3 p-3 rounded-xl bg-white/60 border border-slate-200"
+              transition={{ delay: 0.35 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-4 font-bold text-lg transition-all shadow-lg"
+              style={{
+                backgroundColor: styles.button.backgroundColor,
+                color: styles.button.textColor,
+                borderRadius: `${styles.button.borderRadius}px`,
+              }}
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
-                <feature.icon className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="font-semibold text-slate-900">{feature.text}</p>
-                <p className="text-sm text-slate-600">{feature.sub}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              {activeStep.ctaText}
+            </motion.button>
 
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="pt-1"
-        >
-          <button
-            onClick={() => paginate(1)}
-            className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-slate-900/25"
-          >
-            Tovább
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
-        </motion.div>
-      </div>
-    )
-  }
+            {/* Privacy Note */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45 }}
+              className="text-center text-xs mt-3"
+              style={{ color: styles.typography.labelColor }}
+            >
+              {pricing.privacyNote}
+            </motion.p>
+          </motion.div>
+        )}
 
-  // Step 3: Atmosphere / Target audience
-  const Step3 = () => {
-    const reasons = [
-      { icon: Calendar, text: 'Nem szereted a menetrendeket' },
-      { icon: Sun, text: 'Csak akkor hajóznál, ha kisüt a nap' },
-      { icon: Headphones, text: 'Szeretnéd megismerni Párizs titkait' },
-    ]
-
-    return (
-      <div className="space-y-5">
-        <div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
-          >
-            3 / 4 – Neked szól
-          </motion.p>
-          <motion.h2
+        {/* CTA Button (Not Last Step) */}
+        {!isLastStep && (
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="font-playfair text-xl md:text-2xl lg:text-3xl font-bold text-slate-900"
+            transition={{ delay: 0.3 }}
+            className="pt-2"
           >
-            Ez a jegy neked szól, ha...
-          </motion.h2>
-        </div>
-
-        <div className="space-y-3">
-          {reasons.map((reason, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + idx * 0.1 }}
-              className="flex items-center gap-3 p-4 bg-white/70 rounded-xl border border-slate-200"
+            <button
+              onClick={() => paginate(1)}
+              className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 font-semibold text-base md:text-lg transition-all shadow-lg"
+              style={{
+                backgroundColor: styles.button.backgroundColor,
+                color: styles.button.textColor,
+                borderRadius: `${styles.button.borderRadius}px`,
+              }}
             >
-              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center">
-                <reason.icon className="w-4 h-4 text-slate-700" />
-              </div>
-              <p className="text-slate-700 font-medium">{reason.text}</p>
-            </motion.div>
-          ))}
-        </div>
+              {activeStep.ctaText}
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </button>
+          </motion.div>
+        )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-          className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200"
-        >
-          <Anchor className="w-6 h-6 text-slate-700 flex-shrink-0" />
-          <div>
-            <p className="font-semibold text-slate-900">Bateaux Parisiens</p>
-            <p className="text-sm text-slate-600">Hivatalos partnerem 1956 óta</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-        >
-          <button
-            onClick={() => paginate(1)}
-            className="group inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition-all shadow-lg shadow-slate-900/25"
+        {/* Back to start (Last Step) */}
+        {isLastStep && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.55 }}
+            className="flex justify-center"
           >
-            Lássuk az árakat
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
-        </motion.div>
+            <button
+              onClick={() => goToStep(1)}
+              className="flex items-center gap-2 transition-colors text-sm"
+              style={{ color: styles.typography.labelColor }}
+            >
+              <RotateCcw className="w-4 h-4" />
+              Vissza az elejére
+            </button>
+          </motion.div>
+        )}
       </div>
     )
   }
 
-  // Step 4: Pricing & CTA
-  const Step4 = () => (
-    <div className="space-y-5">
-      <div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3"
-        >
-          4 / 4 – Jegyvétel
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="font-playfair text-xl md:text-2xl lg:text-3xl font-bold text-slate-900"
-        >
-          Árak és foglalás
-        </motion.h2>
-      </div>
-
-      {/* Pricing Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl p-5 md:p-6 border border-slate-200 shadow-sm"
-      >
-        <div className="flex items-end justify-center gap-6 md:gap-10 mb-5">
-          <div className="text-center">
-            <p className="text-slate-600 text-sm mb-1">Felnőtt</p>
-            <p className="text-4xl md:text-5xl font-bold text-slate-900">
-              17<span className="text-xl md:text-2xl text-slate-700">€</span>
-            </p>
-          </div>
-          <div className="h-10 w-px bg-slate-200" />
-          <div className="text-center">
-            <p className="text-slate-600 text-sm mb-1">Gyermek</p>
-            <p className="text-3xl md:text-4xl font-bold text-slate-700">
-              8<span className="text-lg md:text-xl">€</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Main CTA Button */}
-        <motion.button
-          onClick={handleOrderClick}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full bg-slate-900 hover:bg-slate-700 text-white py-4 rounded-full font-bold text-lg transition-all shadow-lg shadow-slate-900/30"
-        >
-          Jegyet kérek
-        </motion.button>
-
-        {/* Privacy Note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-          className="text-center text-slate-500 text-xs mt-3"
-        >
-          A megrendeléssel elfogadod az adatvédelmi tájékoztatómat.
-        </motion.p>
-      </motion.div>
-
-      {/* Back to start */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.55 }}
-        className="flex justify-center"
-      >
-        <button
-          onClick={() => goToStep(1)}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors text-sm"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Vissza az elejére
-        </button>
-      </motion.div>
-    </div>
-  )
-
-  const steps = [Step1, Step2, Step3, Step4]
-  const CurrentStepComponent = steps[currentStep - 1]
+  // FAB position class
+  const fabPositionClass = fabPosition === 'bottom-right' ? 'right-6' : 'left-6'
 
   return (
     <>
-      {/* Floating Action Button - Amber/Gold */}
+      {/* Floating Action Button */}
       <AnimatePresence>
         {isVisible && !isOpen && (
           <motion.button
@@ -381,10 +417,15 @@ export default function BoatTourModal() {
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full bg-slate-900 hover:bg-slate-700 px-4 py-3 text-white shadow-xl shadow-slate-900/30 transition-all duration-300 hover:scale-105 md:px-6 md:py-4"
+            className={`fixed bottom-6 ${fabPositionClass} z-40 flex items-center gap-2 px-4 py-3 md:px-6 md:py-4 shadow-xl transition-all duration-300 hover:scale-105`}
+            style={{
+              backgroundColor: styles.button.backgroundColor,
+              color: styles.button.textColor,
+              borderRadius: `${styles.button.borderRadius}px`,
+            }}
           >
             <Ship className="h-5 w-5 md:h-6 md:w-6" />
-            <span className="hidden font-semibold md:inline">Hajózás Párizsban</span>
+            <span className="hidden font-semibold md:inline">{fabText}</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -409,8 +450,12 @@ export default function BoatTourModal() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.92, y: 20 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl"
-                style={{ backgroundColor: '#FAF7F2' }}
+                className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
+                style={{
+                  background: cardBackground,
+                  borderRadius: `${styles.card.borderRadius}px`,
+                  border: `1px solid ${styles.card.borderColor}`,
+                }}
               >
                 {/* Close Button */}
                 <motion.button
@@ -420,17 +465,18 @@ export default function BoatTourModal() {
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setIsOpen(false)}
-                  className="absolute right-3 top-3 md:right-4 md:top-4 z-20 flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-white/90 text-slate-700 shadow-md hover:bg-white transition-colors"
+                  className="absolute right-3 top-3 md:right-4 md:top-4 z-20 flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-white/90 shadow-md hover:bg-white transition-colors"
+                  style={{ color: styles.typography.headingColor }}
                 >
                   <X className="h-5 w-5" />
                 </motion.button>
 
                 {/* Split Layout */}
                 <div className="flex flex-col md:flex-row h-full max-h-[90vh]">
-
                   {/* Left Side - Journey Visualization */}
                   <div
-                    className="relative w-full md:w-2/5 h-36 md:h-auto min-h-[144px] md:min-h-[520px] overflow-hidden flex-shrink-0 bg-[#FAF7F2] z-10"
+                    className="relative w-full md:w-2/5 h-36 md:h-auto min-h-[144px] md:min-h-[520px] overflow-hidden flex-shrink-0 z-10"
+                    style={{ backgroundColor: styles.card.backgroundColor }}
                   >
                     {/* Journey Path Container */}
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -441,7 +487,7 @@ export default function BoatTourModal() {
                           <path
                             d="M 10% 50% Q 30% 35%, 50% 50% T 90% 50%"
                             fill="none"
-                            stroke="#94a3b8"
+                            stroke={styles.journeyPathColor}
                             strokeWidth="2"
                             strokeDasharray="8 6"
                             strokeLinecap="round"
@@ -449,35 +495,47 @@ export default function BoatTourModal() {
                         </svg>
 
                         {/* Checkpoint dots - horizontal */}
-                        {[10, 36, 64, 90].map((pos, idx) => (
-                          <motion.div
-                            key={idx}
-                            className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white shadow-sm transition-colors duration-300 ${
-                              idx + 1 <= currentStep ? 'bg-slate-900' : 'bg-slate-300'
-                            }`}
-                            style={{ left: `${pos}%`, marginLeft: '-6px' }}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.2 + idx * 0.1 }}
-                          />
-                        ))}
+                        {steps.map((step, idx) => {
+                          const pos = 10 + (idx * 80) / (steps.length - 1)
+                          return (
+                            <motion.div
+                              key={step.id}
+                              className="absolute top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm transition-colors duration-300"
+                              style={{
+                                left: `${pos}%`,
+                                marginLeft: '-6px',
+                                width: `${styles.timeline.dotSize}px`,
+                                height: `${styles.timeline.dotSize}px`,
+                                backgroundColor:
+                                  idx + 1 <= currentStep
+                                    ? styles.timeline.dotColorActive
+                                    : styles.timeline.dotColorInactive,
+                              }}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ delay: 0.2 + idx * 0.1 }}
+                            />
+                          )
+                        })}
 
                         {/* Boat - horizontal movement */}
                         <motion.div
                           className="absolute top-1/2 -translate-y-1/2"
                           initial={{ left: '10%' }}
                           animate={{
-                            left: `${[10, 36, 64, 90][currentStep - 1]}%`,
+                            left: `${10 + ((currentStep - 1) * 80) / (steps.length - 1)}%`,
                           }}
                           transition={{ duration: 0.5, ease: 'easeInOut' }}
                           style={{ marginLeft: '-20px', marginTop: '-24px' }}
                         >
-                          {/* Floating boat animation */}
                           <motion.div
                             animate={{ y: [0, -4, 0] }}
                             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                           >
-                            <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center shadow-lg border-3 border-white">
+                            <div
+                              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-3 border-white"
+                              style={{ backgroundColor: styles.journeyBoatBackground }}
+                            >
                               <Ship className="w-5 h-5 text-white" />
                             </div>
                           </motion.div>
@@ -492,7 +550,7 @@ export default function BoatTourModal() {
                               <path
                                 d="M0 4 Q8 0, 16 4 T32 4"
                                 fill="none"
-                                stroke="#475569"
+                                stroke={styles.journeyWaveColor}
                                 strokeWidth="2"
                                 strokeLinecap="round"
                               />
@@ -512,7 +570,7 @@ export default function BoatTourModal() {
                           <path
                             d="M 50 8 Q 35 25, 50 35 T 50 65 Q 65 75, 50 92"
                             fill="none"
-                            stroke="#94a3b8"
+                            stroke={styles.journeyPathColor}
                             strokeWidth="0.8"
                             strokeDasharray="3 2"
                             strokeLinecap="round"
@@ -521,50 +579,56 @@ export default function BoatTourModal() {
                         </svg>
 
                         {/* Checkpoint dots with labels */}
-                        {[
-                          { top: '10%', label: 'Indulás' },
-                          { top: '35%', label: 'Előnyök' },
-                          { top: '65%', label: 'Neked szól' },
-                          { top: '90%', label: 'Jegyvétel' },
-                        ].map((checkpoint, idx) => (
-                          <motion.div
-                            key={idx}
-                            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3"
-                            style={{ top: checkpoint.top }}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + idx * 0.1 }}
-                          >
-                            {/* Dot */}
-                            <div
-                              className={`w-4 h-4 rounded-full border-2 border-white shadow-md transition-all duration-300 ${
-                                idx + 1 <= currentStep
-                                  ? 'bg-slate-900 scale-110'
-                                  : 'bg-slate-300'
-                              }`}
-                            />
-                            {/* Label */}
-                            <span
-                              className={`absolute left-8 whitespace-nowrap text-sm font-medium transition-colors duration-300 ${
-                                idx + 1 <= currentStep ? 'text-slate-700' : 'text-slate-400'
-                              }`}
+                        {steps.map((step, idx) => {
+                          const topPercent = 10 + (idx * 80) / (steps.length - 1)
+                          return (
+                            <motion.div
+                              key={step.id}
+                              className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3"
+                              style={{ top: `${topPercent}%` }}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 + idx * 0.1 }}
                             >
-                              {checkpoint.label}
-                            </span>
-                          </motion.div>
-                        ))}
+                              {/* Dot */}
+                              <div
+                                className="rounded-full border-2 border-white shadow-md transition-all duration-300"
+                                style={{
+                                  width: `${styles.timeline.dotSize + 4}px`,
+                                  height: `${styles.timeline.dotSize + 4}px`,
+                                  backgroundColor:
+                                    idx + 1 <= currentStep
+                                      ? styles.timeline.dotColorActive
+                                      : styles.timeline.dotColorInactive,
+                                  transform: idx + 1 <= currentStep ? 'scale(1.1)' : 'scale(1)',
+                                }}
+                              />
+                              {/* Label */}
+                              <span
+                                className="absolute left-8 whitespace-nowrap text-sm font-medium transition-colors duration-300"
+                                style={{
+                                  color:
+                                    idx + 1 <= currentStep
+                                      ? styles.typography.headingColor
+                                      : styles.typography.labelColor,
+                                }}
+                              >
+                                {step.label}
+                              </span>
+                            </motion.div>
+                          )
+                        })}
 
                         {/* The Boat Hero - Animated along the path */}
                         <motion.div
                           className="absolute left-1/2 -translate-x-1/2"
                           initial={{ top: '10%' }}
                           animate={{
-                            top: ['10%', '35%', '65%', '90%'][currentStep - 1],
+                            top: `${10 + ((currentStep - 1) * 80) / (steps.length - 1)}%`,
                           }}
                           transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                           style={{ marginLeft: '-28px' }}
                         >
-                          {/* Floating/bobbing animation wrapper */}
                           <motion.div
                             animate={{ y: [0, -6, 0] }}
                             transition={{
@@ -573,13 +637,18 @@ export default function BoatTourModal() {
                               ease: 'easeInOut',
                             }}
                           >
-                            {/* Boat container */}
                             <div className="relative">
                               {/* Glow effect */}
-                              <div className="absolute inset-0 bg-slate-400/30 rounded-full blur-xl scale-150" />
+                              <div
+                                className="absolute inset-0 rounded-full blur-xl scale-150"
+                                style={{ backgroundColor: `${styles.journeyBoatBackground}30` }}
+                              />
 
                               {/* Main boat icon */}
-                              <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-xl border-4 border-white">
+                              <div
+                                className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl border-4 border-white"
+                                style={{ backgroundColor: styles.journeyBoatBackground }}
+                              >
                                 <Ship className="w-7 h-7 text-white drop-shadow-sm" />
                               </div>
 
@@ -600,33 +669,8 @@ export default function BoatTourModal() {
                                   <path
                                     d="M0 6 Q12 2, 24 6 T48 6"
                                     fill="none"
-                                    stroke="#475569"
+                                    stroke={styles.journeyWaveColor}
                                     strokeWidth="2.5"
-                                    strokeLinecap="round"
-                                  />
-                                </svg>
-                              </motion.div>
-
-                              {/* Secondary wave */}
-                              <motion.div
-                                className="absolute -bottom-4 left-1/2 -translate-x-1/2"
-                                animate={{
-                                  opacity: [0.3, 0.6, 0.3],
-                                  scale: [1, 1.2, 1],
-                                }}
-                                transition={{
-                                  duration: 2.5,
-                                  repeat: Infinity,
-                                  ease: 'easeInOut',
-                                  delay: 0.3,
-                                }}
-                              >
-                                <svg width="56" height="10" viewBox="0 0 56 10">
-                                  <path
-                                    d="M0 5 Q14 1, 28 5 T56 5"
-                                    fill="none"
-                                    stroke="#64748b"
-                                    strokeWidth="1.5"
                                     strokeLinecap="round"
                                   />
                                 </svg>
@@ -643,8 +687,12 @@ export default function BoatTourModal() {
                         ].map((bubble, idx) => (
                           <motion.div
                             key={idx}
-                            className="absolute w-2 h-2 rounded-full bg-slate-300/40"
-                            style={{ left: bubble.left, top: bubble.top }}
+                            className="absolute w-2 h-2 rounded-full"
+                            style={{
+                              left: bubble.left,
+                              top: bubble.top,
+                              backgroundColor: `${styles.journeyPathColor}40`,
+                            }}
                             animate={{
                               y: [0, -10, 0],
                               opacity: [0.3, 0.6, 0.3],
@@ -668,18 +716,24 @@ export default function BoatTourModal() {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md"
                       >
-                        <Anchor className="w-4 h-4 text-slate-700" />
-                        <span className="text-xs font-medium text-slate-600">Szajna túra</span>
+                        <Anchor className="w-4 h-4" style={{ color: styles.timeline.boatIconColor }} />
+                        <span className="text-xs font-medium" style={{ color: styles.typography.bodyTextColor }}>
+                          Szajna túra
+                        </span>
                       </motion.div>
                     </div>
                   </div>
 
                   {/* Right Side - Content */}
                   <div
-                    className="flex-1 flex flex-col overflow-hidden relative z-10 bg-[#FAF7F2]"
+                    className="flex-1 flex flex-col overflow-hidden relative z-10"
+                    style={{ backgroundColor: styles.card.backgroundColor }}
                   >
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10 bg-[#FAF7F2]">
+                    <div
+                      className="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10"
+                      style={{ backgroundColor: styles.card.backgroundColor }}
+                    >
                       <AnimatePresence mode="wait" custom={direction}>
                         <motion.div
                           key={currentStep}
@@ -689,24 +743,32 @@ export default function BoatTourModal() {
                           animate="center"
                           exit="exit"
                           transition={{ duration: 0.25, ease: 'easeInOut' }}
-                          className="w-full bg-[#FAF7F2]"
+                          className="w-full"
+                          style={{ backgroundColor: styles.card.backgroundColor }}
                         >
-                          <CurrentStepComponent />
+                          {renderStepContent()}
                         </motion.div>
                       </AnimatePresence>
                     </div>
 
                     {/* Progress Bar with Ship Icon */}
                     <div
-                      className="p-4 md:p-5 border-t border-slate-200"
-                      style={{ backgroundColor: '#FAF7F2' }}
+                      className="p-4 md:p-5 border-t"
+                      style={{
+                        backgroundColor: styles.card.backgroundColor,
+                        borderColor: styles.card.borderColor,
+                      }}
                     >
                       <div className="relative h-6">
                         {/* Track background */}
-                        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 bg-slate-200 rounded-full">
+                        <div
+                          className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 rounded-full"
+                          style={{ backgroundColor: styles.timeline.lineColorInactive }}
+                        >
                           {/* Filled track */}
                           <motion.div
-                            className="h-full bg-slate-900 rounded-full"
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: styles.timeline.lineColorActive }}
                             initial={{ width: '0%' }}
                             animate={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
                             transition={{ duration: 0.35, ease: 'easeOut' }}
@@ -715,17 +777,21 @@ export default function BoatTourModal() {
 
                         {/* Step dots */}
                         <div className="absolute inset-0 flex justify-between items-center">
-                          {[1, 2, 3, 4].map((step) => (
+                          {steps.map((step, idx) => (
                             <button
-                              key={step}
-                              onClick={() => goToStep(step)}
-                              className={`relative z-10 w-3 h-3 rounded-full transition-all duration-300 ${
-                                step <= currentStep
-                                  ? 'bg-slate-900'
-                                  : 'bg-slate-300'
-                              } ${step === currentStep ? 'scale-125 ring-2 ring-slate-400 ring-offset-2' : 'hover:scale-110'}`}
+                              key={step.id}
+                              onClick={() => goToStep(idx + 1)}
+                              className="relative z-10 w-3 h-3 rounded-full transition-all duration-300 hover:scale-110"
                               style={{
-                                ringOffsetColor: '#FAF7F2',
+                                backgroundColor:
+                                  idx + 1 <= currentStep
+                                    ? styles.timeline.dotColorActive
+                                    : styles.timeline.dotColorInactive,
+                                transform: idx + 1 === currentStep ? 'scale(1.25)' : 'scale(1)',
+                                boxShadow:
+                                  idx + 1 === currentStep
+                                    ? `0 0 0 2px ${styles.timeline.dotColorInactive}, 0 0 0 4px ${styles.card.backgroundColor}`
+                                    : 'none',
                               }}
                             />
                           ))}
@@ -741,7 +807,10 @@ export default function BoatTourModal() {
                           transition={{ duration: 0.35, ease: 'easeOut' }}
                           style={{ marginLeft: '-10px' }}
                         >
-                          <div className="w-5 h-5 rounded-full bg-slate-900 flex items-center justify-center shadow-md border-2 border-white">
+                          <div
+                            className="w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white"
+                            style={{ backgroundColor: styles.timeline.boatIconColor }}
+                          >
                             <Ship className="w-2.5 h-2.5 text-white" />
                           </div>
                         </motion.div>
@@ -749,16 +818,19 @@ export default function BoatTourModal() {
 
                       {/* Step labels */}
                       <div className="flex justify-between mt-2 text-xs">
-                        {['Indulás', 'Előnyök', 'Neked szól', 'Jegyvétel'].map((label, idx) => (
+                        {steps.map((step, idx) => (
                           <span
-                            key={label}
-                            className={`transition-colors ${
-                              currentStep >= idx + 1
-                                ? 'text-slate-700 font-medium'
-                                : 'text-slate-400'
-                            }`}
+                            key={step.id}
+                            className="transition-colors"
+                            style={{
+                              color:
+                                currentStep >= idx + 1
+                                  ? styles.typography.headingColor
+                                  : styles.typography.labelColor,
+                              fontWeight: currentStep === idx + 1 ? 500 : 400,
+                            }}
                           >
-                            {label}
+                            {step.label}
                           </span>
                         ))}
                       </div>
