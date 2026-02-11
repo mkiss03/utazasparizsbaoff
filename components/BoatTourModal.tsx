@@ -22,6 +22,8 @@ import {
   Camera,
   Music,
   Gift,
+  Map,
+  Eye,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -57,6 +59,7 @@ export default function BoatTourModal() {
   const [isVisible, setIsVisible] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(0)
+  const [showMap, setShowMap] = useState(false)
 
   // Config state (loaded from database)
   const [config, setConfig] = useState<{
@@ -138,6 +141,7 @@ export default function BoatTourModal() {
       const timer = setTimeout(() => {
         setCurrentStep(1)
         setDirection(0)
+        setShowMap(false)
       }, 300)
       return () => clearTimeout(timer)
     }
@@ -327,23 +331,115 @@ export default function BoatTourModal() {
               </div>
             </div>
 
-            {/* Main CTA Button */}
-            <motion.button
-              onClick={handleOrderClick}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-4 font-bold text-lg transition-all shadow-lg"
-              style={{
-                backgroundColor: styles.button.backgroundColor,
-                color: styles.button.textColor,
-                borderRadius: `${styles.button.borderRadius}px`,
-              }}
-            >
-              {activeStep.ctaText}
-            </motion.button>
+            {/* Button Container */}
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              {/* Main CTA Button */}
+              <motion.button
+                onClick={handleOrderClick}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full sm:flex-1 py-4 font-bold text-lg transition-all shadow-lg"
+                style={{
+                  backgroundColor: styles.button.backgroundColor,
+                  color: styles.button.textColor,
+                  borderRadius: `${styles.button.borderRadius}px`,
+                }}
+              >
+                {activeStep.ctaText}
+              </motion.button>
+
+              {/* Route Map Button */}
+              <motion.button
+                onClick={() => setShowMap(!showMap)}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-4 font-semibold text-base transition-all border border-slate-300 text-slate-700 hover:bg-slate-100"
+                style={{
+                  borderRadius: `${styles.button.borderRadius}px`,
+                }}
+              >
+                {showMap ? <Eye className="w-5 h-5" /> : <Map className="w-5 h-5" />}
+                <span className="hidden sm:inline">{showMap ? 'Bezárás' : 'Útvonal'}</span>
+              </motion.button>
+            </div>
+
+            {/* Holographic Route Map Reveal */}
+            <AnimatePresence>
+              {showMap && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  className="relative mt-4 rounded-2xl overflow-hidden"
+                >
+                  {/* Glassmorphism container */}
+                  <motion.div
+                    className="relative backdrop-blur-md bg-white/30 border border-white/60 rounded-2xl p-3 shadow-[0_0_20px_rgba(255,255,255,0.6),0_8px_32px_rgba(0,0,0,0.1)]"
+                    animate={{
+                      y: [-2, 2, -2],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    {/* Close button */}
+                    <button
+                      onClick={() => setShowMap(false)}
+                      className="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 hover:bg-white shadow-md transition-all hover:scale-110"
+                    >
+                      <X className="w-4 h-4 text-slate-600" />
+                    </button>
+
+                    {/* Holographic glow effect */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10 pointer-events-none" />
+
+                    {/* Scan lines effect */}
+                    <div
+                      className="absolute inset-0 rounded-2xl pointer-events-none opacity-30"
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+                      }}
+                    />
+
+                    {/* The Map Image */}
+                    <motion.img
+                      src="/images/folyooo.jpg"
+                      alt="Szajna útvonal térkép"
+                      className="w-full rounded-xl mix-blend-multiply opacity-90"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.9 }}
+                      transition={{ delay: 0.15 }}
+                    />
+
+                    {/* Label */}
+                    <motion.div
+                      className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white/80 backdrop-blur-sm rounded-full shadow-lg"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                        <Ship className="w-3.5 h-3.5" />
+                        Klasszikus Szajna Útvonal
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Privacy Note */}
             <motion.p
