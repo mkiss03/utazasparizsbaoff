@@ -24,6 +24,7 @@ import {
   Gift,
   Map,
   Eye,
+  ZoomIn,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -60,6 +61,7 @@ export default function BoatTourModal() {
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(0)
   const [showMap, setShowMap] = useState(false)
+  const [isMapZoomed, setIsMapZoomed] = useState(false)
 
   // Config state (loaded from database)
   const [config, setConfig] = useState<{
@@ -142,6 +144,7 @@ export default function BoatTourModal() {
         setCurrentStep(1)
         setDirection(0)
         setShowMap(false)
+        setIsMapZoomed(false)
       }, 300)
       return () => clearTimeout(timer)
     }
@@ -451,15 +454,30 @@ export default function BoatTourModal() {
                         }}
                       />
 
-                      {/* The Map Image */}
-                      <motion.img
-                        src="/images/folyoooo.jpg"
-                        alt="Szajna útvonal térkép"
-                        className="w-full rounded-xl mix-blend-multiply opacity-90"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.9 }}
-                        transition={{ delay: 0.15 }}
-                      />
+                      {/* The Map Image - Clickable for zoom */}
+                      <div
+                        className="relative cursor-pointer group"
+                        onClick={() => setIsMapZoomed(true)}
+                      >
+                        <motion.img
+                          src="/images/folyoooo.jpg"
+                          alt="Szajna útvonal térkép"
+                          className="w-full rounded-xl mix-blend-multiply opacity-90 transition-transform group-hover:scale-[1.02]"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 0.9 }}
+                          transition={{ delay: 0.15 }}
+                        />
+
+                        {/* Zoom indicator */}
+                        <motion.div
+                          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 0.7, scale: 1 }}
+                          transition={{ delay: 0.3 }}
+                        >
+                          <ZoomIn className="w-4 h-4 text-slate-600" />
+                        </motion.div>
+                      </div>
 
                       {/* Label */}
                       <motion.div
@@ -478,6 +496,57 @@ export default function BoatTourModal() {
                 )}
               </AnimatePresence>
             )}
+
+            {/* Zoomed Map Lightbox */}
+            <AnimatePresence>
+              {isMapZoomed && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                  onClick={() => setIsMapZoomed(false)}
+                >
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="relative max-w-4xl w-full max-h-[90vh]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Close button */}
+                    <button
+                      onClick={() => setIsMapZoomed(false)}
+                      className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                    >
+                      <X className="w-6 h-6 text-white" />
+                    </button>
+
+                    {/* Zoomed image */}
+                    <motion.img
+                      src="/images/folyoooo.jpg"
+                      alt="Szajna útvonal térkép - Nagyított"
+                      className="w-full h-auto rounded-2xl shadow-2xl"
+                      layoutId="route-map-image"
+                    />
+
+                    {/* Label in zoomed view */}
+                    <motion.div
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Ship className="w-4 h-4" />
+                        Klasszikus Szajna Útvonal – Kattints bárhová a bezáráshoz
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
 
