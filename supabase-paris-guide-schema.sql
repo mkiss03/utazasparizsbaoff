@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS paris_guide_configs (
     "mainTitle": "Fedezd fel Párizs kerületeit",
     "subtitle": "Minden kerületnek megvan a saját karaktere. Kattints a térképre vagy navigálj az idővonalon!",
     "timelineTitle": "Felfedezési útvonal",
+    "mapTitle": "Párizs Kerületei",
     "legendActiveText": "Aktív",
     "legendVisitedText": "Megtekintett",
     "legendInactiveText": "Nem aktív"

@@ -194,6 +194,20 @@ export default function DistrictContentEditor({
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Térkép címe
+            </label>
+            <input
+              type="text"
+              value={globalContent.mapTitle || 'Párizs Kerületei'}
+              onChange={(e) =>
+                onGlobalContentChange({ ...globalContent, mapTitle: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
+
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">

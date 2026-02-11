@@ -311,6 +311,7 @@ export default function ParisDistrictGuide() {
                   onDistrictHover={setHoveredDistrict}
                   mapStyles={styles.map}
                   sectionBackground={styles.sectionBackground}
+                  mapTitle={globalContent.mapTitle}
                 />
               </div>
 

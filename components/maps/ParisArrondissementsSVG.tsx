@@ -20,6 +20,7 @@ interface ParisArrondissementsSVGProps {
   className?: string
   mapStyles?: MapStyles
   sectionBackground?: string
+  mapTitle?: string
 }
 
 // Original geographic bounds from the SVG file
@@ -99,6 +100,7 @@ export default function ParisArrondissementsSVG({
   className = '',
   mapStyles = defaultMapStyles,
   sectionBackground = '#FAF7F2',
+  mapTitle = 'Párizs Kerületei',
 }: ParisArrondissementsSVGProps) {
   const styles = { ...defaultMapStyles, ...mapStyles }
 
@@ -195,7 +197,7 @@ export default function ParisArrondissementsSVG({
         textAnchor="middle"
         style={{ fontSize: '20px', fontWeight: 600, fill: styles.activeColor }}
       >
-        Párizs Kerületei
+        {mapTitle}
       </text>
 
       {/* Compass */}

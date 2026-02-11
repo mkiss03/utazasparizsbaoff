@@ -541,6 +541,7 @@ export interface ParisGuideGlobalContent {
   mainTitle: string
   subtitle: string
   timelineTitle: string
+  mapTitle: string
   legendActiveText: string
   legendVisitedText: string
   legendInactiveText: string
@@ -564,6 +565,7 @@ export const createDefaultParisGuideConfig = (): Omit<ParisGuideConfig, 'id' | '
     mainTitle: 'Fedezd fel Párizs kerületeit',
     subtitle: 'Minden kerületnek megvan a saját karaktere. Kattints a térképre vagy navigálj az idővonalon!',
     timelineTitle: 'Felfedezési útvonal',
+    mapTitle: 'Párizs Kerületei',
     legendActiveText: 'Aktív',
     legendVisitedText: 'Megtekintett',
     legendInactiveText: 'Nem aktív',
