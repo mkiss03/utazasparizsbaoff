@@ -471,3 +471,195 @@ export const createDefaultWizardConfig = (): Omit<WizardConfig, 'id' | 'created_
   fabPosition: 'bottom-left',
   isActive: true,
 })
+
+// ============================================
+// PARIS DISTRICT GUIDE CONFIG TYPES
+// ============================================
+
+export type DistrictLayoutType = 'standard' | 'rich_ticket' | 'rich_list'
+
+export interface DistrictContent {
+  districtNumber: number // 1-20
+  isActive: boolean
+  title: string // e.g., "1. Kerület - A Louvre"
+  subtitle?: string
+  description: string
+  highlights?: string[]
+  mainAttraction?: string
+  localTips?: string
+  bestFor?: string[]
+  avoidTips?: string
+  layoutType: DistrictLayoutType
+  sortOrder: number
+  iconName?: string
+  accentColor?: string
+}
+
+export interface MapStyles {
+  baseColor: string // Default fill for inactive districts
+  hoverColor: string // Fill on hover
+  activeColor: string // Highlighted/selected district
+  strokeColor: string // Borders between districts
+  strokeWidth: number
+  labelColor: string // District number labels
+}
+
+export interface CardStyles {
+  backgroundColor: string
+  headerGradientFrom: string
+  headerGradientTo: string
+  titleColor: string
+  subtitleColor: string
+  bodyTextColor: string
+  accentColor: string // Icons, checkmarks
+  borderColor: string
+  borderRadius: number
+  shadowIntensity: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+}
+
+export interface TimelineStyles {
+  lineColor: string
+  lineColorActive: string
+  dotColorActive: string
+  dotColorInactive: string
+  dotSize: number
+  labelColorActive: string
+  labelColorInactive: string
+  pinColor: string
+}
+
+export interface ParisGuideStyles {
+  map: MapStyles
+  card: CardStyles
+  timeline: TimelineStyles
+  sectionBackground: string
+  headingColor: string
+  subheadingColor: string
+}
+
+export interface ParisGuideGlobalContent {
+  mainTitle: string
+  subtitle: string
+  timelineTitle: string
+  legendActiveText: string
+  legendVisitedText: string
+  legendInactiveText: string
+}
+
+export interface ParisGuideConfig {
+  id: string
+  name: string
+  globalContent: ParisGuideGlobalContent
+  districts: DistrictContent[]
+  styles: ParisGuideStyles
+  isActive: boolean
+  created_at: string
+  updated_at: string
+}
+
+// Default configuration factory for Paris Guide
+export const createDefaultParisGuideConfig = (): Omit<ParisGuideConfig, 'id' | 'created_at' | 'updated_at'> => ({
+  name: 'Paris District Guide - Default',
+  globalContent: {
+    mainTitle: 'Fedezd fel Párizs kerületeit',
+    subtitle: 'Minden kerületnek megvan a saját karaktere. Kattints a térképre vagy navigálj az idővonalon!',
+    timelineTitle: 'Felfedezési útvonal',
+    legendActiveText: 'Aktív',
+    legendVisitedText: 'Megtekintett',
+    legendInactiveText: 'Nem aktív',
+  },
+  districts: [
+    {
+      districtNumber: 1,
+      isActive: true,
+      title: '1. kerület - Louvre és Châtelet',
+      subtitle: 'A királyi Párizs',
+      description: 'A Louvre, Tuileriák kertje és a Palais Royal otthona. Párizs történelmi szíve, ahol a királyok éltek.',
+      highlights: ['Louvre Múzeum', 'Tuileriák kertje', 'Palais Royal', 'Place Vendôme'],
+      mainAttraction: 'A Louvre - a világ legnagyobb múzeuma',
+      localTips: 'Kerüld a főbejáratot! A Carrousel du Louvre bejárat sokkal rövidebb sorokat jelent.',
+      bestFor: ['Művészet', 'Történelem', 'Luxus vásárlás'],
+      layoutType: 'rich_ticket',
+      sortOrder: 1,
+      iconName: 'Ticket',
+    },
+    {
+      districtNumber: 4,
+      isActive: true,
+      title: '4. kerület - Notre-Dame és Marais',
+      subtitle: 'A szív és a lélek',
+      description: 'Notre-Dame, Hôtel de Ville, és a Marais negyed. A párizsi romantika és történelem epicentruma.',
+      highlights: ['Notre-Dame', 'Marais', 'Place des Vosges', 'Île de la Cité'],
+      mainAttraction: 'Notre-Dame katedrális (felújítás alatt)',
+      localTips: 'A falafel a Rue des Rosiers-n kötelező! Vasárnap délelőtt a legnyugisabb.',
+      bestFor: ['Történelem', 'Gasztronómia', 'Séta'],
+      layoutType: 'standard',
+      sortOrder: 2,
+      iconName: 'MapPin',
+    },
+    {
+      districtNumber: 7,
+      isActive: true,
+      title: '7. kerület - Eiffel-torony',
+      subtitle: 'Az ikonikus negyed',
+      description: 'Az Eiffel-torony, Invalidusok és az Orsay Múzeum. A legtöbb turista itt kezdi a párizsi kalandját.',
+      highlights: ['Eiffel-torony', "Musée d'Orsay", 'Invalidusok', 'Champ de Mars'],
+      mainAttraction: 'Az Eiffel-torony - Párizs ikonikus szimbóluma',
+      localTips: 'A legjobb kilátás a Trocadéróról van. Kerüld a csúcsidőt (10-14 óra)!',
+      bestFor: ['Turisták', 'Romantika', 'Fotózás'],
+      layoutType: 'rich_ticket',
+      sortOrder: 3,
+      iconName: 'Star',
+    },
+    {
+      districtNumber: 18,
+      isActive: true,
+      title: '18. kerület - Montmartre',
+      subtitle: 'Bohém Párizs',
+      description: 'A Sacré-Cœur bazilika, művészek tere és a Moulin Rouge otthona. A legikonikusabb negyed a művészet szerelmeseinek.',
+      highlights: ['Sacré-Cœur', 'Place du Tertre', 'Moulin Rouge', 'Montmartre szőlőskert'],
+      mainAttraction: 'Sacré-Cœur bazilika és a páratlan kilátás',
+      localTips: 'Reggel érkezz, mielőtt megérkeznek a turistacsoportok. A funiculaire megspórolja a lépcsőzést!',
+      bestFor: ['Művészet', 'Romantika', 'Kilátás'],
+      layoutType: 'rich_ticket',
+      sortOrder: 4,
+      iconName: 'Sparkles',
+    },
+  ],
+  styles: {
+    map: {
+      baseColor: '#ffffff',
+      hoverColor: '#f5f5f4',
+      activeColor: '#1e293b',
+      strokeColor: '#cbd5e1',
+      strokeWidth: 1,
+      labelColor: '#64748b',
+    },
+    card: {
+      backgroundColor: '#ffffff',
+      headerGradientFrom: '#1e293b',
+      headerGradientTo: '#334155',
+      titleColor: '#ffffff',
+      subtitleColor: '#cbd5e1',
+      bodyTextColor: '#475569',
+      accentColor: '#1e293b',
+      borderColor: '#e7e5e4',
+      borderRadius: 16,
+      shadowIntensity: 'lg',
+    },
+    timeline: {
+      lineColor: '#e7e5e4',
+      lineColorActive: '#a8a29e',
+      dotColorActive: '#1e293b',
+      dotColorInactive: '#e7e5e4',
+      dotSize: 16,
+      labelColorActive: '#1e293b',
+      labelColorInactive: '#94a3b8',
+      pinColor: '#1e293b',
+    },
+    sectionBackground: '#FAF7F2',
+    headingColor: '#0f172a',
+    subheadingColor: '#64748b',
+  },
+  isActive: true,
+})

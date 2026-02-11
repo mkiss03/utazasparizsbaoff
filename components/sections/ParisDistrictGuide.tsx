@@ -15,8 +15,37 @@ import {
   List,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { DistrictGuide } from '@/lib/types/database'
+import {
+  DistrictGuide,
+  ParisGuideStyles,
+  ParisGuideGlobalContent,
+  DistrictContent,
+  createDefaultParisGuideConfig,
+} from '@/lib/types/database'
 import ParisArrondissementsSVG from '@/components/maps/ParisArrondissementsSVG'
+
+// Convert DistrictContent (from config) to DistrictGuide format
+function convertToDistrictGuide(district: DistrictContent): DistrictGuide {
+  return {
+    id: String(district.districtNumber),
+    district_number: district.districtNumber,
+    title: district.title,
+    subtitle: district.subtitle,
+    description: district.description,
+    highlights: district.highlights,
+    content_layout: district.layoutType === 'rich_ticket' ? 'rich_ticket' : district.layoutType === 'rich_list' ? 'rich_list' : 'standard',
+    sort_order: district.sortOrder,
+    is_active: district.isActive,
+    main_attraction: district.mainAttraction,
+    local_tips: district.localTips,
+    best_for: district.bestFor,
+    avoid_tips: district.avoidTips,
+    accent_color: district.accentColor || 'slate',
+    icon_name: district.iconName || 'MapPin',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+}
 
 // Fallback data for when database is empty
 const fallbackDistricts: DistrictGuide[] = [
@@ -76,6 +105,9 @@ const fallbackDistricts: DistrictGuide[] = [
   },
 ]
 
+// Default styles for fallback
+const defaultConfig = createDefaultParisGuideConfig()
+
 // Icon mapping
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   MapPin,
@@ -87,18 +119,68 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Sparkles,
 }
 
+// Shadow intensity mapping
+const shadowMap: Record<string, string> = {
+  none: 'shadow-none',
+  sm: 'shadow-sm',
+  md: 'shadow-md',
+  lg: 'shadow-lg',
+  xl: 'shadow-xl',
+  '2xl': 'shadow-2xl',
+}
+
 export default function ParisDistrictGuide() {
   const [districts, setDistricts] = useState<DistrictGuide[]>([])
   const [activeIndex, setActiveIndex] = useState(0)
   const [hoveredDistrict, setHoveredDistrict] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [styles, setStyles] = useState<ParisGuideStyles>(defaultConfig.styles)
+  const [globalContent, setGlobalContent] = useState<ParisGuideGlobalContent>(defaultConfig.globalContent)
   const timelineRef = useRef<HTMLDivElement>(null)
 
-  // Fetch districts from Supabase
+  // Fetch config and districts from Supabase
   useEffect(() => {
-    async function fetchDistricts() {
+    async function fetchConfig() {
       try {
         const supabase = createClient()
+
+        // First try to get config from paris_guide_configs
+        const { data: configData, error: configError } = await supabase
+          .from('paris_guide_configs')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        if (configError && configError.code !== 'PGRST116') {
+          console.error('Error fetching paris guide config:', configError)
+        }
+
+        if (configData) {
+          // Use config from admin panel
+          if (configData.styles) {
+            setStyles(configData.styles)
+          }
+          if (configData.global_content) {
+            setGlobalContent(configData.global_content)
+          }
+          if (configData.districts && configData.districts.length > 0) {
+            // Convert DistrictContent[] to DistrictGuide[] and filter active ones
+            const activeDistricts = configData.districts
+              .filter((d: DistrictContent) => d.isActive)
+              .sort((a: DistrictContent, b: DistrictContent) => a.sortOrder - b.sortOrder)
+              .map(convertToDistrictGuide)
+
+            if (activeDistricts.length > 0) {
+              setDistricts(activeDistricts)
+              setIsLoading(false)
+              return
+            }
+          }
+        }
+
+        // Fallback: fetch from district_guides table
         const { data, error } = await supabase
           .from('district_guides')
           .select('*')
@@ -114,14 +196,14 @@ export default function ParisDistrictGuide() {
           setDistricts(fallbackDistricts)
         }
       } catch (err) {
-        console.error('Failed to fetch districts:', err)
+        console.error('Failed to fetch config:', err)
         setDistricts(fallbackDistricts)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchDistricts()
+    fetchConfig()
   }, [])
 
   const activeDistrict = districts[activeIndex]
@@ -161,7 +243,7 @@ export default function ParisDistrictGuide() {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-[#FAF7F2]">
+      <section className="py-16" style={{ backgroundColor: styles.sectionBackground }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse flex flex-col items-center">
             <div className="h-8 bg-stone-200 rounded w-64 mb-4" />
@@ -178,7 +260,7 @@ export default function ParisDistrictGuide() {
   }
 
   return (
-    <section className="py-16 bg-[#FAF7F2]" id="district-guide">
+    <section className="py-16" id="district-guide" style={{ backgroundColor: styles.sectionBackground }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -187,15 +269,21 @@ export default function ParisDistrictGuide() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="inline-flex items-center gap-2 text-slate-600 font-semibold text-sm uppercase tracking-wider mb-3">
+          <span
+            className="inline-flex items-center gap-2 font-semibold text-sm uppercase tracking-wider mb-3"
+            style={{ color: styles.subheadingColor }}
+          >
             <Map className="w-4 h-4" />
-            Kerületi Útmutató
+            {globalContent.timelineTitle}
           </span>
-          <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Fedezd fel Párizs kerületeit
+          <h2
+            className="font-playfair text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+            style={{ color: styles.headingColor }}
+          >
+            {globalContent.mainTitle}
           </h2>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Minden kerületnek megvan a saját karaktere. Kattints a térképre vagy navigálj az idővonalon!
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: styles.subheadingColor }}>
+            {globalContent.subtitle}
           </p>
         </motion.div>
 
@@ -208,28 +296,40 @@ export default function ParisDistrictGuide() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-stone-200">
+            <div
+              className={`p-4 md:p-6 border ${shadowMap[styles.card.shadowIntensity]}`}
+              style={{
+                backgroundColor: styles.card.backgroundColor,
+                borderColor: styles.card.borderColor,
+                borderRadius: `${styles.card.borderRadius}px`,
+              }}
+            >
               <div className="w-full">
                 <ParisArrondissementsSVG
                   activeDistrict={hoveredDistrict || activeDistrict?.district_number || null}
                   onDistrictClick={handleMapClick}
                   onDistrictHover={setHoveredDistrict}
+                  mapStyles={styles.map}
+                  sectionBackground={styles.sectionBackground}
                 />
               </div>
 
               {/* Map Legend */}
               <div className="mt-4 flex items-center justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-slate-800" />
-                  <span className="text-slate-600">Aktív</span>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: styles.map.activeColor }} />
+                  <span style={{ color: styles.card.bodyTextColor }}>{globalContent.legendActiveText}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-stone-300" />
-                  <span className="text-slate-600">Megtekintett</span>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: styles.map.hoverColor }} />
+                  <span style={{ color: styles.card.bodyTextColor }}>{globalContent.legendVisitedText}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-white border border-slate-300" />
-                  <span className="text-slate-600">Nem aktív</span>
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ backgroundColor: styles.map.baseColor, borderColor: styles.map.strokeColor }}
+                  />
+                  <span style={{ color: styles.card.bodyTextColor }}>{globalContent.legendInactiveText}</span>
                 </div>
               </div>
             </div>
@@ -248,30 +348,43 @@ export default function ParisDistrictGuide() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-stone-200"
+                className={`overflow-hidden border ${shadowMap[styles.card.shadowIntensity]}`}
+                style={{
+                  backgroundColor: styles.card.backgroundColor,
+                  borderColor: styles.card.borderColor,
+                  borderRadius: `${styles.card.borderRadius}px`,
+                }}
               >
-                {/* Card Header - Navy gradient */}
-                <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-6 text-white">
+                {/* Card Header - Dynamic gradient */}
+                <div
+                  className="p-6"
+                  style={{
+                    background: `linear-gradient(to right, ${styles.card.headerGradientFrom}, ${styles.card.headerGradientTo})`,
+                  }}
+                >
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         {(() => {
                           const Icon = getIcon(activeDistrict?.icon_name)
-                          return <Icon className="w-5 h-5" />
+                          return <Icon className="w-5 h-5" style={{ color: styles.card.subtitleColor }} />
                         })()}
-                        <span className="text-slate-300 text-sm font-medium">
+                        <span className="text-sm font-medium" style={{ color: styles.card.subtitleColor }}>
                           {activeIndex + 1} / {districts.length}
                         </span>
                       </div>
-                      <h3 className="font-playfair text-2xl md:text-3xl font-bold mb-1">
+                      <h3
+                        className="font-playfair text-2xl md:text-3xl font-bold mb-1"
+                        style={{ color: styles.card.titleColor }}
+                      >
                         {activeDistrict?.title}
                       </h3>
                       {activeDistrict?.subtitle && (
-                        <p className="text-slate-300">{activeDistrict.subtitle}</p>
+                        <p style={{ color: styles.card.subtitleColor }}>{activeDistrict.subtitle}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-4xl font-bold opacity-30">
+                      <span className="text-4xl font-bold opacity-30" style={{ color: styles.card.titleColor }}>
                         {activeDistrict?.district_number}
                       </span>
                     </div>
@@ -281,22 +394,30 @@ export default function ParisDistrictGuide() {
                 {/* Card Body */}
                 <div className="p-6">
                   {/* Description */}
-                  <p className="text-slate-600 leading-relaxed mb-6">
+                  <p className="leading-relaxed mb-6" style={{ color: styles.card.bodyTextColor }}>
                     {activeDistrict?.description}
                   </p>
 
                   {/* Best For Tags */}
                   {activeDistrict?.best_for && activeDistrict.best_for.length > 0 && (
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-slate-600" />
+                      <h4
+                        className="text-sm font-semibold mb-2 flex items-center gap-2"
+                        style={{ color: styles.headingColor }}
+                      >
+                        <Sparkles className="w-4 h-4" style={{ color: styles.card.accentColor }} />
                         Ideális, ha...
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {activeDistrict.best_for.map((tag, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-stone-100 text-slate-700 border border-stone-200"
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm border"
+                            style={{
+                              backgroundColor: `${styles.card.accentColor}15`,
+                              color: styles.card.bodyTextColor,
+                              borderColor: styles.card.borderColor,
+                            }}
                           >
                             {tag}
                           </span>
@@ -308,17 +429,24 @@ export default function ParisDistrictGuide() {
                   {/* Highlights */}
                   {activeDistrict?.highlights && activeDistrict.highlights.length > 0 && (
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Star className="w-4 h-4 text-slate-600" />
+                      <h4
+                        className="text-sm font-semibold mb-2 flex items-center gap-2"
+                        style={{ color: styles.headingColor }}
+                      >
+                        <Star className="w-4 h-4" style={{ color: styles.card.accentColor }} />
                         Fő látnivalók
                       </h4>
                       <div className="grid grid-cols-2 gap-2">
                         {activeDistrict.highlights.map((highlight, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center gap-2 text-sm text-slate-600"
+                            className="flex items-center gap-2 text-sm"
+                            style={{ color: styles.card.bodyTextColor }}
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            <div
+                              className="w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: styles.card.accentColor }}
+                            />
                             {highlight}
                           </div>
                         ))}
@@ -328,12 +456,23 @@ export default function ParisDistrictGuide() {
 
                   {/* Local Tips */}
                   {activeDistrict?.local_tips && (
-                    <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
-                      <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4 text-slate-600" />
+                    <div
+                      className="rounded-xl p-4 border"
+                      style={{
+                        backgroundColor: `${styles.card.accentColor}10`,
+                        borderColor: styles.card.borderColor,
+                      }}
+                    >
+                      <h4
+                        className="text-sm font-semibold mb-2 flex items-center gap-2"
+                        style={{ color: styles.headingColor }}
+                      >
+                        <Lightbulb className="w-4 h-4" style={{ color: styles.card.accentColor }} />
                         Viktória tippje
                       </h4>
-                      <p className="text-sm text-slate-600">{activeDistrict.local_tips}</p>
+                      <p className="text-sm" style={{ color: styles.card.bodyTextColor }}>
+                        {activeDistrict.local_tips}
+                      </p>
                     </div>
                   )}
 
@@ -350,14 +489,24 @@ export default function ParisDistrictGuide() {
 
                   {/* Rich Ticket Layout (special design) */}
                   {activeDistrict?.content_layout === 'rich_ticket' && activeDistrict?.main_attraction && (
-                    <div className="mt-6 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 text-white">
+                    <div
+                      className="mt-6 rounded-xl p-5"
+                      style={{
+                        background: `linear-gradient(to bottom right, ${styles.card.headerGradientFrom}, ${styles.card.headerGradientTo})`,
+                      }}
+                    >
                       <div className="flex items-center gap-3 mb-3">
-                        <Ticket className="w-5 h-5 text-stone-300" />
-                        <span className="text-stone-300 font-semibold text-sm uppercase tracking-wider">
+                        <Ticket className="w-5 h-5" style={{ color: styles.card.subtitleColor }} />
+                        <span
+                          className="font-semibold text-sm uppercase tracking-wider"
+                          style={{ color: styles.card.subtitleColor }}
+                        >
                           Fő attrakció
                         </span>
                       </div>
-                      <p className="text-white/90">{activeDistrict.main_attraction}</p>
+                      <p style={{ color: styles.card.titleColor, opacity: 0.9 }}>
+                        {activeDistrict.main_attraction}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -367,7 +516,11 @@ export default function ParisDistrictGuide() {
                   <button
                     onClick={() => navigate('prev')}
                     disabled={activeIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-stone-100 text-slate-700 hover:bg-stone-200"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
+                    style={{
+                      backgroundColor: `${styles.card.accentColor}15`,
+                      color: styles.card.bodyTextColor,
+                    }}
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Előző
@@ -375,7 +528,11 @@ export default function ParisDistrictGuide() {
                   <button
                     onClick={() => navigate('next')}
                     disabled={activeIndex === districts.length - 1}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-slate-800 text-white hover:bg-slate-700"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
+                    style={{
+                      backgroundColor: styles.card.accentColor,
+                      color: styles.card.titleColor,
+                    }}
                   >
                     Következő
                     <ChevronRight className="w-4 h-4" />
@@ -393,9 +550,19 @@ export default function ParisDistrictGuide() {
           viewport={{ once: true }}
           className="mt-12"
         >
-          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-stone-200">
-            <h4 className="text-sm font-semibold text-slate-900 mb-4 text-center">
-              Felfedezési útvonal
+          <div
+            className={`rounded-2xl p-4 md:p-6 border ${shadowMap[styles.card.shadowIntensity]}`}
+            style={{
+              backgroundColor: styles.card.backgroundColor,
+              borderColor: styles.card.borderColor,
+              borderRadius: `${styles.card.borderRadius}px`,
+            }}
+          >
+            <h4
+              className="text-sm font-semibold mb-4 text-center"
+              style={{ color: styles.headingColor }}
+            >
+              {globalContent.timelineTitle}
             </h4>
 
             {/* Scrollable Timeline */}
@@ -419,20 +586,31 @@ export default function ParisDistrictGuide() {
                       <motion.div
                         animate={{
                           scale: idx === activeIndex ? 1.3 : 1,
-                          backgroundColor: idx === activeIndex ? '#1e293b' : idx < activeIndex ? '#a8a29e' : '#e7e5e4',
+                          backgroundColor:
+                            idx === activeIndex
+                              ? styles.timeline.dotColorActive
+                              : idx < activeIndex
+                              ? styles.timeline.lineColorActive
+                              : styles.timeline.dotColorInactive,
                         }}
-                        className={`w-4 h-4 rounded-full border-2 border-white shadow-sm transition-all ${
-                          idx === activeIndex ? 'ring-4 ring-stone-200' : ''
+                        style={{
+                          width: `${styles.timeline.dotSize}px`,
+                          height: `${styles.timeline.dotSize}px`,
+                        }}
+                        className={`rounded-full border-2 border-white shadow-sm transition-all ${
+                          idx === activeIndex ? 'ring-4' : ''
                         }`}
                       />
 
                       {/* Label */}
                       <span
-                        className={`mt-2 text-xs font-medium whitespace-nowrap transition-colors ${
-                          idx === activeIndex
-                            ? 'text-slate-800'
-                            : 'text-slate-400 group-hover:text-slate-600'
-                        }`}
+                        className="mt-2 text-xs font-medium whitespace-nowrap transition-colors"
+                        style={{
+                          color:
+                            idx === activeIndex
+                              ? styles.timeline.labelColorActive
+                              : styles.timeline.labelColorInactive,
+                        }}
                       >
                         {district.district_number}. ker.
                       </span>
@@ -444,7 +622,13 @@ export default function ParisDistrictGuide() {
                           animate={{ opacity: 1, y: 0 }}
                           className="absolute -top-6"
                         >
-                          <MapPin className="w-4 h-4 text-slate-800 fill-slate-800" />
+                          <MapPin
+                            className="w-4 h-4"
+                            style={{
+                              color: styles.timeline.pinColor,
+                              fill: styles.timeline.pinColor,
+                            }}
+                          />
                         </motion.div>
                       )}
                     </button>
@@ -452,9 +636,13 @@ export default function ParisDistrictGuide() {
                     {/* Connector Line */}
                     {idx < districts.length - 1 && (
                       <div
-                        className={`w-12 md:w-20 h-0.5 mx-1 transition-colors ${
-                          idx < activeIndex ? 'bg-stone-400' : 'bg-stone-200'
-                        }`}
+                        className="w-12 md:w-20 h-0.5 mx-1 transition-colors"
+                        style={{
+                          backgroundColor:
+                            idx < activeIndex
+                              ? styles.timeline.lineColorActive
+                              : styles.timeline.lineColor,
+                        }}
                       />
                     )}
                   </div>
@@ -463,11 +651,18 @@ export default function ParisDistrictGuide() {
             </div>
 
             {/* Progress indicator */}
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-500">
+            <div
+              className="mt-4 flex items-center justify-center gap-2 text-sm"
+              style={{ color: styles.timeline.labelColorInactive }}
+            >
               <span>{activeIndex + 1}</span>
-              <div className="w-24 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+              <div
+                className="w-24 h-1.5 rounded-full overflow-hidden"
+                style={{ backgroundColor: styles.timeline.lineColor }}
+              >
                 <motion.div
-                  className="h-full bg-slate-800 rounded-full"
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: styles.timeline.dotColorActive }}
                   animate={{
                     width: `${((activeIndex + 1) / districts.length) * 100}%`,
                   }}

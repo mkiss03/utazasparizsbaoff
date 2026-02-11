@@ -1,12 +1,25 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { MapStyles } from '@/lib/types/database'
+
+// Default map styles (fallback)
+const defaultMapStyles: MapStyles = {
+  baseColor: '#ffffff',
+  hoverColor: '#f5f5f4',
+  activeColor: '#1e293b',
+  strokeColor: '#94a3b8',
+  strokeWidth: 1.5,
+  labelColor: '#475569',
+}
 
 interface ParisArrondissementsSVGProps {
   activeDistrict: number | null
   onDistrictClick: (district: number) => void
   onDistrictHover?: (district: number | null) => void
   className?: string
+  mapStyles?: MapStyles
+  sectionBackground?: string
 }
 
 // Original geographic bounds from the SVG file
@@ -84,7 +97,11 @@ export default function ParisArrondissementsSVG({
   onDistrictClick,
   onDistrictHover,
   className = '',
+  mapStyles = defaultMapStyles,
+  sectionBackground = '#FAF7F2',
 }: ParisArrondissementsSVGProps) {
+  const styles = { ...defaultMapStyles, ...mapStyles }
+
   return (
     <svg
       viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
@@ -93,7 +110,7 @@ export default function ParisArrondissementsSVG({
       style={{ maxWidth: '100%' }}
     >
       {/* Background */}
-      <rect x="0" y="0" width={VIEW_WIDTH} height={VIEW_HEIGHT} fill="#FAF7F2" />
+      <rect x="0" y="0" width={VIEW_WIDTH} height={VIEW_HEIGHT} fill={sectionBackground} />
 
       {/* Seine River (stylized curve) */}
       <path
@@ -116,17 +133,17 @@ export default function ParisArrondissementsSVG({
             points={points}
             initial={false}
             animate={{
-              fill: isActive ? '#1e293b' : '#ffffff',
+              fill: isActive ? styles.activeColor : styles.baseColor,
             }}
             whileHover={{
-              fill: isActive ? '#1e293b' : '#f5f5f4',
+              fill: isActive ? styles.activeColor : styles.hoverColor,
             }}
             transition={{ duration: 0.2 }}
-            stroke="#94a3b8"
-            strokeWidth={isActive ? 2.5 : 1.5}
+            stroke={styles.strokeColor}
+            strokeWidth={isActive ? styles.strokeWidth * 1.67 : styles.strokeWidth}
             style={{
               cursor: 'pointer',
-              filter: isActive ? 'drop-shadow(0 4px 8px rgba(30, 41, 59, 0.3))' : 'none',
+              filter: isActive ? `drop-shadow(0 4px 8px ${styles.activeColor}4D)` : 'none',
             }}
             onClick={() => onDistrictClick(districtNum)}
             onMouseEnter={() => onDistrictHover?.(districtNum)}
@@ -147,8 +164,8 @@ export default function ParisArrondissementsSVG({
               cx={center.x}
               cy={center.y}
               r={isActive ? 18 : 14}
-              fill={isActive ? '#1e293b' : '#ffffff'}
-              stroke={isActive ? '#ffffff' : '#94a3b8'}
+              fill={isActive ? styles.activeColor : styles.baseColor}
+              stroke={isActive ? styles.baseColor : styles.strokeColor}
               strokeWidth={isActive ? 2 : 1}
               style={{ cursor: 'pointer' }}
               onClick={() => onDistrictClick(districtNum)}
@@ -162,7 +179,7 @@ export default function ParisArrondissementsSVG({
               style={{
                 fontSize: isActive ? '12px' : '10px',
                 fontWeight: 600,
-                fill: isActive ? '#ffffff' : '#475569',
+                fill: isActive ? styles.baseColor : styles.labelColor,
               }}
             >
               {district}
@@ -176,18 +193,18 @@ export default function ParisArrondissementsSVG({
         x={VIEW_WIDTH / 2}
         y="30"
         textAnchor="middle"
-        style={{ fontSize: '20px', fontWeight: 600, fill: '#1e293b' }}
+        style={{ fontSize: '20px', fontWeight: 600, fill: styles.activeColor }}
       >
         Párizs Kerületei
       </text>
 
       {/* Compass */}
       <g transform={`translate(${VIEW_WIDTH - 40}, ${VIEW_HEIGHT - 40})`}>
-        <circle r="18" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
-        <text x="0" y="-4" textAnchor="middle" fontSize="10" fill="#64748b" fontWeight="600">
+        <circle r="18" fill={styles.baseColor} stroke={styles.strokeColor} strokeWidth="1" />
+        <text x="0" y="-4" textAnchor="middle" fontSize="10" fill={styles.labelColor} fontWeight="600">
           É
         </text>
-        <text x="0" y="10" textAnchor="middle" fontSize="8" fill="#94a3b8">
+        <text x="0" y="10" textAnchor="middle" fontSize="8" fill={styles.strokeColor}>
           D
         </text>
       </g>

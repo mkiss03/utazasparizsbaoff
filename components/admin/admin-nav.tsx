@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Compass,
   Ship,
+  Globe,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -80,6 +81,12 @@ const allNavItems: NavItem[] = [
     title: 'Hajózás Varázsló',
     href: '/admin/cruise-wizard',
     icon: Ship,
+    type: 'item',
+  },
+  {
+    title: 'Kerületi Útmutató',
+    href: '/admin/paris-guide',
+    icon: Globe,
     type: 'item',
   },
   {
