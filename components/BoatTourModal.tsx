@@ -505,25 +505,25 @@ export default function BoatTourModal() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                  className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm p-4"
                   onClick={() => setIsMapZoomed(false)}
                 >
+                  {/* Close button - top right */}
+                  <button
+                    onClick={() => setIsMapZoomed(false)}
+                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors z-10"
+                  >
+                    <X className="w-6 h-6 text-white" />
+                  </button>
+
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="relative max-w-4xl w-full max-h-[90vh]"
+                    className="relative max-w-4xl w-full"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {/* Close button */}
-                    <button
-                      onClick={() => setIsMapZoomed(false)}
-                      className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-                    >
-                      <X className="w-6 h-6 text-white" />
-                    </button>
-
                     {/* Zoomed image */}
                     <motion.img
                       src="/images/folyoooo.jpg"
@@ -531,19 +531,20 @@ export default function BoatTourModal() {
                       className="w-full h-auto rounded-2xl shadow-2xl"
                       layoutId="route-map-image"
                     />
+                  </motion.div>
 
-                    {/* Label in zoomed view */}
-                    <motion.div
-                      className="absolute bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                        <Ship className="w-4 h-4" />
-                        Klasszikus Szajna Útvonal – Kattints bárhová a bezáráshoz
-                      </span>
-                    </motion.div>
+                  {/* Label - below the image */}
+                  <motion.div
+                    className="mt-4 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <span className="text-xs sm:text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <Ship className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Klasszikus Szajna Útvonal – Kattints bárhová a bezáráshoz</span>
+                      <span className="sm:hidden">Kattints a bezáráshoz</span>
+                    </span>
                   </motion.div>
                 </motion.div>
               )}
