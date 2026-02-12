@@ -119,6 +119,12 @@ export default function DistrictContentEditor({
   const sortedDistricts = [...districts].sort((a, b) => a.sortOrder - b.sortOrder)
   const activeDistricts = sortedDistricts.filter((d) => d.isActive)
 
+  // Calculate position (rank) for each active district
+  const getDistrictPosition = (districtNumber: number): number | null => {
+    const index = activeDistricts.findIndex((d) => d.districtNumber === districtNumber)
+    return index !== -1 ? index + 1 : null
+  }
+
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
@@ -310,8 +316,8 @@ export default function DistrictContentEditor({
 
                     <div className="flex items-center gap-2">
                       {district.isActive && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                          #{district.sortOrder}
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full" title={`Sorrend érték: ${district.sortOrder}`}>
+                          #{getDistrictPosition(num)}
                         </span>
                       )}
 
