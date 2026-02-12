@@ -374,10 +374,30 @@ export default function BoatTourModal() {
             className="pt-2 space-y-4"
           >
             {/* Button container - flex layout for Step 4 (Élménytérkép) */}
-            <div className={`flex items-center gap-3 ${currentStep === 4 ? 'flex-wrap' : ''}`}>
+            <div className={`flex flex-col gap-3 ${currentStep === 4 ? '' : 'sm:flex-row sm:items-center'}`}>
+              {/* Route Map Button - Only on Step 4 (Élménytérkép) - FIRST */}
+              {currentStep === 4 && (
+                <motion.button
+                  onClick={() => setShowMap(!showMap)}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 md:px-6 md:py-4 font-semibold text-base transition-all border border-slate-300 text-slate-700 hover:bg-slate-100"
+                  style={{
+                    borderRadius: `${styles.button.borderRadius}px`,
+                  }}
+                >
+                  {showMap ? <Eye className="w-5 h-5" /> : <Map className="w-5 h-5" />}
+                  <span>{showMap ? 'Bezárás' : 'Útvonal megtekintése'}</span>
+                </motion.button>
+              )}
+
+              {/* Main CTA Button - SECOND (below on Step 4) */}
               <button
                 onClick={() => paginate(1)}
-                className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 font-semibold text-base md:text-lg transition-all shadow-lg"
+                className="group inline-flex items-center justify-center gap-3 px-6 py-3 md:px-8 md:py-4 font-semibold text-base md:text-lg transition-all shadow-lg"
                 style={{
                   backgroundColor: styles.button.backgroundColor,
                   color: styles.button.textColor,
@@ -387,25 +407,6 @@ export default function BoatTourModal() {
                 {activeStep.ctaText}
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
-
-              {/* Route Map Button - Only on Step 4 (Élménytérkép) */}
-              {currentStep === 4 && (
-                <motion.button
-                  onClick={() => setShowMap(!showMap)}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-5 py-3 md:px-6 md:py-4 font-semibold text-base transition-all border border-slate-300 text-slate-700 hover:bg-slate-100"
-                  style={{
-                    borderRadius: `${styles.button.borderRadius}px`,
-                  }}
-                >
-                  {showMap ? <Eye className="w-5 h-5" /> : <Map className="w-5 h-5" />}
-                  <span>{showMap ? 'Bezárás' : 'Útvonal megtekintése'}</span>
-                </motion.button>
-              )}
             </div>
 
             {/* Holographic Route Map Reveal - Only on Step 4 */}

@@ -49,7 +49,7 @@ export default async function ASZFPage() {
                 <p>
                   Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) tartalmazzák Szeidl Viktória
                   (székhely: Párizs, Franciaország; SIRET: 94822714500018; nyilvántartási szám: 250065)
-                  által nyújtott idegenvezetési és programszervezői szolgáltatások igénybevételének feltételeit.
+                  által nyújtott idegenvezetési és utazásszervezői szolgáltatások igénybevételének feltételeit.
                 </p>
 
                 <h3>2. A szolgáltatások köre</h3>

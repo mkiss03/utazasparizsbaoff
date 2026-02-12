@@ -103,11 +103,11 @@ export default function NewsletterForm() {
 
       {/* Privacy Note */}
       <p className="mt-4 text-center text-xs text-slate-500">
-        Feliratkozással elfogadja az{' '}
+        Feliratkozással elfogadod az{' '}
         <a href="/adatvedelem" className="underline hover:text-slate-700 transition-colors">
           adatvédelmi nyilatkozatunkat
         </a>
-        . Bármikor leiratkozhat.
+        . Bármikor leiratkozhatsz.
       </p>
     </motion.div>
   )

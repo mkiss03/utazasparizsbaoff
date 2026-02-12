@@ -50,7 +50,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </h3>
             </div>
             <p className="mb-4 text-sm text-white/90 font-semibold">
-              Hivatalos idegenvezető és programszervező Párizsban
+              Hivatalos idegenvezető és utazásszervező Párizsban
             </p>
             <p className="text-sm text-white/70">
               {description}
