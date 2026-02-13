@@ -294,7 +294,7 @@ export default function DistrictGuidePreview({
                     className="text-2xl font-bold opacity-30"
                     style={{ color: styles.card.titleColor }}
                   >
-                    {activeDistrict?.districtNumber}
+                    {activeIndex + 1}
                   </span>
                 </div>
               </div>
@@ -436,7 +436,7 @@ export default function DistrictGuidePreview({
                       fontWeight: idx === activeIndex ? 600 : 400,
                     }}
                   >
-                    {district.districtNumber}. ker.
+                    {idx + 1}. ker.
                   </span>
                 </button>
 

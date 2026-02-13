@@ -386,7 +386,7 @@ export default function ParisDistrictGuide() {
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="text-4xl font-bold opacity-30" style={{ color: styles.card.titleColor }}>
-                        {activeDistrict?.district_number}
+                        {activeIndex + 1}
                       </span>
                     </div>
                   </div>
@@ -613,7 +613,7 @@ export default function ParisDistrictGuide() {
                               : styles.timeline.labelColorInactive,
                         }}
                       >
-                        {district.district_number}. ker.
+                        {idx + 1}. ker.
                       </span>
 
                       {/* Active indicator */}
