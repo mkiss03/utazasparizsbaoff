@@ -8,29 +8,21 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 
 const galleryImages = [
-  { src: '/images/kepnezopar1.jpeg', alt: 'Párizsi pillanat 1' },
+  { src: '/images/kepnezopar1.JPG', alt: 'Párizsi pillanat 1' },
   { src: '/images/kepnezopar2.jpg', alt: 'Párizsi pillanat 2' },
   { src: '/images/kepnezopar3.jpg', alt: 'Párizsi pillanat 3' },
   { src: '/images/kepnezopar4.jpg', alt: 'Párizsi pillanat 4' },
   { src: '/images/kepnezopar5.jpg', alt: 'Párizsi pillanat 5' },
-  { src: '/images/kepnezopar3.jpg', alt: 'Párizsi pillanat 6' },
-  { src: '/images/kepnezopar1.jpeg', alt: 'Párizsi pillanat 7' },
-  { src: '/images/kepnezopar4.jpg', alt: 'Párizsi pillanat 8' },
-  { src: '/images/kepnezopar2.jpg', alt: 'Párizsi pillanat 9' },
-  { src: '/images/kepnezopar5.jpg', alt: 'Párizsi pillanat 10' },
+  { src: '/images/kepnezopar6.JPG', alt: 'Párizsi pillanat 6' },
 ]
 
 // Masonry height pattern to create visual variety
 const heightClasses = [
-  'h-64',    // short
   'h-80',    // medium
   'h-96',    // tall
   'h-72',    // medium-short
-  'h-80',    // medium
   'h-96',    // tall
-  'h-72',    // medium-short
   'h-64',    // short
-  'h-96',    // tall
   'h-80',    // medium
 ]
 
