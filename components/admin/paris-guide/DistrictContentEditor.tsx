@@ -156,7 +156,7 @@ function SortableDistrictCard({
             district.isActive ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500'
           }`}
         >
-          <span className="text-sm font-bold">{district.districtNumber}</span>
+          <IconComponent className="w-4 h-4" />
         </div>
 
         <div
@@ -628,7 +628,9 @@ export default function DistrictContentEditor({
                 Inaktív kerületek ({inactiveDistricts.length})
               </h4>
               <div className="space-y-2 opacity-60">
-                {inactiveDistricts.map((district) => (
+                {inactiveDistricts.map((district) => {
+                  const IconComponent = getIconComponent(district.iconName)
+                  return (
                   <div
                     key={district.districtNumber}
                     className="border border-slate-200 bg-slate-50 rounded-xl overflow-hidden"
@@ -636,7 +638,7 @@ export default function DistrictContentEditor({
                     <div className="flex items-center gap-3 p-3">
                       <div className="w-4 h-4" /> {/* Spacer for alignment */}
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-200 text-slate-500">
-                        <span className="text-sm font-bold">{district.districtNumber}</span>
+                        <IconComponent className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-slate-500 truncate">
@@ -653,7 +655,8 @@ export default function DistrictContentEditor({
                       </button>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
