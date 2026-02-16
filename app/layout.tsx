@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/query-provider";
 import BoatTourModal from "@/components/BoatTourModal";
+import { PostHogProvider } from "@/app/providers/PostHogProvider";
+import dynamic from "next/dynamic";
+
+const PostHogPageView = dynamic(() => import("@/app/providers/PostHogPageView"), {
+  ssr: false,
+});
 
 export const metadata: Metadata = {
   title: "Utazás Párizsba - Párizsi Idegenvezetés",
@@ -30,10 +36,13 @@ export default function RootLayout({
         />
       </head>
       <body className="font-montserrat antialiased">
-        <QueryProvider>
-          {children}
-        </QueryProvider>
-        <BoatTourModal />
+        <PostHogProvider>
+          <PostHogPageView />
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+          <BoatTourModal />
+        </PostHogProvider>
       </body>
     </html>
   );

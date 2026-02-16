@@ -17,6 +17,7 @@ import {
   Compass,
   Ship,
   Globe,
+  BarChart3,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -125,6 +126,12 @@ const allNavItems: NavItem[] = [
     title: 'Feliratkozók',
     href: '/admin/subscribers',
     icon: Mail,
+    type: 'item',
+  },
+  {
+    title: 'Analitika',
+    href: '/admin/analytics',
+    icon: BarChart3,
     type: 'item',
   },
 ]
