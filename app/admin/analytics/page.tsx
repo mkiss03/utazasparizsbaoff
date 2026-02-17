@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 
-const POSTHOG_DASHBOARD_URL = process.env.NEXT_PUBLIC_POSTHOG_DASHBOARD_URL || ''
+const POSTHOG_DASHBOARD_URL =
+  process.env.NEXT_PUBLIC_POSTHOG_DASHBOARD_URL ||
+  'https://eu.posthog.com/embedded/53-TJ8Ms9CyKrCjfBBoZdOkqYHI1Uw'
 const POSTHOG_PROJECT_URL = 'https://eu.posthog.com'
 
 export default function AnalyticsPage() {
