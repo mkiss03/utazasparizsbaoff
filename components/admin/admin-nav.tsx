@@ -18,6 +18,8 @@ import {
   Ship,
   Globe,
   BarChart3,
+  Footprints,
+  Users,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -94,6 +96,22 @@ const allNavItems: NavItem[] = [
     title: 'Tartalom',
     href: '/admin/content',
     icon: FileText,
+    type: 'item',
+  },
+  {
+    title: 'SÉTATÚRÁK',
+    type: 'section',
+  },
+  {
+    title: 'Sétatúrák',
+    href: '/admin/walking-tours',
+    icon: Footprints,
+    type: 'item',
+  },
+  {
+    title: 'Túrafoglalások',
+    href: '/admin/walking-tours/bookings',
+    icon: Users,
     type: 'item',
   },
   {

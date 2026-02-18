@@ -5,6 +5,7 @@ import AboutSection from '@/components/sections/AboutSection'
 import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import ParisDistrictGuide from '@/components/sections/ParisDistrictGuide'
+import WalkingToursSection from '@/components/sections/WalkingToursSection'
 import BlogSection from '@/components/sections/BlogSection'
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
@@ -44,6 +45,16 @@ export default async function Home() {
     textsMap[item.key] = item.value || ''
   })
 
+  // Fetch next 3 upcoming walking tours
+  const today = new Date().toISOString().split('T')[0]
+  const { data: upcomingWalkingTours } = await supabase
+    .from('walking_tours')
+    .select('*')
+    .eq('status', 'published')
+    .gte('tour_date', today)
+    .order('tour_date', { ascending: true })
+    .limit(3)
+
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
   const testimonialsData = testimonials || []
@@ -73,6 +84,7 @@ export default async function Home() {
         <ParisFlashcardsPromoSection />
       )}
       <ParisDistrictGuide />
+      <WalkingToursSection tours={upcomingWalkingTours || []} />
       <TestimonialsSection
         title={textsMap.testimonials_title}
         subtitle={textsMap.testimonials_subtitle}

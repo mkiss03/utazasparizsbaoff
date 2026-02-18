@@ -29,6 +29,7 @@ export default function Navigation() {
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
+    { name: 'Sétatúrák', href: '/walking-tours' },
     { name: 'Városbérletek', href: '/pricing' },
     { name: 'Galéria', href: '/galeria' },
     { name: 'Párizsi Napló', href: '/blog' },

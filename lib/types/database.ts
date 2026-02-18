@@ -558,7 +558,62 @@ export interface ParisGuideConfig {
   updated_at: string
 }
 
-// Default configuration factory for Paris Guide
+// ============================================
+// WALKING TOUR TYPES (Bookable Tour Events)
+// ============================================
+
+export type WalkingTourStatus = 'draft' | 'published' | 'cancelled' | 'completed'
+export type BookingPaymentStatus = 'pending' | 'completed' | 'refunded'
+export type BookingStatus = 'confirmed' | 'cancelled_by_user' | 'cancelled_by_admin'
+
+export interface WalkingTour {
+  id: string
+  title: string
+  slug: string
+  description?: string
+  short_description?: string
+  tour_date: string
+  start_time: string
+  duration_minutes: number
+  meeting_point: string
+  meeting_point_url?: string
+  price_per_person: number
+  min_participants: number
+  max_participants: number
+  current_bookings: number
+  image_url?: string
+  highlights?: string[]
+  status: WalkingTourStatus
+  cancellation_reason?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WalkingTourBooking {
+  id: string
+  walking_tour_id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  num_participants: number
+  total_amount: number
+  payment_status: BookingPaymentStatus
+  payment_method: string
+  booking_status: BookingStatus
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WalkingTourBookingWithTour extends WalkingTourBooking {
+  walking_tours?: Pick<WalkingTour, 'title' | 'tour_date' | 'start_time'>
+}
+
+// ============================================
+// PARIS DISTRICT GUIDE CONFIG TYPES
+// ============================================
+
 export const createDefaultParisGuideConfig = (): Omit<ParisGuideConfig, 'id' | 'created_at' | 'updated_at'> => ({
   name: 'Paris District Guide - Default',
   globalContent: {
