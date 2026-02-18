@@ -246,7 +246,7 @@ export default function WalkingToursPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Összes bevétel</p>
+                <p className="text-sm text-slate-600">Várható bevétel</p>
                 <p className="mt-2 text-3xl font-bold text-french-red-500">€{totalRevenue.toFixed(0)}</p>
               </div>
               <Euro className="h-12 w-12 text-french-red-200" />

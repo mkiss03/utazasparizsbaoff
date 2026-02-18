@@ -98,12 +98,12 @@ export default async function BookingSuccessPage({ searchParams }: Props) {
                 {/* Min participants notice */}
                 <div className="mb-8 rounded-lg bg-blue-50 border border-blue-200 p-4 text-sm text-blue-700">
                   <strong>Fontos:</strong> A túra min. {tour.min_participants} főtől indul.
-                  Ha nem éri el a létszám a minimumot, teljes visszatérítést kapsz.
+                  Ha nem éri el a létszám a minimumot, értesítünk emailben.
                 </div>
 
-                {/* Demo notice */}
-                <div className="mb-8 rounded-lg bg-slate-50 border border-slate-200 p-3 text-xs text-slate-500">
-                  Ez egy demo foglalás. Valódi fizetés nem történt.
+                {/* Payment info */}
+                <div className="mb-8 rounded-lg bg-parisian-beige-50 border border-parisian-beige-200 p-4 text-sm text-parisian-grey-600">
+                  Az összeg (<strong>{Number(booking.total_amount).toFixed(0)} EUR</strong>) a helyszínen készpénzzel fizetendő.
                 </div>
               </>
             ) : (

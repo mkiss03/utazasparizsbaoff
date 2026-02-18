@@ -4,15 +4,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Users, Euro, Calendar, RotateCcw, Footprints } from 'lucide-react'
+import { Users, Euro, Calendar, XCircle, Footprints } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { WalkingTourBookingWithTour } from '@/lib/types/database'
 
 const paymentStatusLabels: Record<string, string> = {
   pending: 'Függőben',
-  completed: 'Fizetve',
-  refunded: 'Visszatérítve',
+  completed: 'Megerősítve',
+  refunded: 'Lemondva',
 }
 
 const paymentStatusColors: Record<string, string> = {
@@ -50,7 +50,7 @@ export default function WalkingTourBookingsPage() {
     },
   })
 
-  const refundMutation = useMutation({
+  const cancelMutation = useMutation({
     mutationFn: async (bookingId: string) => {
       const { error } = await supabase
         .from('walking_tour_bookings')
@@ -224,18 +224,18 @@ export default function WalkingTourBookingsPage() {
                         €{Number(booking.total_amount).toFixed(0)}
                       </p>
                     </div>
-                    {booking.payment_status === 'completed' && booking.booking_status === 'confirmed' && (
+                    {booking.booking_status === 'confirmed' && (
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          if (window.confirm(`Biztosan visszatéríted a(z) ${booking.guest_name} foglalását (€${Number(booking.total_amount).toFixed(0)})?`)) {
-                            refundMutation.mutate(booking.id)
+                          if (window.confirm(`Biztosan lemondod ${booking.guest_name} foglalását (${booking.num_participants} fő)?`)) {
+                            cancelMutation.mutate(booking.id)
                           }
                         }}
-                        title="Visszatérítés"
+                        title="Foglalás lemondása"
                       >
-                        <RotateCcw className="h-4 w-4 text-red-500" />
+                        <XCircle className="h-4 w-4 text-red-500" />
                       </Button>
                     )}
                   </div>
