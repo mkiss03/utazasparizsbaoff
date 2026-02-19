@@ -11,6 +11,7 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
+import BoatTourModal from '@/components/BoatTourModal'
 import type { Profile, Post } from '@/lib/types/database'
 
 // Force dynamic rendering to avoid build-time database access
@@ -117,6 +118,7 @@ export default async function Home() {
       />
       <NewsletterSection />
       <Footer staticTexts={textsMap} />
+      <BoatTourModal />
     </main>
   )
 }

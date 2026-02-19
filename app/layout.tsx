@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/query-provider";
-import BoatTourModal from "@/components/BoatTourModal";
 import { PostHogProvider } from "@/app/providers/PostHogProvider";
 import dynamic from "next/dynamic";
 
@@ -41,7 +40,6 @@ export default function RootLayout({
           <QueryProvider>
             {children}
           </QueryProvider>
-          <BoatTourModal />
         </PostHogProvider>
       </body>
     </html>
