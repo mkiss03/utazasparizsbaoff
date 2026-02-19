@@ -1,45 +1,72 @@
 'use client'
 
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { CalendarDays, Clock, MapPin, Users, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { WalkingTour } from '@/lib/types/database'
+import WalkingTourDayModal from '@/components/walking-tours/WalkingTourDayModal'
 
 interface WalkingToursSectionProps {
   tours?: WalkingTour[]
 }
 
+const HUNGARIAN_MONTHS = [
+  'Január', 'Február', 'Március', 'Április', 'Május', 'Június',
+  'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December',
+]
+
+const HUNGARIAN_DAYS_SHORT = ['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V']
+
 export default function WalkingToursSection({ tours = [] }: WalkingToursSectionProps) {
   if (!tours || tours.length === 0) return null
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString + 'T00:00:00').toLocaleDateString('hu-HU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
+  const earliestTourDate = useMemo(() => {
+    const dates = tours.map(t => new Date(t.tour_date + 'T00:00:00'))
+    dates.sort((a, b) => a.getTime() - b.getTime())
+    return dates[0] || new Date()
+  }, [tours])
+
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    return new Date(earliestTourDate.getFullYear(), earliestTourDate.getMonth(), 1)
+  })
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+
+  const toursByDate = useMemo(() => {
+    const map: Record<string, WalkingTour[]> = {}
+    tours.forEach(tour => {
+      if (!map[tour.tour_date]) map[tour.tour_date] = []
+      map[tour.tour_date].push(tour)
     })
+    return map
+  }, [tours])
+
+  const year = currentMonth.getFullYear()
+  const month = currentMonth.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  // Monday = 0, Sunday = 6
+  const firstDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7
+
+  const calendarDays = useMemo(() => {
+    const days: (number | null)[] = []
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      days.push(null)
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      days.push(d)
+    }
+    return days
+  }, [firstDayOfWeek, daysInMonth])
+
+  const getDateString = (day: number) => {
+    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   }
 
-  const getAvailability = (tour: WalkingTour) => {
-    const available = tour.max_participants - (tour.current_bookings || 0)
-    if (available <= 0) return { text: 'Betelt', color: 'text-red-600' }
-    if (available <= 3) return { text: `Még ${available} hely`, color: 'text-orange-600' }
-    return { text: `${available} szabad hely`, color: 'text-green-600' }
+  const navigateMonth = (direction: number) => {
+    setCurrentMonth(new Date(year, month + direction, 1))
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 },
-    },
-  } as const
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 },
-  } as const
+  const today = new Date().toISOString().split('T')[0]
+  const selectedTours = selectedDate ? (toursByDate[selectedDate] || []) : []
 
   return (
     <section id="walking-tours" className="relative overflow-hidden bg-gradient-to-b from-white to-parisian-cream-50 py-20 md:py-32">
@@ -65,102 +92,134 @@ export default function WalkingToursSection({ tours = [] }: WalkingToursSectionP
           </p>
         </motion.div>
 
-        {/* Tour Cards */}
+        {/* Calendar */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {tours.map((tour) => {
-            const availability = getAvailability(tour)
-            return (
-              <motion.div key={tour.id} variants={itemVariants} whileHover={{ y: -10, scale: 1.02 }} className="group">
-                <Link href={`/walking-tours/${tour.slug}`}>
-                  <div className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-xl transition-all duration-500 hover:shadow-2xl hover:border-parisian-beige-300">
-                    {/* Date Badge */}
-                    <div className="bg-gradient-to-r from-parisian-grey-800 to-parisian-grey-700 px-6 py-4">
-                      <div className="flex items-center gap-2 text-sm text-parisian-beige-200">
-                        <CalendarDays className="h-4 w-4" />
-                        <span className="font-medium">{formatDate(tour.tour_date)}</span>
-                      </div>
-                      <div className="mt-1 flex items-center gap-4 text-xs text-parisian-beige-300">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {tour.start_time?.slice(0, 5)} • {tour.duration_minutes} perc
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6">
-                      <h3 className="mb-2 font-playfair text-2xl font-bold text-parisian-grey-800 transition-colors group-hover:text-parisian-beige-600">
-                        {tour.title}
-                      </h3>
-
-                      {tour.short_description && (
-                        <p className="mb-4 line-clamp-2 text-parisian-grey-600">
-                          {tour.short_description}
-                        </p>
-                      )}
-
-                      <div className="mb-4 space-y-2 text-sm text-parisian-grey-600">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-parisian-beige-500" />
-                          <span className="line-clamp-1">{tour.meeting_point}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-parisian-beige-500" />
-                          <span className={`font-medium ${availability.color}`}>
-                            {availability.text}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between border-t border-parisian-beige-100 pt-4">
-                        <div>
-                          <span className="text-2xl font-bold text-parisian-grey-800">
-                            {tour.price_per_person} €
-                          </span>
-                          <span className="text-sm text-parisian-grey-500"> / fő</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm font-semibold text-parisian-beige-600 transition-all group-hover:gap-3">
-                          <span>Foglalj most</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </div>
-                      </div>
-
-                      <p className="mt-2 text-xs text-parisian-grey-400">
-                        Min. {tour.min_participants} főtől indul
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mt-12 text-center"
+          className="mx-auto max-w-4xl"
         >
-          <Link href="/walking-tours">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-full bg-parisian-beige-400 px-8 py-3 font-semibold text-white transition-all duration-300 hover:bg-parisian-beige-500"
-            >
-              Összes sétatúra
-            </motion.button>
-          </Link>
+          <div className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-xl">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between bg-gradient-to-r from-parisian-grey-800 to-parisian-grey-700 px-6 py-5">
+              <button
+                onClick={() => navigateMonth(-1)}
+                className="rounded-full p-2 text-parisian-beige-200 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <h3 className="font-playfair text-2xl font-bold text-white md:text-3xl">
+                {HUNGARIAN_MONTHS[month]} {year}
+              </h3>
+              <button
+                onClick={() => navigateMonth(1)}
+                className="rounded-full p-2 text-parisian-beige-200 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Day of week headers */}
+            <div className="grid grid-cols-7 border-b border-parisian-beige-100 bg-parisian-beige-50">
+              {HUNGARIAN_DAYS_SHORT.map(day => (
+                <div key={day} className="py-3 text-center text-sm font-semibold text-parisian-grey-600">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7">
+              {calendarDays.map((day, idx) => {
+                if (day === null) {
+                  return (
+                    <div
+                      key={`empty-${idx}`}
+                      className="min-h-[80px] border-b border-r border-parisian-beige-50 bg-parisian-cream-50/30 md:min-h-[100px]"
+                    />
+                  )
+                }
+
+                const dateStr = getDateString(day)
+                const dayTours = toursByDate[dateStr] || []
+                const hasTours = dayTours.length > 0
+                const isToday = dateStr === today
+                const isPast = dateStr < today
+
+                return (
+                  <div
+                    key={dateStr}
+                    onClick={() => hasTours && setSelectedDate(dateStr)}
+                    className={`relative min-h-[80px] border-b border-r border-parisian-beige-50 p-1.5 transition-all md:min-h-[100px] md:p-2 ${
+                      hasTours
+                        ? 'cursor-pointer hover:bg-parisian-beige-50 hover:shadow-inner'
+                        : ''
+                    } ${isPast && !hasTours ? 'bg-parisian-cream-50/40' : ''}`}
+                  >
+                    {/* Day number */}
+                    <span
+                      className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium ${
+                        isToday
+                          ? 'bg-parisian-grey-800 text-white'
+                          : isPast
+                          ? 'text-parisian-grey-400'
+                          : 'text-parisian-grey-700'
+                      }`}
+                    >
+                      {day}
+                    </span>
+
+                    {/* Tour titles */}
+                    {hasTours && (
+                      <div className="mt-1 space-y-0.5">
+                        {dayTours.map(tour => {
+                          const available = tour.max_participants - (tour.current_bookings || 0)
+                          const isFull = available <= 0
+                          return (
+                            <div
+                              key={tour.id}
+                              className={`rounded px-1 py-0.5 text-[10px] font-medium leading-tight md:px-1.5 md:text-xs ${
+                                isFull
+                                  ? 'bg-red-50 text-red-500'
+                                  : 'bg-parisian-beige-100 text-parisian-beige-700'
+                              }`}
+                            >
+                              <span className="line-clamp-1">
+                                <span className="hidden sm:inline">{tour.start_time?.slice(0, 5)} </span>
+                                {tour.title}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="mt-4 flex items-center justify-center gap-6 text-sm text-parisian-grey-500">
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded bg-parisian-beige-100 border border-parisian-beige-200" />
+              <span>Van túra</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded bg-red-50 border border-red-200" />
+              <span>Betelt</span>
+            </div>
+          </div>
         </motion.div>
       </div>
+
+      {/* Tour Day Modal */}
+      <WalkingTourDayModal
+        tours={selectedTours}
+        date={selectedDate}
+        onClose={() => setSelectedDate(null)}
+      />
     </section>
   )
 }

@@ -45,7 +45,7 @@ export default async function Home() {
     textsMap[item.key] = item.value || ''
   })
 
-  // Fetch next 3 upcoming walking tours
+  // Fetch all upcoming walking tours for calendar
   const today = new Date().toISOString().split('T')[0]
   const { data: upcomingWalkingTours } = await supabase
     .from('walking_tours')
@@ -53,7 +53,6 @@ export default async function Home() {
     .eq('status', 'published')
     .gte('tour_date', today)
     .order('tour_date', { ascending: true })
-    .limit(3)
 
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
