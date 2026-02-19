@@ -20,6 +20,7 @@ import {
   BarChart3,
   Footprints,
   Users,
+  Palette,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -112,6 +113,12 @@ const allNavItems: NavItem[] = [
     title: 'Túrafoglalások',
     href: '/admin/walking-tours/bookings',
     icon: Users,
+    type: 'item',
+  },
+  {
+    title: 'Naptár Megjelenés',
+    href: '/admin/walking-tours/calendar-settings',
+    icon: Palette,
     type: 'item',
   },
   {

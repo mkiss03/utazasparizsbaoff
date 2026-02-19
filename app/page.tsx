@@ -54,6 +54,14 @@ export default async function Home() {
     .gte('tour_date', today)
     .order('tour_date', { ascending: true })
 
+  // Fetch calendar settings
+  const { data: calendarSettings } = await supabase
+    .from('walking_tour_calendar_settings')
+    .select('settings')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
   const profileData = profile as Profile | null
   const postsData = (posts as Post[]) || []
   const testimonialsData = testimonials || []
@@ -79,11 +87,11 @@ export default async function Home() {
         customOfferText={textsMap.services_custom_offer_text}
         customOfferButtonText={textsMap.services_custom_offer_button}
       />
+      <WalkingToursSection tours={upcomingWalkingTours || []} calendarSettings={calendarSettings?.settings || null} />
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && (
         <ParisFlashcardsPromoSection />
       )}
       <ParisDistrictGuide />
-      <WalkingToursSection tours={upcomingWalkingTours || []} />
       <TestimonialsSection
         title={textsMap.testimonials_title}
         subtitle={textsMap.testimonials_subtitle}

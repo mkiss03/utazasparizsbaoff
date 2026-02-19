@@ -24,15 +24,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import type { WalkingTour } from '@/lib/types/database'
+import type { WalkingTour, WalkingTourCalendarSettings } from '@/lib/types/database'
+import { defaultCalendarSettings } from '@/lib/types/database'
 
 interface WalkingTourDayModalProps {
   tours: WalkingTour[]
   date: string | null
   onClose: () => void
+  calendarSettings?: WalkingTourCalendarSettings
 }
 
-export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTourDayModalProps) {
+export default function WalkingTourDayModal({ tours, date, onClose, calendarSettings }: WalkingTourDayModalProps) {
+  const s = { ...defaultCalendarSettings, ...calendarSettings }
   const router = useRouter()
   const supabase = createClient()
   const [selectedTourId, setSelectedTourId] = useState<string | null>(null)
@@ -49,7 +52,6 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
   const isOpen = !!date && tours.length > 0
   const selectedTour = tours.find(t => t.id === selectedTourId) || null
 
-  // Auto-select if only one tour; reset when tours change
   useEffect(() => {
     if (tours.length === 1) {
       setSelectedTourId(tours[0].id)
@@ -157,7 +159,8 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-2 bg-white shadow-2xl"
+              style={{ borderColor: s.modalAccentColor + '40' }}
             >
               {/* Close button */}
               <motion.button
@@ -169,16 +172,22 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                 onClick={handleClose}
                 className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md transition-colors hover:bg-white"
               >
-                <X className="h-5 w-5 text-parisian-grey-700" />
+                <X className="h-5 w-5" style={{ color: s.modalHeaderBgFrom }} />
               </motion.button>
 
               {/* Header */}
-              <div className="bg-gradient-to-r from-parisian-grey-800 to-parisian-grey-700 px-6 py-5 pr-16">
-                <div className="flex items-center gap-2 text-parisian-beige-200">
+              <div
+                className="px-6 py-5 pr-16"
+                style={{ background: `linear-gradient(to right, ${s.modalHeaderBgFrom}, ${s.modalHeaderBgTo})` }}
+              >
+                <div className="flex items-center gap-2" style={{ color: s.modalHeaderTextColor + 'CC' }}>
                   <CalendarDays className="h-5 w-5" />
                   <span className="font-medium">{date && formatDate(date)}</span>
                 </div>
-                <h3 className="mt-1 font-playfair text-xl font-bold text-white md:text-2xl">
+                <h3
+                  className="mt-1 font-playfair text-xl font-bold md:text-2xl"
+                  style={{ color: s.modalHeaderTextColor }}
+                >
                   {tours.length === 1 ? 'Sétatúra' : `${tours.length} sétatúra`} ezen a napon
                 </h3>
               </div>
@@ -186,7 +195,7 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
               {/* Content */}
               <div className="p-6">
                 {!selectedTour ? (
-                  /* Tour selection list (when multiple tours) */
+                  /* Tour selection list */
                   <div className="space-y-4">
                     {tours.map(tour => {
                       const available = tour.max_participants - (tour.current_bookings || 0)
@@ -197,37 +206,45 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className={`rounded-2xl border-2 p-5 transition-all ${
-                            isFull
-                              ? 'border-red-200 bg-red-50/50'
-                              : 'cursor-pointer border-parisian-beige-200 hover:border-parisian-beige-400 hover:shadow-lg'
+                            isFull ? 'opacity-60' : 'cursor-pointer hover:shadow-lg'
                           }`}
+                          style={{
+                            borderColor: isFull ? '#fecaca' : s.modalAccentColor + '60',
+                            backgroundColor: isFull ? '#fef2f2' : 'white',
+                          }}
                           onClick={() => !isFull && setSelectedTourId(tour.id)}
+                          onMouseEnter={(e) => {
+                            if (!isFull) e.currentTarget.style.borderColor = s.modalAccentColor
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isFull) e.currentTarget.style.borderColor = s.modalAccentColor + '60'
+                          }}
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <h4 className="font-playfair text-lg font-bold text-parisian-grey-800">
+                              <h4 className="font-playfair text-lg font-bold" style={{ color: s.sectionTitleColor }}>
                                 {tour.title}
                               </h4>
-                              <div className="mt-2 flex flex-wrap gap-3 text-sm text-parisian-grey-600">
+                              <div className="mt-2 flex flex-wrap gap-3 text-sm" style={{ color: s.sectionSubtitleColor }}>
                                 <span className="flex items-center gap-1">
-                                  <Clock className="h-4 w-4 text-parisian-beige-500" />
+                                  <Clock className="h-4 w-4" style={{ color: s.modalAccentColor }} />
                                   {tour.start_time?.slice(0, 5)} &bull; {tour.duration_minutes} perc
                                 </span>
                                 <span className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4 text-parisian-beige-500" />
+                                  <MapPin className="h-4 w-4" style={{ color: s.modalAccentColor }} />
                                   {tour.meeting_point}
                                 </span>
                               </div>
                               {tour.short_description && (
-                                <p className="mt-2 line-clamp-2 text-sm text-parisian-grey-500">
+                                <p className="mt-2 line-clamp-2 text-sm" style={{ color: s.sectionSubtitleColor }}>
                                   {tour.short_description}
                                 </p>
                               )}
                             </div>
                             <div className="ml-4 text-right">
-                              <div className="text-xl font-bold text-parisian-grey-800">
+                              <div className="text-xl font-bold" style={{ color: s.sectionTitleColor }}>
                                 {tour.price_per_person} &euro;
-                                <span className="text-sm font-normal text-parisian-grey-500">/f&#337;</span>
+                                <span className="text-sm font-normal" style={{ color: s.sectionSubtitleColor }}>/f&#337;</span>
                               </div>
                               {isFull ? (
                                 <span className="text-sm font-medium text-red-600">Betelt</span>
@@ -239,7 +256,7 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                             </div>
                           </div>
                           {!isFull && (
-                            <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-parisian-beige-600">
+                            <div className="mt-3 flex items-center gap-2 text-sm font-semibold" style={{ color: s.modalAccentColor }}>
                               <Footprints className="h-4 w-4" />
                               <span>Foglalás</span>
                             </div>
@@ -249,9 +266,8 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                     })}
                   </div>
                 ) : (
-                  /* Selected tour details + booking form */
+                  /* Selected tour + booking form */
                   <div>
-                    {/* Back button when multiple tours */}
                     {tours.length > 1 && (
                       <button
                         onClick={() => {
@@ -259,7 +275,8 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                           setError(null)
                           setFormData({ name: '', email: '', phone: '', numParticipants: 1, notes: '' })
                         }}
-                        className="mb-4 flex items-center gap-1 text-sm text-parisian-grey-500 transition-colors hover:text-parisian-grey-700"
+                        className="mb-4 flex items-center gap-1 text-sm transition-colors hover:opacity-80"
+                        style={{ color: s.sectionSubtitleColor }}
                       >
                         &larr; Vissza a túrákhoz
                       </button>
@@ -267,35 +284,30 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
 
                     {/* Tour details */}
                     <div className="mb-6">
-                      <h4 className="font-playfair text-2xl font-bold text-parisian-grey-800">
+                      <h4 className="font-playfair text-2xl font-bold" style={{ color: s.sectionTitleColor }}>
                         {selectedTour.title}
                       </h4>
 
                       <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                        <div className="flex items-center gap-2 rounded-lg bg-parisian-beige-50 px-3 py-2 text-sm">
-                          <Clock className="h-4 w-4 text-parisian-beige-500" />
+                        <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm" style={{ backgroundColor: s.tourDayBgColor }}>
+                          <Clock className="h-4 w-4" style={{ color: s.modalAccentColor }} />
                           <span>{selectedTour.start_time?.slice(0, 5)} &bull; {selectedTour.duration_minutes} perc</span>
                         </div>
-                        <div className="flex items-center gap-2 rounded-lg bg-parisian-beige-50 px-3 py-2 text-sm">
-                          <MapPin className="h-4 w-4 text-parisian-beige-500" />
-                          <span>{selectedTour.meeting_point}</span>
+                        <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm" style={{ backgroundColor: s.tourDayBgColor }}>
+                          <MapPin className="h-4 w-4" style={{ color: s.modalAccentColor }} />
+                          <span className="flex-1">{selectedTour.meeting_point}</span>
                           {selectedTour.meeting_point_url && (
-                            <a
-                              href={selectedTour.meeting_point_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-auto"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5 text-parisian-beige-600 hover:text-parisian-beige-800" />
+                            <a href={selectedTour.meeting_point_url} target="_blank" rel="noopener noreferrer" className="ml-auto">
+                              <ExternalLink className="h-3.5 w-3.5" style={{ color: s.modalAccentColor }} />
                             </a>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 rounded-lg bg-parisian-beige-50 px-3 py-2 text-sm">
-                          <Euro className="h-4 w-4 text-parisian-beige-500" />
+                        <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm" style={{ backgroundColor: s.tourDayBgColor }}>
+                          <Euro className="h-4 w-4" style={{ color: s.modalAccentColor }} />
                           <span>{selectedTour.price_per_person} EUR / f&#337;</span>
                         </div>
-                        <div className="flex items-center gap-2 rounded-lg bg-parisian-beige-50 px-3 py-2 text-sm">
-                          <Users className="h-4 w-4 text-parisian-beige-500" />
+                        <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm" style={{ backgroundColor: s.tourDayBgColor }}>
+                          <Users className="h-4 w-4" style={{ color: s.modalAccentColor }} />
                           <span className="font-medium text-green-600">
                             {selectedTour.max_participants - (selectedTour.current_bookings || 0)} szabad hely
                           </span>
@@ -303,7 +315,7 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                       </div>
 
                       {selectedTour.description && (
-                        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-parisian-grey-600">
+                        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed" style={{ color: s.sectionSubtitleColor }}>
                           {selectedTour.description}
                         </p>
                       )}
@@ -311,7 +323,7 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                       {selectedTour.highlights && selectedTour.highlights.length > 0 && (
                         <div className="mt-3 space-y-1">
                           {selectedTour.highlights.map((h, i) => (
-                            <div key={i} className="flex items-start gap-2 text-sm text-parisian-grey-600">
+                            <div key={i} className="flex items-start gap-2 text-sm" style={{ color: s.sectionSubtitleColor }}>
                               <CheckCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-green-500" />
                               <span>{h}</span>
                             </div>
@@ -321,8 +333,8 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                     </div>
 
                     {/* Booking Form */}
-                    <div className="rounded-2xl border-2 border-parisian-beige-200 bg-parisian-cream-50 p-5">
-                      <h5 className="mb-4 font-playfair text-lg font-bold text-parisian-grey-800">
+                    <div className="rounded-2xl border-2 p-5" style={{ borderColor: s.modalAccentColor + '30', backgroundColor: s.tourDayBgColor }}>
+                      <h5 className="mb-4 font-playfair text-lg font-bold" style={{ color: s.sectionTitleColor }}>
                         Foglalás
                       </h5>
 
@@ -372,11 +384,12 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                                     numParticipants: Math.max(1, formData.numParticipants - 1),
                                   })
                                 }
-                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-parisian-beige-200 transition-colors hover:bg-parisian-beige-50"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border transition-colors hover:opacity-80"
+                                style={{ borderColor: s.modalAccentColor + '40' }}
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
-                              <span className="w-8 text-center text-lg font-bold text-parisian-grey-800">
+                              <span className="w-8 text-center text-lg font-bold" style={{ color: s.sectionTitleColor }}>
                                 {formData.numParticipants}
                               </span>
                               <button
@@ -388,7 +401,8 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                                     numParticipants: Math.min(avail, formData.numParticipants + 1),
                                   })
                                 }}
-                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-parisian-beige-200 transition-colors hover:bg-parisian-beige-50"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border transition-colors hover:opacity-80"
+                                style={{ borderColor: s.modalAccentColor + '40' }}
                               >
                                 <Plus className="h-4 w-4" />
                               </button>
@@ -409,13 +423,13 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
 
                         {/* Price summary */}
                         <div className="space-y-1.5 rounded-lg bg-white p-3">
-                          <div className="flex justify-between text-sm text-parisian-grey-600">
+                          <div className="flex justify-between text-sm" style={{ color: s.sectionSubtitleColor }}>
                             <span>{formData.numParticipants} x {selectedTour.price_per_person} EUR</span>
-                            <span className="font-bold text-parisian-grey-800">
+                            <span className="font-bold" style={{ color: s.sectionTitleColor }}>
                               {formData.numParticipants * selectedTour.price_per_person} EUR
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-parisian-grey-500">
+                          <div className="flex items-center gap-2 text-xs" style={{ color: s.sectionSubtitleColor }}>
                             <Banknote className="h-3.5 w-3.5" />
                             <span>Helyszínen készpénzzel fizetendő</span>
                           </div>
@@ -432,21 +446,21 @@ export default function WalkingTourDayModal({ tours, date, onClose }: WalkingTou
                           </div>
                         )}
 
-                        <Button
+                        <button
                           type="submit"
-                          className="w-full"
-                          variant="secondary"
                           disabled={isProcessing}
+                          className="w-full rounded-lg py-3 font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
+                          style={{ backgroundColor: s.bookButtonBgColor, color: s.bookButtonTextColor }}
                         >
                           {isProcessing ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            <span className="flex items-center justify-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
                               Foglalás...
-                            </>
+                            </span>
                           ) : (
                             'Helyfoglalás megerősítése'
                           )}
-                        </Button>
+                        </button>
                       </form>
                     </div>
                   </div>

@@ -197,3 +197,44 @@ CREATE POLICY "Admin can update walking tour bookings"
   USING (
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'super_admin')
   );
+
+-- ============================================
+-- 7. CALENDAR SETTINGS TÁBLA (naptár megjelenés)
+-- ============================================
+CREATE TABLE IF NOT EXISTS walking_tour_calendar_settings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  settings JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TRIGGER update_calendar_settings_updated_at
+  BEFORE UPDATE ON walking_tour_calendar_settings
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE walking_tour_calendar_settings ENABLE ROW LEVEL SECURITY;
+
+-- Mindenki olvashatja
+CREATE POLICY "Anyone can read calendar settings"
+  ON walking_tour_calendar_settings FOR SELECT
+  USING (true);
+
+-- Admin kezelhet
+CREATE POLICY "Admin can insert calendar settings"
+  ON walking_tour_calendar_settings FOR INSERT
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'super_admin')
+  );
+
+CREATE POLICY "Admin can update calendar settings"
+  ON walking_tour_calendar_settings FOR UPDATE
+  USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'super_admin')
+  );
+
+CREATE POLICY "Admin can delete calendar settings"
+  ON walking_tour_calendar_settings FOR DELETE
+  USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'super_admin')
+  );

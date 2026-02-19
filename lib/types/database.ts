@@ -611,6 +611,109 @@ export interface WalkingTourBookingWithTour extends WalkingTourBooking {
 }
 
 // ============================================
+// WALKING TOUR CALENDAR SETTINGS
+// ============================================
+
+export interface WalkingTourCalendarSettings {
+  // Section header
+  sectionBadgeText: string
+  sectionBadgeBgColor: string
+  sectionBadgeTextColor: string
+  sectionTitle: string
+  sectionSubtitle: string
+  sectionTitleColor: string
+  sectionSubtitleColor: string
+
+  // Calendar header
+  headerBgFrom: string
+  headerBgTo: string
+  headerTextColor: string
+  headerNavColor: string
+
+  // Day of week headers
+  dayHeaderBgColor: string
+  dayHeaderTextColor: string
+
+  // Regular day cells
+  dayTextColor: string
+  pastDayTextColor: string
+
+  // Today highlight
+  todayBgColor: string
+  todayTextColor: string
+
+  // Tour day cells
+  tourDayBgColor: string
+  tourDayBorderColor: string
+  tourDayBorderWidth: number
+
+  // Tour badges
+  tourBadgeBgColor: string
+  tourBadgeTextColor: string
+  fullBadgeBgColor: string
+  fullBadgeTextColor: string
+  showTimeOnBadge: boolean
+
+  // Legend
+  showLegend: boolean
+  legendTourLabel: string
+  legendFullLabel: string
+
+  // Modal
+  modalHeaderBgFrom: string
+  modalHeaderBgTo: string
+  modalHeaderTextColor: string
+  modalAccentColor: string
+  bookButtonBgColor: string
+  bookButtonTextColor: string
+}
+
+export const defaultCalendarSettings: WalkingTourCalendarSettings = {
+  sectionBadgeText: 'Fedezd fel velünk',
+  sectionBadgeBgColor: '#FAF4E8',
+  sectionBadgeTextColor: '#C2AF90',
+  sectionTitle: 'Közelgő Sétatúrák',
+  sectionSubtitle: 'Csatlakozz egyedülálló, magyar nyelvű sétáinkhoz és fedezd fel Párizs rejtett kincseit',
+  sectionTitleColor: '#1A1A1A',
+  sectionSubtitleColor: '#4D4D4D',
+
+  headerBgFrom: '#1A1A1A',
+  headerBgTo: '#333333',
+  headerTextColor: '#FFFFFF',
+  headerNavColor: '#F5EDD9',
+
+  dayHeaderBgColor: '#FFFEF9',
+  dayHeaderTextColor: '#4D4D4D',
+
+  dayTextColor: '#333333',
+  pastDayTextColor: '#999999',
+
+  todayBgColor: '#1A1A1A',
+  todayTextColor: '#FFFFFF',
+
+  tourDayBgColor: '#FFF8EB',
+  tourDayBorderColor: '#D4A574',
+  tourDayBorderWidth: 2,
+
+  tourBadgeBgColor: '#D4A574',
+  tourBadgeTextColor: '#FFFFFF',
+  fullBadgeBgColor: '#FEE2E2',
+  fullBadgeTextColor: '#DC2626',
+  showTimeOnBadge: true,
+
+  showLegend: true,
+  legendTourLabel: 'Van túra',
+  legendFullLabel: 'Betelt',
+
+  modalHeaderBgFrom: '#1A1A1A',
+  modalHeaderBgTo: '#333333',
+  modalHeaderTextColor: '#FFFFFF',
+  modalAccentColor: '#D4C49E',
+  bookButtonBgColor: '#D4A574',
+  bookButtonTextColor: '#FFFFFF',
+}
+
+// ============================================
 // PARIS DISTRICT GUIDE CONFIG TYPES
 // ============================================
 
