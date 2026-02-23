@@ -52,7 +52,7 @@ export default function MuseumGuideAdminPage() {
   const [editingArtwork, setEditingArtwork] = useState<Partial<MuseumGuideArtwork> | null>(null)
 
   // ── Fetch all artworks ──
-  const { data: artworks, isLoading } = useQuery({
+  const { data: artworks, isLoading, isError, error } = useQuery({
     queryKey: ['museum-guide-artworks'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -433,7 +433,13 @@ export default function MuseumGuideAdminPage() {
 
       {/* Artworks list */}
       <div className="space-y-3">
-        {isLoading ? (
+        {isError ? (
+          <div className="text-center py-12 bg-red-50 rounded-xl border border-red-200">
+            <p className="text-red-600 font-semibold mb-1">Hiba az adatok betöltésekor</p>
+            <p className="text-sm text-red-500">{(error as Error)?.message || 'Ismeretlen hiba'}</p>
+            <p className="text-xs text-red-400 mt-2">Ellenőrizd, hogy a museum_guide_artworks tábla létezik-e a Supabase-ben.</p>
+          </div>
+        ) : isLoading ? (
           <div className="text-center py-12 text-slate-400">Betöltés...</div>
         ) : !artworks?.length ? (
           <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
