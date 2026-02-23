@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
+import { createClient } from '@/lib/supabase/server'
 import MobileMuseumGuide from '@/components/MobileMuseumGuide'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Louvre Múzeum – Magyar Digitális Útikalauz | Utazás Párizsba',
@@ -13,6 +17,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function MuseumGuidePage() {
-  return <MobileMuseumGuide />
+export default async function MuseumGuidePage() {
+  const supabase = await createClient()
+
+  const { data: dbArtworks } = await supabase
+    .from('museum_guide_artworks')
+    .select('*')
+    .eq('is_published', true)
+    .order('display_order', { ascending: true })
+
+  return <MobileMuseumGuide dbArtworks={dbArtworks} />
 }

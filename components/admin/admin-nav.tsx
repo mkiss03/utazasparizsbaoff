@@ -21,6 +21,7 @@ import {
   Footprints,
   Users,
   Palette,
+  Landmark,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -97,6 +98,16 @@ const allNavItems: NavItem[] = [
     title: 'Tartalom',
     href: '/admin/content',
     icon: FileText,
+    type: 'item',
+  },
+  {
+    title: 'MÚZEUM GUIDE',
+    type: 'section',
+  },
+  {
+    title: 'Louvre Alkotások',
+    href: '/admin/museum-guide',
+    icon: Landmark,
     type: 'item',
   },
   {

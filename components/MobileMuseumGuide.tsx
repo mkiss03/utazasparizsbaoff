@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import {
   Building2,
@@ -20,6 +20,7 @@ import {
   X,
   ArrowRight,
 } from 'lucide-react'
+import type { MuseumGuideArtwork } from '@/lib/types/database'
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    TYPES
@@ -37,6 +38,26 @@ interface Artwork {
   funFact?: string
   mapPosition: { x: number; y: number }
   gradient: string
+}
+
+interface MobileMuseumGuideProps {
+  dbArtworks?: MuseumGuideArtwork[] | null
+}
+
+function mapDbArtworks(dbItems: MuseumGuideArtwork[]): Artwork[] {
+  return dbItems.map((item, index) => ({
+    id: index + 1,
+    title: item.title,
+    artist: item.artist,
+    year: item.year,
+    wing: item.wing,
+    floor: item.floor,
+    room: item.room,
+    story: item.story,
+    funFact: item.fun_fact || undefined,
+    mapPosition: { x: item.map_position_x, y: item.map_position_y },
+    gradient: item.gradient,
+  }))
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -328,11 +349,13 @@ function StepDots({
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 function MapModal({
+  items,
   currentIndex,
   seen,
   onClose,
   onNavigate,
 }: {
+  items: Artwork[]
   currentIndex: number
   seen: Set<number>
   onClose: () => void
@@ -380,7 +403,7 @@ function MapModal({
           )}
           {/* Route line */}
           <polyline
-            points={artworks.map((a) => `${a.mapPosition.x},${a.mapPosition.y}`).join(' ')}
+            points={items.map((a) => `${a.mapPosition.x},${a.mapPosition.y}`).join(' ')}
             fill="none"
             stroke={C.mapLine}
             strokeWidth="0.4"
@@ -390,7 +413,7 @@ function MapModal({
         </svg>
 
         {/* Pins on map */}
-        {artworks.map((artwork, i) => {
+        {items.map((artwork, i) => {
           const isCurrent = i === currentIndex
           const isSeen = seen.has(artwork.id)
           return (
@@ -696,15 +719,20 @@ function CompletionScreen({ onRestart }: { onRestart: () => void }) {
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-export default function MobileMuseumGuide() {
+export default function MobileMuseumGuide({ dbArtworks }: MobileMuseumGuideProps) {
+  const activeArtworks = useMemo(
+    () => (dbArtworks && dbArtworks.length > 0 ? mapDbArtworks(dbArtworks) : artworks),
+    [dbArtworks],
+  )
+
   const [showSplash, setShowSplash] = useState(true)
   const [[currentIndex, direction], setPage] = useState([0, 0])
   const [seen, setSeen] = useState<Set<number>>(new Set())
   const [showMap, setShowMap] = useState(false)
   const [showCompletion, setShowCompletion] = useState(false)
 
-  const artwork = artworks[currentIndex]
-  const total = artworks.length
+  const artwork = activeArtworks[currentIndex]
+  const total = activeArtworks.length
   const seenCount = seen.size
 
   // Navigation
@@ -736,7 +764,7 @@ export default function MobileMuseumGuide() {
 
   // Toggle seen
   const toggleSeen = useCallback(() => {
-    const id = artworks[currentIndex].id
+    const id = activeArtworks[currentIndex].id
     setSeen((prev) => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
@@ -773,6 +801,7 @@ export default function MobileMuseumGuide() {
       <AnimatePresence>
         {showMap && (
           <MapModal
+            items={activeArtworks}
             currentIndex={currentIndex}
             seen={seen}
             onClose={() => setShowMap(false)}

@@ -611,6 +611,43 @@ export interface WalkingTourBookingWithTour extends WalkingTourBooking {
 }
 
 // ============================================
+// MUSEUM GUIDE TYPES (Louvre Interactive Guide)
+// ============================================
+
+export type MuseumWing = 'Denon' | 'Sully' | 'Richelieu'
+
+export interface MuseumGuideArtwork {
+  id: string
+  title: string
+  artist: string
+  year: string
+  wing: MuseumWing
+  floor: string
+  room: string
+  story: string
+  fun_fact?: string
+  image_url?: string
+  gradient: string
+  map_position_x: number
+  map_position_y: number
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
+export const GRADIENT_PRESETS = [
+  { label: 'Meleg bézs', value: 'linear-gradient(160deg, #E8DDD0 0%, #D4C9BC 40%, #C4B8A8 100%)' },
+  { label: 'Hűvös kék-szürke', value: 'linear-gradient(160deg, #D6DDE4 0%, #C4CDD6 40%, #B0BBC6 100%)' },
+  { label: 'Zsálya zöld', value: 'linear-gradient(160deg, #DDE4D6 0%, #C6D0BC 40%, #B4C0A8 100%)' },
+  { label: 'Halvány rózsaszín', value: 'linear-gradient(160deg, #E4D6DD 0%, #D0BCC6 40%, #C0A8B4 100%)' },
+  { label: 'Meleg homok', value: 'linear-gradient(160deg, #E4DED6 0%, #D0C8BC 40%, #C0B6A8 100%)' },
+  { label: 'Puha zöldeskék', value: 'linear-gradient(160deg, #D6E0E4 0%, #BCD0D4 40%, #A8C0C4 100%)' },
+  { label: 'Levendula', value: 'linear-gradient(160deg, #DDD6E4 0%, #C6BCD0 40%, #B0A8C0 100%)' },
+  { label: 'Arany homok', value: 'linear-gradient(160deg, #E8E0D0 0%, #D8CDB8 40%, #C8BAA0 100%)' },
+] as const
+
+// ============================================
 // WALKING TOUR CALENDAR SETTINGS
 // ============================================
 
