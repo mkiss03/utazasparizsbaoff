@@ -70,12 +70,9 @@ CREATE POLICY "Admins can manage museum guide artworks"
   WITH CHECK (auth.role() = 'authenticated');
 
 -- ============================================
--- 4. SEED DATA (optional - 6 base artworks)
+-- 4. SEED DATA — 6 alap alkotás
 -- ============================================
 
--- Uncomment and run this section to populate initial data:
-
-/*
 INSERT INTO museum_guide_artworks (title, artist, year, wing, floor, room, story, fun_fact, gradient, map_position_x, map_position_y, display_order) VALUES
 (
   'Mona Lisa',
@@ -149,4 +146,3 @@ INSERT INTO museum_guide_artworks (title, artist, year, wing, floor, room, story
   'linear-gradient(160deg, #D6E0E4 0%, #BCD0D4 40%, #A8C0C4 100%)',
   65, 38, 6
 );
-*/
