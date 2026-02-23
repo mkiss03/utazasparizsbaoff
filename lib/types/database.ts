@@ -648,6 +648,26 @@ export const GRADIENT_PRESETS = [
 ] as const
 
 // ============================================
+// MUSEUM GUIDE PURCHASE TYPES
+// ============================================
+
+export type MuseumGuidePurchaseStatus = 'pending' | 'completed' | 'refunded'
+
+export interface MuseumGuidePurchase {
+  id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  amount: number
+  payment_status: MuseumGuidePurchaseStatus
+  access_token: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
 // WALKING TOUR CALENDAR SETTINGS
 // ============================================
 

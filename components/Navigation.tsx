@@ -30,6 +30,7 @@ export default function Navigation() {
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Sétatúrák', href: '/walking-tours' },
+    { name: 'Louvre Guide', href: '/museum-guide' },
     { name: 'Városbérletek', href: '/pricing' },
     { name: 'Galéria', href: '/galeria' },
     { name: 'Párizsi Napló', href: '/blog' },

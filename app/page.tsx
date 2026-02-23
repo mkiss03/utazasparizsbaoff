@@ -5,6 +5,7 @@ import AboutSection from '@/components/sections/AboutSection'
 import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import ParisDistrictGuide from '@/components/sections/ParisDistrictGuide'
+import MuseumGuidePromoSection from '@/components/sections/MuseumGuidePromoSection'
 import WalkingToursSection from '@/components/sections/WalkingToursSection'
 import BlogSection from '@/components/sections/BlogSection'
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
@@ -93,6 +94,7 @@ export default async function Home() {
         <ParisFlashcardsPromoSection />
       )}
       <ParisDistrictGuide />
+      <MuseumGuidePromoSection />
       <TestimonialsSection
         title={textsMap.testimonials_title}
         subtitle={textsMap.testimonials_subtitle}

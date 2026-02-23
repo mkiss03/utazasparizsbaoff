@@ -23,6 +23,8 @@ import {
   MapPin,
   Palette,
   GripVertical,
+  Upload,
+  ImageIcon,
 } from 'lucide-react'
 
 const supabase = createClient()
@@ -50,6 +52,7 @@ export default function MuseumGuideAdminPage() {
   const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
   const [editingArtwork, setEditingArtwork] = useState<Partial<MuseumGuideArtwork> | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   // ── Fetch all artworks ──
   const { data: artworks, isLoading, isError, error } = useQuery({
@@ -181,6 +184,36 @@ export default function MuseumGuideAdminPage() {
 
   const updateField = (field: string, value: unknown) => {
     setEditingArtwork((prev) => (prev ? { ...prev, [field]: value } : null))
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `museum-guide/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('museum-guide-images')
+        .upload(fileName, file)
+
+      if (uploadError) {
+        alert('Hiba a kep feltoltesekor: ' + uploadError.message)
+        return
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('museum-guide-images')
+        .getPublicUrl(fileName)
+
+      updateField('image_url', publicUrl)
+    } catch (err) {
+      alert('Hiba a kep feltoltesekor')
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   // ── Stats ──
@@ -316,12 +349,61 @@ export default function MuseumGuideAdminPage() {
             {/* Row 5: Image + Gradient */}
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label>Kép URL <span className="text-slate-400 font-normal">(opcionális)</span></Label>
-                <Input
-                  value={editingArtwork.image_url || ''}
-                  onChange={(e) => updateField('image_url', e.target.value)}
-                  placeholder="https://..."
-                />
+                <Label className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-slate-500" />
+                  Kep feltoltes <span className="text-slate-400 font-normal">(opcionalis)</span>
+                </Label>
+
+                {/* File upload */}
+                <label className="mt-2 flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-slate-200 p-4 transition-colors hover:border-slate-400 hover:bg-slate-50">
+                  <Upload className="h-5 w-5 text-slate-400" />
+                  <span className="text-sm text-slate-500">
+                    {isUploading ? 'Feltoltes...' : 'Kattints a kep kiválasztásához'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                </label>
+
+                {isUploading && (
+                  <div className="flex items-center gap-2 text-sm text-slate-500 mt-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
+                    Feltoltes folyamatban...
+                  </div>
+                )}
+
+                {/* Image preview */}
+                {editingArtwork.image_url && (
+                  <div className="mt-3 relative">
+                    <img
+                      src={editingArtwork.image_url}
+                      alt="Elonezet"
+                      className="rounded-lg border border-slate-200 max-h-40 object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateField('image_url', '')}
+                      className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Manual URL fallback */}
+                <div className="mt-2">
+                  <Label className="text-xs text-slate-400">Vagy kezi URL megadas</Label>
+                  <Input
+                    value={editingArtwork.image_url || ''}
+                    onChange={(e) => updateField('image_url', e.target.value)}
+                    placeholder="https://..."
+                    className="mt-1"
+                  />
+                </div>
               </div>
               <div>
                 <Label>Háttér gradient</Label>
