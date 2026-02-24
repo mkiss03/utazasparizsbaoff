@@ -14,14 +14,14 @@ interface FooterProps {
 export default function Footer({ staticTexts = {}, pageSettings: ps }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
-  const description = ps?.description || staticTexts.footer_description || 'Fedezze fel Párizs varázslatos titkait egy tapasztalt magyar idegenvezetővel.'
-  const copyright = ps?.copyrightText || staticTexts.footer_copyright || 'Szeidl Viktória. Készült'
+  const description = ps?.description || staticTexts.footer_description || 'Párizs ahogy kevesen ismerik – élményekkel, titkokkal és tapasztalt magyar nyelvű idegenvezetővel'
+  const copyright = ps?.copyrightText || staticTexts.footer_copyright || 'Szeidl Viktória'
   const servicesTitle = ps?.servicesTitle || staticTexts.footer_services_title || 'Szolgáltatások:'
   const service1 = ps?.service1 || staticTexts.footer_service_1 || 'Városnéző séták'
-  const service2 = ps?.service2 || staticTexts.footer_service_2 || 'Programszervezés'
-  const service3 = ps?.service3 || staticTexts.footer_service_3 || 'Transzferek'
-  const contactEmail = ps?.contactEmail || staticTexts.footer_contact_email || 'viktoria.szeidl@gmail.com'
-  const contactPhone = ps?.contactPhone || staticTexts.footer_contact_phone || '+33 6 12 34 56 78'
+  const service2 = ps?.service2 || staticTexts.footer_service_2 || 'Utazástervezés'
+  const service3 = ps?.service3 || staticTexts.footer_service_3 || 'Transzferszolgáltatás'
+  const contactEmail = ps?.contactEmail || staticTexts.footer_contact_email || 'utazasparizsba@gmail.com'
+  const contactPhone = ps?.contactPhone || staticTexts.footer_contact_phone || '+33 7 53 14 50 35'
   const brandTitle = ps?.brandTitle || 'Utazás'
   const brandHighlight = ps?.brandHighlight || 'Párizsba'
   const tagline = ps?.tagline || 'Hivatalos idegenvezető és utazásszervező Párizsban'

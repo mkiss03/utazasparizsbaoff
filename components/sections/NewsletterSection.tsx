@@ -13,8 +13,8 @@ interface NewsletterSectionProps {
 
 export default function NewsletterSection({ pageSettings: ps }: NewsletterSectionProps = {}) {
   const [content, setContent] = useState({
-    title: ps?.title || 'Maradj Kapcsolatban',
-    description: ps?.description || 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
+    title: ps?.title || 'Személyes üzenet Párizsból',
+    description: ps?.description || 'Havonta egy levélnyi inspiráció: elfeledett legendák, rejtett kincsek és a város örök lüktetése. Iratkozz fel hírlevelünkre, hogy ne maradj le a legújabb párizsi programokról és exkluzív ajánlatokról!'
   })
 
   const feature1 = ps?.feature1 || 'Exkluzív túra ajánlatok'
@@ -32,8 +32,8 @@ export default function NewsletterSection({ pageSettings: ps }: NewsletterSectio
 
       if (data && !error) {
         setContent({
-          title: data.newsletter_title || 'Maradj Kapcsolatban',
-          description: data.newsletter_description || 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
+          title: data.newsletter_title || 'Személyes üzenet Párizsból',
+          description: data.newsletter_description || 'Havonta egy levélnyi inspiráció: elfeledett legendák, rejtett kincsek és a város örök lüktetése. Iratkozz fel hírlevelünkre, hogy ne maradj le a legújabb párizsi programokról és exkluzív ajánlatokról!'
         })
       }
     }

@@ -4,8 +4,8 @@ import Footer from '@/components/Footer'
 import MuseumGuidePurchaseClient from '@/components/museum-guide/MuseumGuidePurchaseClient'
 
 export const metadata: Metadata = {
-  title: 'Louvre Digitalis Utikalauz - Megvasarlas | Utazas Parizsba',
-  description: 'Vasarold meg az egyetlen magyar nyelvu interaktiv Louvre utikalauzt. Gondosan valogatott alkotasok, sztorik, utvonalterv.',
+  title: 'Louvre Digitális Útikalauz - Megvásárlás | Utazás Párizsba',
+  description: 'Vásárold meg az egyetlen magyar nyelvű interaktív Louvre útikalauzt. Gondosan válogatott alkotások, sztorik, útvonalterv.',
 }
 
 export default function MuseumGuidePurchasePage() {

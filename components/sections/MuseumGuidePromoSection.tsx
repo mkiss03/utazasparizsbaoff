@@ -10,18 +10,18 @@ interface MuseumGuidePromoSectionProps {
 }
 
 export default function MuseumGuidePromoSection({ pageSettings: ps }: MuseumGuidePromoSectionProps = {}) {
-  const sectionBadge = ps?.sectionBadge || 'Digitalis Utikalauz'
-  const sectionTitle = ps?.title || 'Louvre Digitalis Utikalauz'
-  const sectionSubtitle = ps?.subtitle || 'Az egyetlen magyar nyelvu interaktiv Louvre-kalauz. Gondosan valogatott alkotasok, lenyugozo sztorik, utvonalterv — mindezt a zsebedben.'
+  const sectionBadge = ps?.sectionBadge || 'Digitális Útikalauz'
+  const sectionTitle = ps?.title || 'Louvre Digitális Útikalauz'
+  const sectionSubtitle = ps?.subtitle || 'Az egyetlen magyar nyelvű interaktív Louvre-kalauz. Gondosan válogatott alkotások, lenyűgöző sztorik, útvonalterv – mindezt a zsebedben.'
   const promoCardTitle = ps?.promoCardTitle || 'Fedezd fel a Louvre kincseit'
-  const promoCardSubtitle = ps?.promoCardSubtitle || 'Interaktiv kartyak, terkep, sztorik'
-  const promoCardDescription = ps?.promoCardDescription || '12-15 gondosan valogatott alkotas, mindegyikhez lenyugozo sztori es erdekes teny. Logikus utvonal a Louvre-ban, hogy semmit ne hagyj ki.'
-  const promoFeature1 = ps?.promoFeature1 || 'Interaktiv, lapozgathato kartyak'
-  const promoFeature2 = ps?.promoFeature2 || 'Beepitett Louvre terkep utvonallal'
-  const promoFeature3 = ps?.promoFeature3 || 'Teljes egeszeben magyarul'
-  const promoCtaText = ps?.promoCtaText || 'Kiprobalom ingyen'
-  const purchaseCtaText = ps?.purchaseCtaText || 'Utikalauz megvasarlasa — 4 990 Ft'
-  const purchaseNote = ps?.purchaseNote || 'Egyszeri vasarlas, korlátlan hasznalat'
+  const promoCardSubtitle = ps?.promoCardSubtitle || 'Interaktív kártyák, térkép, sztorik'
+  const promoCardDescription = ps?.promoCardDescription || '12-15 gondosan válogatott alkotás, mindegyikhez lenyűgöző sztori és érdekes tény. Logikus útvonal a Louvre-ban, hogy semmit ne hagyj ki.'
+  const promoFeature1 = ps?.promoFeature1 || 'Interaktív, lapozgatható kártyák'
+  const promoFeature2 = ps?.promoFeature2 || 'Beépített Louvre térkép útvonallal'
+  const promoFeature3 = ps?.promoFeature3 || 'Teljes egészében magyarul'
+  const promoCtaText = ps?.promoCtaText || 'Kipróbálom ingyen'
+  const purchaseCtaText = ps?.purchaseCtaText || 'Útikalauz megvásárlása – 4 990 Ft'
+  const purchaseNote = ps?.purchaseNote || 'Egyszeri vásárlás, korlátlan használat'
 
   const valueProps = [
     {
