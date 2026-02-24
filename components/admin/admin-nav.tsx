@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   MapPin,
   Map,
-  FileText,
   PenTool,
   Mail,
   Package,
@@ -22,6 +21,7 @@ import {
   Users,
   Palette,
   Landmark,
+  Paintbrush,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -49,7 +49,7 @@ const allNavItems: NavItem[] = [
   {
     title: 'Vizuális Szerkesztő',
     href: '/admin/page-builder',
-    icon: LayoutDashboard,
+    icon: Paintbrush,
     type: 'item',
   },
   {
@@ -102,12 +102,6 @@ const allNavItems: NavItem[] = [
     title: 'Kerületi Útmutató',
     href: '/admin/paris-guide',
     icon: Globe,
-    type: 'item',
-  },
-  {
-    title: 'Tartalom',
-    href: '/admin/content',
-    icon: FileText,
     type: 'item',
   },
   {
