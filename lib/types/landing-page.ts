@@ -230,12 +230,14 @@ export interface LandingPageSettings {
 export const defaultLandingPageSettings: LandingPageSettings = {
   hero: {
     visible: true,
+    // DB-sourced fields (profile table) — empty so DB values show through
+    headline: '',
+    subheadline: '',
+    ctaText: '',
+    backgroundImage: '',
+    // Page builder only fields — keep defaults
     badgeText: 'Utazas Parizsba',
-    headline: 'Fedezze fel Parizs',
-    subheadline: 'Szemelyre szabott turak a Fenyek Varosaban',
-    ctaText: 'Nezd meg szolgaltatasainkat',
     ctaLink: '#services',
-    backgroundImage: '/images/eiffel1.jpeg',
     floatingBadge1Title: 'Teljes koru szervezes',
     floatingBadge1Subtitle: 'Minden reszlet egy helyen',
     floatingBadge2Title: 'Tobb eves tapasztalat',
@@ -246,10 +248,12 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   },
   about: {
     visible: true,
-    sectionBadge: 'Rolam',
-    title: 'Bemutatkozas',
+    // DB-sourced fields (profile table) — empty so DB values show through
+    title: '',
     description: '',
-    aboutImage: '/images/viktoriaprofillouvre.jpg',
+    aboutImage: '',
+    // Page builder only fields — keep defaults (no DB source for these)
+    sectionBadge: 'Rolam',
     offerCardsTitle: 'Amit kinalok',
     offerCard1Title: 'Szemelyre szabott elmenyek',
     offerCard1Description: 'Minden tura az erdeklodesedre es tempodra van szabva, legyen szo muveszetrol, gasztromiarol vagy tortenelmrol.',
@@ -261,7 +265,7 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     stat1Label: 'ev Parizsban',
     stat2Value: '1000+',
     stat2Label: 'elegedett vendeg',
-    stat3Value: '⭐',
+    stat3Value: '',
     stat3Label: 'Licencelt idegenvezetes',
     quoteText: 'Parizs mindig jo otlet -- es szeretnem, ha a te parizsi elmenyeid felejthetetlenek lennenek.',
     quoteAuthor: '-- Viktoria',
@@ -272,14 +276,16 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   },
   services: {
     visible: true,
+    // DB-sourced fields (site_text_content table) — empty so DB values show through
+    groupBookingTitle: '',
+    groupBookingDescription: '',
+    groupBookingButtonText: '',
+    customOfferText: '',
+    customOfferButtonText: '',
+    // Page builder only fields — keep defaults
     sectionBadge: 'Mit kinalunk',
     title: 'Szolgaltatasok',
     subtitle: 'Kattints a kartyakra a reszletes informaciokert',
-    groupBookingTitle: 'Csoportos megrendeles?',
-    groupBookingDescription: 'Nagyobb csoportok, ceges rendezvenyek vagy kulonleges igenyek eseten egyedi arkalkulaciot biztositunk. Vegye fel velunk a kapcsolatot, es allitsunk ossze Onnek szemelyre szabott ajanlatot!',
-    groupBookingButtonText: 'Erdekel az egyedi ajanlat',
-    customOfferText: 'Nem talalja amit keres? Kerjen egyedi ajanlatot!',
-    customOfferButtonText: 'Egyedi ajanlatkeres',
     sectionBadgeBgColor: '#F5EDE4',
     sectionBadgeTextColor: '#4A4A4A',
     titleColor: '#1F2937',
@@ -338,8 +344,10 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   },
   testimonials: {
     visible: true,
-    title: 'Elmenyek, ahogy ok megeltek',
-    subtitle: 'Amit az utazoink mondanak rolunk',
+    // DB-sourced fields (site_text_content table) — empty so DB values show through
+    title: '',
+    subtitle: '',
+    // Page builder only fields — keep defaults
     ctaText: 'Legyel Te is a kovetkezo elegedett vendegunk!',
     ctaButtonText: 'Foglalj most',
     titleColor: '#1F2937',
@@ -356,19 +364,21 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   },
   contact: {
     visible: true,
-    title: 'Kapcsolat',
-    subtitle: 'Kerdesei van? Irjon nekunk!',
-    locationLabel: 'Helyszin',
-    locationValue: 'Parizs, Franciaorszag',
-    availabilityTitle: 'Elerhetoseg',
-    formTitle: 'Uzenet kuldese',
-    formNameLabel: 'Nev',
-    formEmailLabel: 'Email',
-    formMessageLabel: 'Uzenet',
-    formButtonText: 'Kuldes',
-    formButtonSending: 'Kuldes...',
+    // DB-sourced fields (site_text_content table) — empty so DB values show through
+    title: '',
+    subtitle: '',
+    locationLabel: '',
+    locationValue: '',
+    availabilityTitle: '',
+    formTitle: '',
+    formNameLabel: '',
+    formEmailLabel: '',
+    formMessageLabel: '',
+    formButtonText: '',
+    formButtonSending: '',
     quoteText: '',
     quoteAuthor: '',
+    // Page builder only fields — keep defaults
     titleColor: '#1F2937',
   },
   newsletter: {
