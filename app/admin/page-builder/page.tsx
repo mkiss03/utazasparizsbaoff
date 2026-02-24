@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { Save, Loader2, RotateCcw, CheckCircle, Paintbrush } from 'lucide-react'
 import { LandingPageSettings, defaultLandingPageSettings, SECTION_META } from '@/lib/types/landing-page'
 import { revalidateLandingPage } from '@/app/actions/revalidate'
@@ -44,14 +44,13 @@ const editorComponents: Record<string, React.ComponentType<any>> = {
 
 export default function PageBuilderPage() {
   const supabase = createClient()
-  const queryClient = useQueryClient()
   const [settings, setSettings] = useState<LandingPageSettings>(defaultLandingPageSettings)
-  const [initialLoaded, setInitialLoaded] = useState(false)
   const [saved, setSaved] = useState(false)
   const [openSection, setOpenSection] = useState<string | null>('hero')
   const [device, setDevice] = useState<DeviceMode>('desktop')
+  const hasInitialized = useRef(false)
 
-  // Load landing_page_settings
+  // Load landing_page_settings — once only, no auto-refetch
   const { data: dbRow, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['landing-page-settings'],
     queryFn: async () => {
@@ -65,9 +64,12 @@ export default function PageBuilderPage() {
       if (error && error.code !== 'PGRST116') throw error
       return data
     },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
-  // Load DB-sourced content (profile + site_text_content) to pre-populate empty fields
+  // Load DB-sourced content (profile + site_text_content) — once only
   const { data: dbContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['page-builder-db-content'],
     queryFn: async () => {
@@ -82,15 +84,21 @@ export default function PageBuilderPage() {
       })
       return { profile, textsMap }
     },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
-  // Merge everything into settings on initial load
+  // Merge DB data into settings ONCE on initial load
   useEffect(() => {
-    if (initialLoaded) return // Only run once
+    if (hasInitialized.current) return
+    if (isLoadingSettings || isLoadingContent) return
+
+    hasInitialized.current = true
 
     const merged = { ...defaultLandingPageSettings } as any
 
-    // First: merge saved landing_page_settings (if exists)
+    // Merge saved landing_page_settings (if exists)
     if (dbRow?.settings) {
       const savedSettings = dbRow.settings as any
       for (const key of Object.keys(defaultLandingPageSettings) as (keyof LandingPageSettings)[]) {
@@ -100,7 +108,7 @@ export default function PageBuilderPage() {
       }
     }
 
-    // Second: fill empty DB-sourced fields from profile + site_text_content
+    // Fill empty DB-sourced fields from profile + site_text_content
     if (dbContent?.profile) {
       const p = dbContent.profile
       if (!merged.hero.headline) merged.hero.headline = p.hero_title || ''
@@ -114,16 +122,13 @@ export default function PageBuilderPage() {
 
     if (dbContent?.textsMap) {
       const t = dbContent.textsMap
-      // Services
       if (!merged.services.groupBookingTitle) merged.services.groupBookingTitle = t.services_group_booking_title || ''
       if (!merged.services.groupBookingDescription) merged.services.groupBookingDescription = t.services_group_booking_description || ''
       if (!merged.services.groupBookingButtonText) merged.services.groupBookingButtonText = t.services_group_booking_button || ''
       if (!merged.services.customOfferText) merged.services.customOfferText = t.services_custom_offer_text || ''
       if (!merged.services.customOfferButtonText) merged.services.customOfferButtonText = t.services_custom_offer_button || ''
-      // Testimonials
       if (!merged.testimonials.title) merged.testimonials.title = t.testimonials_title || ''
       if (!merged.testimonials.subtitle) merged.testimonials.subtitle = t.testimonials_subtitle || ''
-      // Contact
       if (!merged.contact.title) merged.contact.title = t.contact_title || ''
       if (!merged.contact.subtitle) merged.contact.subtitle = t.contact_subtitle || ''
       if (!merged.contact.locationLabel) merged.contact.locationLabel = t.contact_location_label || ''
@@ -140,13 +145,12 @@ export default function PageBuilderPage() {
     }
 
     setSettings(merged)
-    setInitialLoaded(true)
-  }, [dbRow, dbContent, initialLoaded])
+  }, [dbRow, dbContent, isLoadingSettings, isLoadingContent])
 
-  // Save mutation — fresh row lookup at save time + revalidation
+  // Save mutation — fresh row lookup, NO query invalidation afterwards
   const saveMutation = useMutation({
     mutationFn: async (newSettings: LandingPageSettings) => {
-      // Fresh lookup to avoid stale dbRow reference
+      // Fresh lookup at save time — never rely on stale dbRow
       const { data: currentRow } = await supabase
         .from('landing_page_settings')
         .select('id')
@@ -168,7 +172,6 @@ export default function PageBuilderPage() {
       }
     },
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['landing-page-settings'] })
       // Revalidate the live landing page so changes appear immediately
       try {
         await revalidateLandingPage()
@@ -204,9 +207,7 @@ export default function PageBuilderPage() {
     }
   }
 
-  const isLoading = isLoadingSettings || isLoadingContent
-
-  if (isLoading) {
+  if (isLoadingSettings || isLoadingContent) {
     return (
       <div className="flex h-96 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
@@ -290,7 +291,7 @@ export default function PageBuilderPage() {
           </div>
         </div>
 
-        {/* Right: Preview panel — full remaining width, no maxWidth cap */}
+        {/* Right: Preview panel */}
         <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-slate-100/50 to-slate-50 p-6">
           <LandingPagePreview
             settings={settings}
