@@ -120,11 +120,13 @@ export default async function Home() {
           pageSettings={pageSettings.services}
         />
       )}
-      <WalkingToursSection tours={upcomingWalkingTours || []} calendarSettings={calendarSettings?.settings || null} />
+      {pageSettings.walkingTours.visible && (
+        <WalkingToursSection tours={upcomingWalkingTours || []} calendarSettings={calendarSettings?.settings || null} />
+      )}
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && pageSettings.flashcardsPromo.visible && (
         <ParisFlashcardsPromoSection pageSettings={pageSettings.flashcardsPromo} />
       )}
-      <ParisDistrictGuide />
+      {pageSettings.parisDistrictGuide.visible && <ParisDistrictGuide />}
       {pageSettings.museumGuidePromo.visible && (
         <MuseumGuidePromoSection pageSettings={pageSettings.museumGuidePromo} />
       )}
@@ -165,7 +167,7 @@ export default async function Home() {
       {pageSettings.footer.visible && (
         <Footer staticTexts={textsMap} pageSettings={pageSettings.footer} />
       )}
-      <BoatTourModal />
+      {pageSettings.boatTour.visible && <BoatTourModal />}
     </main>
   )
 }

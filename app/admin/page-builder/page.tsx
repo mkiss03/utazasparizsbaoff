@@ -21,18 +21,24 @@ import BlogEditor from '@/components/admin/page-builder/editors/BlogEditor'
 import ContactEditor from '@/components/admin/page-builder/editors/ContactEditor'
 import NewsletterEditor from '@/components/admin/page-builder/editors/NewsletterEditor'
 import FooterEditor from '@/components/admin/page-builder/editors/FooterEditor'
+import WalkingToursEditor from '@/components/admin/page-builder/editors/WalkingToursEditor'
+import ParisDistrictGuideEditor from '@/components/admin/page-builder/editors/ParisDistrictGuideEditor'
+import BoatTourEditor from '@/components/admin/page-builder/editors/BoatTourEditor'
 
 const editorComponents: Record<string, React.ComponentType<any>> = {
   hero: HeroEditor,
   about: AboutEditor,
   services: ServicesEditor,
+  walkingTours: WalkingToursEditor,
   flashcardsPromo: FlashcardsPromoEditor,
+  parisDistrictGuide: ParisDistrictGuideEditor,
   museumGuidePromo: MuseumGuidePromoEditor,
   testimonials: TestimonialsEditor,
   blog: BlogEditor,
   contact: ContactEditor,
   newsletter: NewsletterEditor,
   footer: FooterEditor,
+  boatTour: BoatTourEditor,
 }
 
 export default function PageBuilderPage() {

@@ -10,6 +10,10 @@ import {
   Lock,
   Send,
   ArrowRight,
+  Calendar,
+  Map,
+  Ship,
+  Footprints,
 } from 'lucide-react'
 
 interface LandingPagePreviewProps {
@@ -216,6 +220,50 @@ export default function LandingPagePreview({
             </PreviewSection>
           )}
 
+          {/* ========== WALKING TOURS ========== */}
+          {settings.walkingTours.visible && (
+            <PreviewSection sectionKey="walkingTours" active={activeSection === 'walkingTours'} onClick={onSectionClick} label="Sétatúrák">
+              <div className="bg-white px-12 py-16">
+                <div className="text-center">
+                  <span className="inline-block rounded-full bg-emerald-100 px-4 py-1 text-xs font-medium text-emerald-700">
+                    Sétatúrák
+                  </span>
+                  <h2 className="mt-3 text-2xl font-bold text-slate-800">Foglalj Sétatúrát</h2>
+                  <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500">Válassz a közelgő túráink közül és fedezd fel Párizst gyalog</p>
+                </div>
+                <div className="mx-auto mt-8 max-w-xl">
+                  {/* Calendar mockup */}
+                  <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div className="flex items-center justify-between border-b px-6 py-3">
+                      <span className="text-sm font-bold text-slate-700">Február 2026</span>
+                      <div className="flex gap-1">
+                        <div className="h-7 w-7 rounded-lg bg-slate-100" />
+                        <div className="h-7 w-7 rounded-lg bg-slate-100" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-7 gap-1 p-4 text-center text-[10px] text-slate-400">
+                      {['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V'].map((d) => (
+                        <div key={d} className="py-1 font-medium">{d}</div>
+                      ))}
+                      {Array.from({ length: 28 }, (_, i) => (
+                        <div
+                          key={i}
+                          className={`rounded-lg py-2 text-xs ${
+                            [4, 11, 18, 25].includes(i)
+                              ? 'bg-emerald-500 font-bold text-white'
+                              : 'text-slate-600'
+                          }`}
+                        >
+                          {i + 1}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </PreviewSection>
+          )}
+
           {/* ========== FLASHCARDS PROMO ========== */}
           {settings.flashcardsPromo.visible && (
             <PreviewSection sectionKey="flashcardsPromo" active={activeSection === 'flashcardsPromo'} onClick={onSectionClick} label="Flashcards">
@@ -245,6 +293,44 @@ export default function LandingPagePreview({
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+            </PreviewSection>
+          )}
+
+          {/* ========== PARIS DISTRICT GUIDE ========== */}
+          {settings.parisDistrictGuide.visible && (
+            <PreviewSection sectionKey="parisDistrictGuide" active={activeSection === 'parisDistrictGuide'} onClick={onSectionClick} label="Kerületek">
+              <div className="bg-white px-12 py-16">
+                <div className="text-center">
+                  <span className="inline-block rounded-full bg-violet-100 px-4 py-1 text-xs font-medium text-violet-700">
+                    Párizsi Kerületek
+                  </span>
+                  <h2 className="mt-3 text-2xl font-bold text-slate-800">Fedezd fel a kerületeket</h2>
+                  <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500">Ismerd meg Párizs egyedi negyedeit az interaktív térképünkkel</p>
+                </div>
+                <div className="mx-auto mt-8 flex max-w-4xl items-start gap-6">
+                  {/* Map mockup */}
+                  <div className="flex-1">
+                    <div className="relative aspect-square rounded-2xl bg-gradient-to-br from-violet-50 to-blue-50 p-8">
+                      <Map className="mx-auto h-full w-full text-violet-200" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="rounded-xl bg-white/90 px-4 py-2 text-xs font-bold text-violet-700 shadow-lg">
+                          Interaktív Térkép
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* District card mockup */}
+                  <div className="flex-1 space-y-3">
+                    {['7. kerület – Eiffel-torony', '18. kerület – Montmartre', '4. kerület – Notre-Dame'].map((d, i) => (
+                      <div key={i} className={`rounded-xl border p-4 ${i === 0 ? 'border-violet-300 bg-violet-50' : 'bg-white'}`}>
+                        <p className="text-xs font-bold text-slate-700">{d}</p>
+                        <div className="mt-1.5 h-2 w-3/4 rounded bg-slate-100" />
+                        <div className="mt-1 h-2 w-1/2 rounded bg-slate-100" />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -431,6 +517,26 @@ export default function LandingPagePreview({
                 </div>
                 <div className="mt-6 border-t border-white/10 pt-4 text-center">
                   <p className="text-[10px] opacity-40">&copy; {new Date().getFullYear()} {settings.footer.copyrightText}</p>
+                </div>
+              </div>
+            </PreviewSection>
+          )}
+
+          {/* ========== BOAT TOUR (floating element) ========== */}
+          {settings.boatTour.visible && (
+            <PreviewSection sectionKey="boatTour" active={activeSection === 'boatTour'} onClick={onSectionClick} label="Hajózás">
+              <div className="bg-gradient-to-r from-sky-50 to-blue-50 px-12 py-8">
+                <div className="mx-auto flex max-w-3xl items-center gap-6">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 shadow-lg">
+                    <Ship className="h-7 w-7 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-800">Hajózás Párizsban</p>
+                    <p className="mt-0.5 text-xs text-slate-500">Szajna-parti sétahajózás — A lebegő gomb a képernyő alján jelenik meg</p>
+                  </div>
+                  <div className="rounded-full bg-sky-500 px-5 py-2 text-xs font-semibold text-white shadow-sm">
+                    Hajózás
+                  </div>
                 </div>
               </div>
             </PreviewSection>

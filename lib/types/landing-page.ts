@@ -65,6 +65,24 @@ export interface ServicesSectionSettings {
   subtitleColor: string
 }
 
+// === WALKING TOURS SECTION ===
+export interface WalkingToursSettings {
+  visible: boolean
+  description: string
+}
+
+// === PARIS DISTRICT GUIDE SECTION ===
+export interface ParisDistrictGuideSettings {
+  visible: boolean
+  description: string
+}
+
+// === BOAT TOUR MODAL ===
+export interface BoatTourSettings {
+  visible: boolean
+  description: string
+}
+
 // === FLASHCARDS PROMO SECTION ===
 export interface FlashcardsPromoSettings {
   visible: boolean
@@ -193,13 +211,16 @@ export interface LandingPageSettings {
   hero: HeroSectionSettings
   about: AboutSectionSettings
   services: ServicesSectionSettings
+  walkingTours: WalkingToursSettings
   flashcardsPromo: FlashcardsPromoSettings
+  parisDistrictGuide: ParisDistrictGuideSettings
   museumGuidePromo: MuseumGuidePromoSettings
   testimonials: TestimonialsSectionSettings
   blog: BlogSectionSettings
   contact: ContactSectionSettings
   newsletter: NewsletterSectionSettings
   footer: FooterSettings
+  boatTour: BoatTourSettings
 }
 
 // ============================================
@@ -264,6 +285,10 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     titleColor: '#1F2937',
     subtitleColor: '#6B7280',
   },
+  walkingTours: {
+    visible: true,
+    description: 'Setaturaink naptarbol foglalhatok. A reszletes beallitasok az Admin > Setaturak menuben erhetok el.',
+  },
   flashcardsPromo: {
     visible: true,
     sectionBadge: 'Parizs Tematikus Csomagok',
@@ -281,6 +306,10 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     bottomCtaText: 'Osszes varos megtekintese',
     headerGradientFrom: '#C4A882',
     headerGradientTo: '#B09672',
+  },
+  parisDistrictGuide: {
+    visible: true,
+    description: 'A Parizsi Keruleti Utmutato tartalma az Admin > Keruleti Utmutato menubol szerkesztheto.',
   },
   museumGuidePromo: {
     visible: true,
@@ -353,6 +382,10 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     sectionBgColor: '#FAF7F2',
     titleColor: '#0F172A',
   },
+  boatTour: {
+    visible: true,
+    description: 'A hajozas varazslo tartalma az Admin > Hajozas Varazslo menubol szerkesztheto.',
+  },
   footer: {
     visible: true,
     brandTitle: 'Utazas',
@@ -383,11 +416,14 @@ export const SECTION_META = [
   { key: 'hero', label: 'Hero szekció', icon: 'Image' },
   { key: 'about', label: 'Rólam', icon: 'User' },
   { key: 'services', label: 'Szolgáltatások', icon: 'Briefcase' },
+  { key: 'walkingTours', label: 'Sétatúrák', icon: 'Footprints' },
   { key: 'flashcardsPromo', label: 'Flashcards Promo', icon: 'BookOpen' },
-  { key: 'museumGuidePromo', label: 'Museum Guide Promo', icon: 'Landmark' },
+  { key: 'parisDistrictGuide', label: 'Kerületi Útmutató', icon: 'Map' },
+  { key: 'museumGuidePromo', label: 'Múzeum Guide Promo', icon: 'Landmark' },
   { key: 'testimonials', label: 'Vélemények', icon: 'Star' },
   { key: 'blog', label: 'Blog', icon: 'FileText' },
   { key: 'contact', label: 'Kapcsolat', icon: 'Mail' },
   { key: 'newsletter', label: 'Hírlevél', icon: 'Bell' },
   { key: 'footer', label: 'Lábléc', icon: 'LayoutTemplate' },
+  { key: 'boatTour', label: 'Hajózás', icon: 'Ship' },
 ] as const
