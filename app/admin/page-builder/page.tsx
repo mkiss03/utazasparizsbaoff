@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Save, Loader2, RotateCcw, CheckCircle, Paintbrush } from 'lucide-react'
 import { LandingPageSettings, defaultLandingPageSettings, SECTION_META } from '@/lib/types/landing-page'
+import { revalidateLandingPage } from '@/app/actions/revalidate'
 
 import SectionAccordion from '@/components/admin/page-builder/SectionAccordion'
 import PreviewToolbar, { DeviceMode } from '@/components/admin/page-builder/preview/PreviewToolbar'
@@ -45,12 +46,13 @@ export default function PageBuilderPage() {
   const supabase = createClient()
   const queryClient = useQueryClient()
   const [settings, setSettings] = useState<LandingPageSettings>(defaultLandingPageSettings)
+  const [initialLoaded, setInitialLoaded] = useState(false)
   const [saved, setSaved] = useState(false)
   const [openSection, setOpenSection] = useState<string | null>('hero')
   const [device, setDevice] = useState<DeviceMode>('desktop')
 
-  // Load settings
-  const { data: dbRow, isLoading } = useQuery({
+  // Load landing_page_settings
+  const { data: dbRow, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['landing-page-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,27 +67,98 @@ export default function PageBuilderPage() {
     },
   })
 
+  // Load DB-sourced content (profile + site_text_content) to pre-populate empty fields
+  const { data: dbContent, isLoading: isLoadingContent } = useQuery({
+    queryKey: ['page-builder-db-content'],
+    queryFn: async () => {
+      const [profileRes, textsRes] = await Promise.all([
+        supabase.from('profile').select('*').single(),
+        supabase.from('site_text_content').select('*'),
+      ])
+      const profile = profileRes.data as any
+      const textsMap: Record<string, string> = {}
+      textsRes.data?.forEach((item: any) => {
+        textsMap[item.key] = item.value || ''
+      })
+      return { profile, textsMap }
+    },
+  })
+
+  // Merge everything into settings on initial load
   useEffect(() => {
+    if (initialLoaded) return // Only run once
+
+    const merged = { ...defaultLandingPageSettings } as any
+
+    // First: merge saved landing_page_settings (if exists)
     if (dbRow?.settings) {
-      const merged = { ...defaultLandingPageSettings }
       const savedSettings = dbRow.settings as any
       for (const key of Object.keys(defaultLandingPageSettings) as (keyof LandingPageSettings)[]) {
         if (savedSettings[key]) {
-          ;(merged as any)[key] = { ...(defaultLandingPageSettings as any)[key], ...savedSettings[key] }
+          merged[key] = { ...(defaultLandingPageSettings as any)[key], ...savedSettings[key] }
         }
       }
-      setSettings(merged)
     }
-  }, [dbRow])
 
-  // Save mutation
+    // Second: fill empty DB-sourced fields from profile + site_text_content
+    if (dbContent?.profile) {
+      const p = dbContent.profile
+      if (!merged.hero.headline) merged.hero.headline = p.hero_title || ''
+      if (!merged.hero.subheadline) merged.hero.subheadline = p.hero_subtitle || ''
+      if (!merged.hero.ctaText) merged.hero.ctaText = p.hero_cta_text || ''
+      if (!merged.hero.backgroundImage) merged.hero.backgroundImage = p.hero_background_image || ''
+      if (!merged.about.title) merged.about.title = p.about_title || ''
+      if (!merged.about.description) merged.about.description = p.about_description || ''
+      if (!merged.about.aboutImage) merged.about.aboutImage = p.about_image || ''
+    }
+
+    if (dbContent?.textsMap) {
+      const t = dbContent.textsMap
+      // Services
+      if (!merged.services.groupBookingTitle) merged.services.groupBookingTitle = t.services_group_booking_title || ''
+      if (!merged.services.groupBookingDescription) merged.services.groupBookingDescription = t.services_group_booking_description || ''
+      if (!merged.services.groupBookingButtonText) merged.services.groupBookingButtonText = t.services_group_booking_button || ''
+      if (!merged.services.customOfferText) merged.services.customOfferText = t.services_custom_offer_text || ''
+      if (!merged.services.customOfferButtonText) merged.services.customOfferButtonText = t.services_custom_offer_button || ''
+      // Testimonials
+      if (!merged.testimonials.title) merged.testimonials.title = t.testimonials_title || ''
+      if (!merged.testimonials.subtitle) merged.testimonials.subtitle = t.testimonials_subtitle || ''
+      // Contact
+      if (!merged.contact.title) merged.contact.title = t.contact_title || ''
+      if (!merged.contact.subtitle) merged.contact.subtitle = t.contact_subtitle || ''
+      if (!merged.contact.locationLabel) merged.contact.locationLabel = t.contact_location_label || ''
+      if (!merged.contact.locationValue) merged.contact.locationValue = t.contact_location_value || ''
+      if (!merged.contact.availabilityTitle) merged.contact.availabilityTitle = t.contact_availability_title || ''
+      if (!merged.contact.formTitle) merged.contact.formTitle = t.contact_form_title || ''
+      if (!merged.contact.formNameLabel) merged.contact.formNameLabel = t.contact_form_name_label || ''
+      if (!merged.contact.formEmailLabel) merged.contact.formEmailLabel = t.contact_form_email_label || ''
+      if (!merged.contact.formMessageLabel) merged.contact.formMessageLabel = t.contact_form_message_label || ''
+      if (!merged.contact.formButtonText) merged.contact.formButtonText = t.contact_form_button_text || ''
+      if (!merged.contact.formButtonSending) merged.contact.formButtonSending = t.contact_form_button_sending || ''
+      if (!merged.contact.quoteText) merged.contact.quoteText = t.contact_quote_text || ''
+      if (!merged.contact.quoteAuthor) merged.contact.quoteAuthor = t.contact_quote_author || ''
+    }
+
+    setSettings(merged)
+    setInitialLoaded(true)
+  }, [dbRow, dbContent, initialLoaded])
+
+  // Save mutation — fresh row lookup at save time + revalidation
   const saveMutation = useMutation({
     mutationFn: async (newSettings: LandingPageSettings) => {
-      if (dbRow?.id) {
+      // Fresh lookup to avoid stale dbRow reference
+      const { data: currentRow } = await supabase
+        .from('landing_page_settings')
+        .select('id')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (currentRow?.id) {
         const { error } = await supabase
           .from('landing_page_settings')
           .update({ settings: newSettings })
-          .eq('id', dbRow.id)
+          .eq('id', currentRow.id)
         if (error) throw error
       } else {
         const { error } = await supabase
@@ -94,8 +167,14 @@ export default function PageBuilderPage() {
         if (error) throw error
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['landing-page-settings'] })
+      // Revalidate the live landing page so changes appear immediately
+      try {
+        await revalidateLandingPage()
+      } catch {
+        // Revalidation is best-effort
+      }
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
     },
@@ -124,6 +203,8 @@ export default function PageBuilderPage() {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
+
+  const isLoading = isLoadingSettings || isLoadingContent
 
   if (isLoading) {
     return (
