@@ -43,6 +43,16 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
+    title: 'OLDAL SZERKESZTŐ',
+    type: 'section',
+  },
+  {
+    title: 'Vizuális Szerkesztő',
+    href: '/admin/page-builder',
+    icon: LayoutDashboard,
+    type: 'item',
+  },
+  {
     title: 'TARTALOM',
     type: 'section',
   },

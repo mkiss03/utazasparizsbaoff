@@ -5,6 +5,8 @@ import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-rea
 import { useState } from 'react'
 import { sendContactEmail } from '@/lib/actions/contact'
 
+import type { ContactSectionSettings } from '@/lib/types/landing-page'
+
 interface ContactSectionProps {
   email?: string
   phone?: string
@@ -22,25 +24,40 @@ interface ContactSectionProps {
   formButtonSending?: string
   quoteText?: string
   quoteAuthor?: string
+  pageSettings?: ContactSectionSettings
 }
 
 export default function ContactSection({
   email = 'viktoria@parizstourist.com',
   phone = '+33 6 12 34 56 78',
-  title = 'Lépjen kapcsolatba',
-  subtitle = 'Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!',
-  locationLabel = 'Helyszín',
-  locationValue = 'Párizs, Franciaország',
-  availabilityTitle = 'Elérhetőségek',
-  formTitle = 'Küldjön üzenetet',
-  formNameLabel = 'Név',
-  formEmailLabel = 'Email',
-  formMessageLabel = 'Üzenet',
-  formButtonText = 'Üzenet küldése',
-  formButtonSending = 'Küldés...',
-  quoteText = 'Párizs mindig jó ötlet. Különösen akkor, ha egy tapasztalt idegenvezetővel fedezi fel.',
-  quoteAuthor = '- Viktória',
+  title: propTitle = 'Lépjen kapcsolatba',
+  subtitle: propSubtitle = 'Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!',
+  locationLabel: propLL = 'Helyszín',
+  locationValue: propLV = 'Párizs, Franciaország',
+  availabilityTitle: propAT = 'Elérhetőségek',
+  formTitle: propFT = 'Küldjön üzenetet',
+  formNameLabel: propFNL = 'Név',
+  formEmailLabel: propFEL = 'Email',
+  formMessageLabel: propFML = 'Üzenet',
+  formButtonText: propFBT = 'Üzenet küldése',
+  formButtonSending: propFBS = 'Küldés...',
+  quoteText: propQT = 'Párizs mindig jó ötlet. Különösen akkor, ha egy tapasztalt idegenvezetővel fedezi fel.',
+  quoteAuthor: propQA = '- Viktória',
+  pageSettings: ps,
 }: ContactSectionProps) {
+  const title = ps?.title || propTitle
+  const subtitle = ps?.subtitle || propSubtitle
+  const locationLabel = ps?.locationLabel || propLL
+  const locationValue = ps?.locationValue || propLV
+  const availabilityTitle = ps?.availabilityTitle || propAT
+  const formTitle = ps?.formTitle || propFT
+  const formNameLabel = ps?.formNameLabel || propFNL
+  const formEmailLabel = ps?.formEmailLabel || propFEL
+  const formMessageLabel = ps?.formMessageLabel || propFML
+  const formButtonText = ps?.formButtonText || propFBT
+  const formButtonSending = ps?.formButtonSending || propFBS
+  const quoteText = ps?.quoteText || propQT
+  const quoteAuthor = ps?.quoteAuthor || propQA
   const [formData, setFormData] = useState({
     name: '',
     email: '',

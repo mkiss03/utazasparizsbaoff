@@ -5,12 +5,18 @@ import { Calendar, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Post } from '@/lib/types/database'
+import type { BlogSectionSettings } from '@/lib/types/landing-page'
 
 interface BlogSectionProps {
   posts?: Post[]
+  pageSettings?: BlogSectionSettings
 }
 
-export default function BlogSection({ posts = [] }: BlogSectionProps) {
+export default function BlogSection({ posts = [], pageSettings: ps }: BlogSectionProps) {
+  const sectionTitle = ps?.title || 'Párizsi Napló'
+  const sectionSubtitle = ps?.subtitle || 'Fedezd fel a város titkait, történeteit és varázslatos pillanatait'
+  const readMoreText = ps?.readMoreText || 'Tovább olvasom'
+  const viewAllButtonText = ps?.viewAllButtonText || 'Összes bejegyzés'
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('hu-HU', {
       year: 'numeric',
@@ -56,10 +62,10 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 font-playfair text-4xl font-bold text-parisian-grey-800 md:text-5xl lg:text-6xl">
-            Párizsi Napló
+            {sectionTitle}
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600 md:text-xl">
-            Fedezd fel a város titkait, történeteit és varázslatos pillanatait
+            {sectionSubtitle}
           </p>
         </motion.div>
 
@@ -117,7 +123,7 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
 
                     {/* Read More */}
                     <div className="flex items-center gap-2 text-sm font-semibold text-parisian-beige-600 transition-all group-hover:gap-3">
-                      <span>Tovább olvasom</span>
+                      <span>{readMoreText}</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
@@ -141,7 +147,7 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
               whileTap={{ scale: 0.95 }}
               className="rounded-full bg-parisian-beige-400 px-8 py-3 font-semibold text-white transition-all duration-300 hover:bg-parisian-beige-500"
             >
-              Összes bejegyzés
+              {viewAllButtonText}
             </motion.button>
           </Link>
         </motion.div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { useRef } from 'react'
 import Image from 'next/image'
+import type { HeroSectionSettings } from '@/lib/types/landing-page'
 
 interface HeroSectionProps {
   headline?: string
@@ -11,15 +12,26 @@ interface HeroSectionProps {
   backgroundImage?: string
   ctaText?: string
   ctaLink?: string
+  pageSettings?: HeroSectionSettings
 }
 
 export default function HeroSection({
-  headline = 'Fedezze fel Párizs',
-  subheadline = 'Személyre szabott túrák a Fények Városában',
-  backgroundImage = '/images/eiffel1.jpeg',
-  ctaText = 'Nézd meg szolgáltatásainkat',
-  ctaLink = '#services',
+  headline: propHeadline = 'Fedezze fel Párizs',
+  subheadline: propSubheadline = 'Személyre szabott túrák a Fények Városában',
+  backgroundImage: propBg = '/images/eiffel1.jpeg',
+  ctaText: propCtaText = 'Nézd meg szolgáltatásainkat',
+  ctaLink: propCtaLink = '#services',
+  pageSettings: ps,
 }: HeroSectionProps) {
+  const headline = ps?.headline || propHeadline
+  const subheadline = ps?.subheadline || propSubheadline
+  const backgroundImage = ps?.backgroundImage || propBg
+  const ctaText = ps?.ctaText || propCtaText
+  const ctaLink = ps?.ctaLink || propCtaLink
+  const badgeText = ps?.badgeText || 'Utazás Párizsba'
+  const floatingBadge1Title = ps?.floatingBadge1Title || 'Teljes körű szervezés'
+  const floatingBadge1Subtitle = ps?.floatingBadge1Subtitle || 'Minden részlet egy helyen'
+  const floatingBadge2Title = ps?.floatingBadge2Title || 'Több éves tapasztalat'
   const ref = useRef<HTMLDivElement>(null)
 
   // Use default image if backgroundImage is null or empty
@@ -67,7 +79,7 @@ export default function HeroSection({
               className="mb-4 inline-block"
             >
               <span className="rounded-full bg-parisian-beige-100 px-4 py-2 font-montserrat text-sm font-medium text-parisian-grey-700">
-                Utazás Párizsba
+                {badgeText}
               </span>
             </motion.div>
 
@@ -176,10 +188,10 @@ export default function HeroSection({
                 </div>
                 <div>
                   <p className="font-montserrat text-xs font-semibold text-parisian-grey-800 sm:text-sm">
-                    Teljes körű szervezés
+                    {floatingBadge1Title}
                   </p>
                   <p className="font-montserrat text-xs text-parisian-grey-500 hidden sm:block">
-                    Minden részlet egy helyen
+                    {floatingBadge1Subtitle}
                   </p>
                 </div>
               </div>
@@ -202,7 +214,7 @@ export default function HeroSection({
                 </motion.div>
                 <div>
                   <p className="font-montserrat text-xs font-semibold text-parisian-grey-800 sm:text-sm">
-                    Több éves tapasztalat
+                    {floatingBadge2Title}
                   </p>
                 </div>
               </div>

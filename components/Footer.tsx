@@ -4,22 +4,31 @@ import { motion } from 'framer-motion'
 import { Facebook, Heart, Mail, Phone, FileText } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import type { FooterSettings } from '@/lib/types/landing-page'
 
 interface FooterProps {
   staticTexts?: Record<string, string>
+  pageSettings?: FooterSettings
 }
 
-export default function Footer({ staticTexts = {} }: FooterProps) {
+export default function Footer({ staticTexts = {}, pageSettings: ps }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
-  const description = staticTexts.footer_description || 'Fedezze fel Párizs varázslatos titkait egy tapasztalt magyar idegenvezetővel.'
-  const copyright = staticTexts.footer_copyright || 'Szeidl Viktória. Készült'
-  const servicesTitle = staticTexts.footer_services_title || 'Szolgáltatások:'
-  const service1 = staticTexts.footer_service_1 || 'Városnéző séták'
-  const service2 = staticTexts.footer_service_2 || 'Programszervezés'
-  const service3 = staticTexts.footer_service_3 || 'Transzferek'
-  const contactEmail = staticTexts.footer_contact_email || 'viktoria.szeidl@gmail.com'
-  const contactPhone = staticTexts.footer_contact_phone || '+33 6 12 34 56 78'
+  const description = ps?.description || staticTexts.footer_description || 'Fedezze fel Párizs varázslatos titkait egy tapasztalt magyar idegenvezetővel.'
+  const copyright = ps?.copyrightText || staticTexts.footer_copyright || 'Szeidl Viktória. Készült'
+  const servicesTitle = ps?.servicesTitle || staticTexts.footer_services_title || 'Szolgáltatások:'
+  const service1 = ps?.service1 || staticTexts.footer_service_1 || 'Városnéző séták'
+  const service2 = ps?.service2 || staticTexts.footer_service_2 || 'Programszervezés'
+  const service3 = ps?.service3 || staticTexts.footer_service_3 || 'Transzferek'
+  const contactEmail = ps?.contactEmail || staticTexts.footer_contact_email || 'viktoria.szeidl@gmail.com'
+  const contactPhone = ps?.contactPhone || staticTexts.footer_contact_phone || '+33 6 12 34 56 78'
+  const brandTitle = ps?.brandTitle || 'Utazás'
+  const brandHighlight = ps?.brandHighlight || 'Párizsba'
+  const tagline = ps?.tagline || 'Hivatalos idegenvezető és utazásszervező Párizsban'
+  const regNumber = ps?.registrationNumber || 'Nyilvántartási szám: 250065'
+  const siret = ps?.siret || 'SIRET: 94822714500018'
+  const siren = ps?.siren || 'SIREN: 948 227 145'
+  const facebookUrl = ps?.facebookUrl || 'https://www.facebook.com'
 
   return (
     <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 sm:py-16 text-white">
@@ -46,11 +55,11 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
                 />
               </div>
               <h3 className="font-playfair text-xl sm:text-2xl font-bold">
-                Utazás <span className="text-parisian-beige-400">Párizsba</span>
+                {brandTitle} <span className="text-parisian-beige-400">{brandHighlight}</span>
               </h3>
             </div>
             <p className="mb-4 text-sm text-white/90 font-semibold">
-              Hivatalos idegenvezető és utazásszervező Párizsban
+              {tagline}
             </p>
             <p className="text-sm text-white/70">
               {description}
@@ -58,9 +67,9 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
 
             {/* Legal Info */}
             <div className="mt-6 space-y-1 text-xs text-white/60">
-              <p>Nyilvántartási szám: 250065</p>
-              <p>SIRET: 94822714500018</p>
-              <p>SIREN: 948 227 145</p>
+              <p>{regNumber}</p>
+              <p>{siret}</p>
+              <p>{siren}</p>
             </div>
           </motion.div>
 
@@ -148,7 +157,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             {/* Facebook */}
             <div className="flex gap-4">
               <motion.a
-                href="https://www.facebook.com"
+                href={facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, rotate: 5 }}

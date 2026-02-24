@@ -5,14 +5,24 @@ import NewsletterForm from '@/components/NewsletterForm'
 import { Mail, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import type { NewsletterSectionSettings } from '@/lib/types/landing-page'
 
-export default function NewsletterSection() {
+interface NewsletterSectionProps {
+  pageSettings?: NewsletterSectionSettings
+}
+
+export default function NewsletterSection({ pageSettings: ps }: NewsletterSectionProps = {}) {
   const [content, setContent] = useState({
-    title: 'Maradj Kapcsolatban',
-    description: 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
+    title: ps?.title || 'Maradj Kapcsolatban',
+    description: ps?.description || 'Iratkozz fel, hogy ne maradj le a legújabb párizsi programokról, rejtett kincsekről és exkluzív ajánlatokról!'
   })
 
+  const feature1 = ps?.feature1 || 'Exkluzív túra ajánlatok'
+  const feature2 = ps?.feature2 || 'Párizsi insider tippek'
+  const feature3 = ps?.feature3 || 'Havonta 1-2 email'
+
   useEffect(() => {
+    if (ps?.title || ps?.description) return // Skip fetch if pageSettings provided
     const fetchContent = async () => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -73,15 +83,15 @@ export default function NewsletterSection() {
           >
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-parisian-beige-500" />
-              <span>Exkluzív túra ajánlatok</span>
+              <span>{feature1}</span>
             </div>
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-parisian-beige-500" />
-              <span>Párizsi insider tippek</span>
+              <span>{feature2}</span>
             </div>
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-parisian-beige-500" />
-              <span>Havonta 1-2 email</span>
+              <span>{feature3}</span>
             </div>
           </motion.div>
         </motion.div>
