@@ -10,6 +10,7 @@ if (typeof window !== 'undefined') {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     person_profiles: 'identified_only',
+    autocapture: false,
     capture_pageview: false,
     capture_pageleave: true,
     loaded: (posthog) => {
