@@ -264,6 +264,63 @@ export default function LandingPagePreview({
             </PreviewSection>
           )}
 
+          {/* ========== LOUVRE TOUR ========== */}
+          {settings.louvreTour.visible && (
+            <PreviewSection sectionKey="louvreTour" active={activeSection === 'louvreTour'} onClick={onSectionClick} label="Louvre Túra">
+              <div className="bg-white px-12 py-16">
+                <div className="text-center">
+                  <span
+                    className="inline-block rounded-full px-4 py-1 text-xs font-medium"
+                    style={{ backgroundColor: settings.louvreTour.sectionBadgeBgColor, color: settings.louvreTour.sectionBadgeTextColor }}
+                  >
+                    {settings.louvreTour.sectionBadge}
+                  </span>
+                  <h2 className="mt-3 text-2xl font-bold" style={{ color: settings.louvreTour.titleColor }}>
+                    {settings.louvreTour.title}
+                  </h2>
+                  <p className="mx-auto mt-2 max-w-lg text-sm" style={{ color: settings.louvreTour.subtitleColor }}>
+                    {settings.louvreTour.subtitle}
+                  </p>
+                </div>
+                {/* Timeline mockup */}
+                <div className="mx-auto mt-8 max-w-md">
+                  <div className="relative pl-8">
+                    <div className="absolute left-3 top-0 h-full w-0.5 rounded-full" style={{ backgroundColor: `${settings.louvreTour.timelineColor}30` }} />
+                    {[
+                      { n: 1, title: 'Középkori erőd', wing: 'Sully', dur: '10p' },
+                      { n: 2, title: 'Ókori Egyiptom', wing: 'Sully', dur: '20p' },
+                      { n: 3, title: 'Milói Vénusz', wing: 'Sully', dur: '20p' },
+                      { n: 4, title: 'Szamothrakéi Niké', wing: 'Denon', dur: '15p' },
+                      { n: 5, title: 'Mona Lisa', wing: 'Denon', dur: '20p' },
+                    ].map((s) => (
+                      <div key={s.n} className="relative mb-4 flex items-start gap-3">
+                        <div
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white"
+                          style={{ backgroundColor: settings.louvreTour.timelineColor }}
+                        >
+                          {s.n}
+                        </div>
+                        <div className="flex-1 rounded-lg border border-slate-100 p-2.5" style={{ backgroundColor: settings.louvreTour.cardBgColor }}>
+                          <div className="flex items-center justify-between">
+                            <p className="text-[11px] font-bold text-slate-700">{s.title}</p>
+                            <span className="text-[9px] text-slate-400">{s.dur}</span>
+                          </div>
+                          <span
+                            className="mt-1 inline-block rounded px-1.5 py-0.5 text-[8px] font-medium"
+                            style={{ backgroundColor: settings.louvreTour.wingBadgeBgColor, color: settings.louvreTour.wingBadgeTextColor }}
+                          >
+                            {s.wing}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="text-center text-[9px] text-slate-400">... +5 további megálló</div>
+                  </div>
+                </div>
+              </div>
+            </PreviewSection>
+          )}
+
           {/* ========== FLASHCARDS PROMO ========== */}
           {settings.flashcardsPromo.visible && (
             <PreviewSection sectionKey="flashcardsPromo" active={activeSection === 'flashcardsPromo'} onClick={onSectionClick} label="Flashcards">

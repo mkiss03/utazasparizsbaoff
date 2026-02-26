@@ -23,6 +23,7 @@ import ContactEditor from '@/components/admin/page-builder/editors/ContactEditor
 import NewsletterEditor from '@/components/admin/page-builder/editors/NewsletterEditor'
 import FooterEditor from '@/components/admin/page-builder/editors/FooterEditor'
 import WalkingToursEditor from '@/components/admin/page-builder/editors/WalkingToursEditor'
+import LouvreToursEditor from '@/components/admin/page-builder/editors/LouvreToursEditor'
 import ParisDistrictGuideEditor from '@/components/admin/page-builder/editors/ParisDistrictGuideEditor'
 import BoatTourEditor from '@/components/admin/page-builder/editors/BoatTourEditor'
 
@@ -31,6 +32,7 @@ const editorComponents: Record<string, React.ComponentType<any>> = {
   about: AboutEditor,
   services: ServicesEditor,
   walkingTours: WalkingToursEditor,
+  louvreTour: LouvreToursEditor,
   flashcardsPromo: FlashcardsPromoEditor,
   parisDistrictGuide: ParisDistrictGuideEditor,
   museumGuidePromo: MuseumGuidePromoEditor,

@@ -77,6 +77,23 @@ export interface ParisDistrictGuideSettings {
   description: string
 }
 
+// === LOUVRE TOUR SECTION ===
+export interface LouvreTourSectionSettings {
+  visible: boolean
+  sectionBadge: string
+  sectionBadgeBgColor: string
+  sectionBadgeTextColor: string
+  title: string
+  subtitle: string
+  titleColor: string
+  subtitleColor: string
+  accentColor: string
+  timelineColor: string
+  cardBgColor: string
+  wingBadgeBgColor: string
+  wingBadgeTextColor: string
+}
+
 // === BOAT TOUR MODAL ===
 export interface BoatTourSettings {
   visible: boolean
@@ -212,6 +229,7 @@ export interface LandingPageSettings {
   about: AboutSectionSettings
   services: ServicesSectionSettings
   walkingTours: WalkingToursSettings
+  louvreTour: LouvreTourSectionSettings
   flashcardsPromo: FlashcardsPromoSettings
   parisDistrictGuide: ParisDistrictGuideSettings
   museumGuidePromo: MuseumGuidePromoSettings
@@ -294,6 +312,21 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   walkingTours: {
     visible: true,
     description: 'Sétatúráink naptárból foglalhatók. A részletes beállítások az Admin > Sétatúrák menüben érhetők el.',
+  },
+  louvreTour: {
+    visible: true,
+    sectionBadge: 'Múzeumi Túra',
+    sectionBadgeBgColor: '#EDE9FE',
+    sectionBadgeTextColor: '#7C3AED',
+    title: 'Louvre – Mesterművek időutazása',
+    subtitle: 'Fedezd fel a világ legnagyobb múzeumát egy gondosan megtervezett, 3 órás útvonallal',
+    titleColor: '#1F2937',
+    subtitleColor: '#6B7280',
+    accentColor: '#7C3AED',
+    timelineColor: '#7C3AED',
+    cardBgColor: '#FFFFFF',
+    wingBadgeBgColor: '#F3F4F6',
+    wingBadgeTextColor: '#4B5563',
   },
   flashcardsPromo: {
     visible: true,
@@ -427,6 +460,7 @@ export const SECTION_META = [
   { key: 'about', label: 'Rólam', icon: 'User' },
   { key: 'services', label: 'Szolgáltatások', icon: 'Briefcase' },
   { key: 'walkingTours', label: 'Sétatúrák', icon: 'Footprints' },
+  { key: 'louvreTour', label: 'Louvre Túra', icon: 'Landmark' },
   { key: 'flashcardsPromo', label: 'Flashcards Promo', icon: 'BookOpen' },
   { key: 'parisDistrictGuide', label: 'Kerületi Útmutató', icon: 'Map' },
   { key: 'museumGuidePromo', label: 'Múzeum Guide Promo', icon: 'Landmark' },

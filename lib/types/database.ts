@@ -668,6 +668,44 @@ export interface MuseumGuidePurchase {
 }
 
 // ============================================
+// LOUVRE TOUR TYPES (Guided Museum Tour)
+// ============================================
+
+export type LouvreTourStatus = 'draft' | 'published'
+
+export interface LouvreTour {
+  id: string
+  title: string
+  slug: string
+  subtitle?: string
+  duration_text: string
+  summary_text?: string
+  tips?: string
+  image_url?: string
+  status: LouvreTourStatus
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface LouvreTourStop {
+  id: string
+  tour_id: string
+  stop_number: number
+  title: string
+  location_wing: string
+  location_floor: string
+  location_rooms: string
+  duration_minutes: number
+  main_artwork?: string
+  description: string
+  image_url?: string
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
 // WALKING TOUR CALENDAR SETTINGS
 // ============================================
 

@@ -137,6 +137,16 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
+    title: 'LOUVRE TÚRA',
+    type: 'section',
+  },
+  {
+    title: 'Louvre Túrák',
+    href: '/admin/louvre-tours',
+    icon: Landmark,
+    type: 'item',
+  },
+  {
     title: 'FLASHCARDS',
     type: 'section',
   },
