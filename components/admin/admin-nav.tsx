@@ -93,30 +93,32 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'Hajózás Varázsló',
-    href: '/admin/cruise-wizard',
-    icon: Ship,
-    type: 'item',
-  },
-  {
     title: 'Kerületi Útmutató',
     href: '/admin/paris-guide',
     icon: Globe,
     type: 'item',
   },
   {
-    title: 'MÚZEUM GUIDE',
+    title: 'TERMÉKEK',
     type: 'section',
   },
   {
-    title: 'Louvre Alkotások',
+    title: 'Hajózás Varázsló',
+    href: '/admin/cruise-wizard',
+    icon: Ship,
+    type: 'item',
+  },
+  {
+    title: 'Múzeum Guide',
     href: '/admin/museum-guide',
     icon: Landmark,
     type: 'item',
   },
   {
-    title: 'SÉTATÚRÁK',
-    type: 'section',
+    title: 'Louvre Túra',
+    href: '/admin/louvre-tours',
+    icon: MapPin,
+    type: 'item',
   },
   {
     title: 'Sétatúrák',
@@ -131,19 +133,9 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'Naptár Megjelenés',
+    title: 'Naptár Beállítások',
     href: '/admin/walking-tours/calendar-settings',
     icon: Palette,
-    type: 'item',
-  },
-  {
-    title: 'LOUVRE TÚRA',
-    type: 'section',
-  },
-  {
-    title: 'Louvre Túrák',
-    href: '/admin/louvre-tours',
-    icon: Landmark,
     type: 'item',
   },
   {

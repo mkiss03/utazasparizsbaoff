@@ -531,36 +531,31 @@ export default function LouvreToursPage() {
                             )}
                             <p className="mt-1 text-xs text-slate-500 line-clamp-2">{stop.description}</p>
                           </div>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
                               onClick={() => setPreviewStop(stop)}
-                              className="h-7 w-7 p-0 text-slate-400 hover:text-blue-500"
-                              title="Előnézet"
+                              className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2.5 py-1.5 text-[11px] font-medium text-blue-600 hover:bg-blue-100 transition-colors"
                             >
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                              <Eye className="h-3.5 w-3.5" />
+                              Előnézet
+                            </button>
+                            <button
                               onClick={() => setEditingStop(stop)}
-                              className="h-7 w-7 p-0 text-slate-400 hover:text-slate-600"
+                              className="flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1.5 text-[11px] font-medium text-slate-600 hover:bg-slate-200 transition-colors"
                             >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                              <Edit className="h-3.5 w-3.5" />
+                              Szerkesztés
+                            </button>
+                            <button
                               onClick={() => {
                                 if (confirm('Törlöd ezt a megállót?')) {
                                   deleteStopMutation.mutate(stop.id)
                                 }
                               }}
-                              className="h-7 w-7 p-0 text-slate-400 hover:text-red-500"
+                              className="flex items-center gap-1.5 rounded-md bg-red-50 px-2.5 py-1.5 text-[11px] font-medium text-red-500 hover:bg-red-100 transition-colors"
                             >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
                           </div>
                         </div>
                       ))}
