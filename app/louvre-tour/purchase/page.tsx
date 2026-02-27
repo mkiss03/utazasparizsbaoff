@@ -1,24 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft,
   Landmark,
-  CheckCircle,
   ShieldCheck,
   Clock,
   MapPin,
   Sparkles,
   CreditCard,
   Loader2,
+  Lock,
 } from 'lucide-react'
 
 export default function LouvreTourPurchasePage() {
-  const supabase = createClient()
-  const router = useRouter()
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -32,30 +28,33 @@ export default function LouvreTourPurchasePage() {
     setLoading(true)
     setError('')
 
-    const { data, error: dbError } = await supabase
-      .from('louvre_tour_purchases')
-      .insert({
-        guest_name: form.name.trim(),
-        guest_email: form.email.trim(),
-        guest_phone: form.phone.trim() || null,
-        amount: 10,
-        payment_status: 'completed',
+    try {
+      const res = await fetch('/api/louvre-tour/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim() || '',
+        }),
       })
-      .select('order_number, access_token')
-      .single()
 
-    if (dbError) {
-      setError('Hiba történt. Kérlek próbáld újra.')
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Hiba történt.')
+        setLoading(false)
+        return
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch {
+      setError('Hálózati hiba. Kérlek próbáld újra.')
       setLoading(false)
-      return
     }
-
-    // Save access token
-    if (data?.access_token) {
-      localStorage.setItem('louvre-tour-token', data.access_token)
-    }
-
-    router.push(`/louvre-tour/purchase/success?order=${data?.order_number}`)
   }
 
   return (
@@ -131,7 +130,7 @@ export default function LouvreTourPurchasePage() {
           <div>
             <div className="sticky top-20 rounded-2xl border border-[#E8E2D6] bg-white p-6 shadow-lg">
               <h2 className="text-lg font-bold text-slate-800">Megrendelés</h2>
-              <p className="mt-1 text-xs text-slate-500">Töltsd ki az adatokat a hozzáféréshez</p>
+              <p className="mt-1 text-xs text-slate-500">Töltsd ki az adatokat, majd a Stripe biztonságos fizetési felületén fizethetsz</p>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div className="space-y-1.5">
@@ -167,26 +166,15 @@ export default function LouvreTourPurchasePage() {
                   />
                 </div>
 
-                {/* Payment info (demo) */}
-                <div className="rounded-lg bg-[#FAF7F2] p-4 space-y-3">
-                  <p className="text-xs font-medium text-slate-600">Bankkártya adatok</p>
-                  <input
-                    type="text"
-                    placeholder="1234 5678 9012 3456"
-                    className="flex h-10 w-full rounded-lg border-2 border-[#E8E2D6] bg-white px-3 py-2 text-sm focus:border-[#B8A472] focus:outline-none"
-                  />
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="MM/YY"
-                      className="flex h-10 w-full rounded-lg border-2 border-[#E8E2D6] bg-white px-3 py-2 text-sm focus:border-[#B8A472] focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="CVC"
-                      className="flex h-10 w-full rounded-lg border-2 border-[#E8E2D6] bg-white px-3 py-2 text-sm focus:border-[#B8A472] focus:outline-none"
-                    />
+                {/* Stripe info box */}
+                <div className="rounded-lg bg-[#FAF7F2] p-4">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Lock className="h-4 w-4 text-[#B8A472]" />
+                    <span className="font-medium">Biztonságos fizetés a Stripe-on keresztül</span>
                   </div>
+                  <p className="mt-2 text-xs text-slate-400">
+                    A bankkártya adatokat közvetlenül a Stripe kezeli — az adataid nálunk nem tárolódnak.
+                  </p>
                 </div>
 
                 {error && (
@@ -203,7 +191,7 @@ export default function LouvreTourPurchasePage() {
                   ) : (
                     <CreditCard className="h-4 w-4" />
                   )}
-                  {loading ? 'Feldolgozás...' : 'Megvásárlás – 3 990 Ft'}
+                  {loading ? 'Átirányítás a fizetéshez...' : 'Tovább a fizetéshez – 3 990 Ft'}
                 </button>
 
                 <p className="text-center text-[10px] text-slate-400">

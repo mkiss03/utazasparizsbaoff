@@ -1,13 +1,68 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { CheckCircle, Landmark, ChevronRight, Home } from 'lucide-react'
+import { CheckCircle, Landmark, ChevronRight, Home, Loader2 } from 'lucide-react'
 
 function SuccessContent() {
   const searchParams = useSearchParams()
-  const orderNumber = searchParams.get('order') || ''
+  const sessionId = searchParams.get('session_id') || ''
+  const [orderNumber, setOrderNumber] = useState('')
+  const [loading, setLoading] = useState(!!sessionId)
+
+  useEffect(() => {
+    if (!sessionId) return
+
+    // Poll for the purchase created by the Stripe webhook
+    const supabase = createClient()
+    let attempts = 0
+    const maxAttempts = 10
+
+    const checkPurchase = async () => {
+      const { data } = await supabase
+        .from('louvre_tour_purchases')
+        .select('order_number, access_token')
+        .eq('notes', `stripe:${sessionId}`)
+        .eq('payment_status', 'completed')
+        .single()
+
+      if (data) {
+        setOrderNumber(data.order_number || '')
+        if (data.access_token) {
+          localStorage.setItem('louvre-tour-token', data.access_token)
+        }
+        setLoading(false)
+        return true
+      }
+      return false
+    }
+
+    const poll = async () => {
+      const found = await checkPurchase()
+      if (!found && attempts < maxAttempts) {
+        attempts++
+        setTimeout(poll, 2000)
+      } else if (!found) {
+        // After max attempts, still show success (webhook may be delayed)
+        setLoading(false)
+      }
+    }
+
+    poll()
+  }, [sessionId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center px-4">
+        <div className="mx-auto max-w-md text-center">
+          <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#B8A472]" />
+          <p className="mt-4 text-sm text-slate-500">Fizetés feldolgozása...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center px-4">
