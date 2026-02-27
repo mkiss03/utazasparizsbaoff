@@ -66,22 +66,6 @@ export default async function Home() {
     .limit(1)
     .single()
 
-  // Fetch published Louvre tours + stops
-  const { data: louvreTours } = await supabase
-    .from('louvre_tours')
-    .select('*')
-    .eq('status', 'published')
-    .order('display_order')
-
-  const louvreTourIds = (louvreTours || []).map((t: any) => t.id)
-  const { data: louvreTourStops } = louvreTourIds.length > 0
-    ? await supabase
-        .from('louvre_tour_stops')
-        .select('*')
-        .in('tour_id', louvreTourIds)
-        .order('display_order')
-    : { data: [] }
-
   // Fetch landing page settings (page builder)
   const { data: landingPageRow } = await supabase
     .from('landing_page_settings')
@@ -141,11 +125,7 @@ export default async function Home() {
         <WalkingToursSection tours={upcomingWalkingTours || []} calendarSettings={calendarSettings?.settings || null} />
       )}
       {pageSettings.louvreTour.visible && (
-        <LouvreToursSection
-          tours={louvreTours || []}
-          stops={louvreTourStops || []}
-          pageSettings={pageSettings.louvreTour}
-        />
+        <LouvreToursSection pageSettings={pageSettings.louvreTour} />
       )}
       {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && pageSettings.flashcardsPromo.visible && (
         <ParisFlashcardsPromoSection pageSettings={pageSettings.flashcardsPromo} />

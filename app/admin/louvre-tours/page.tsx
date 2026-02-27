@@ -150,8 +150,24 @@ export default function LouvreToursPage() {
       duration_minutes: 15,
       main_artwork: '',
       description: '',
+      story: '',
+      fun_fact: '',
+      is_demo: false,
       display_order: (stops?.length || 0) + 1,
     })
+  }
+
+  const [imageUploading, setImageUploading] = useState(false)
+  const handleImageUpload = async (file: File) => {
+    setImageUploading(true)
+    const ext = file.name.split('.').pop()
+    const fileName = `louvre-tour/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error } = await supabase.storage.from('museum-guide-images').upload(fileName, file)
+    if (!error) {
+      const { data: urlData } = supabase.storage.from('museum-guide-images').getPublicUrl(fileName)
+      setEditingStop((prev: any) => ({ ...prev, image_url: urlData.publicUrl }))
+    }
+    setImageUploading(false)
   }
 
   if (isLoading) {
@@ -412,13 +428,59 @@ export default function LouvreToursPage() {
                           />
                         </div>
                         <div className="col-span-2 space-y-1">
-                          <Label className="text-xs">Leírás / Mit érdemes figyelni</Label>
+                          <Label className="text-xs">Rövid leírás (kártya előnézet)</Label>
                           <Textarea
                             value={editingStop.description || ''}
                             onChange={(e) => setEditingStop({ ...editingStop, description: e.target.value })}
-                            rows={3}
-                            placeholder="Mit érdemes megfigyelni ennél a megállónál..."
+                            rows={2}
+                            placeholder="Rövid összefoglaló amit a kártyán látni..."
                           />
+                        </div>
+                        <div className="col-span-2 space-y-1">
+                          <Label className="text-xs">Részletes sztori (fizetős tartalom)</Label>
+                          <Textarea
+                            value={(editingStop as any).story || ''}
+                            onChange={(e) => setEditingStop({ ...editingStop, story: e.target.value } as any)}
+                            rows={6}
+                            placeholder="Részletes, interaktív leírás a megállóról..."
+                          />
+                        </div>
+                        <div className="col-span-2 space-y-1">
+                          <Label className="text-xs">Érdekesség / Fun fact (opcionális)</Label>
+                          <Textarea
+                            value={(editingStop as any).fun_fact || ''}
+                            onChange={(e) => setEditingStop({ ...editingStop, fun_fact: e.target.value } as any)}
+                            rows={2}
+                            placeholder="Tudtad, hogy..."
+                          />
+                        </div>
+                        <div className="col-span-2 space-y-1">
+                          <Label className="text-xs">Kép</Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={(editingStop as any).image_url || ''}
+                              onChange={(e) => setEditingStop({ ...editingStop, image_url: e.target.value } as any)}
+                              placeholder="URL vagy tölts fel..."
+                              className="flex-1"
+                            />
+                            <label className="shrink-0 cursor-pointer rounded-lg bg-violet-100 px-3 py-2 text-xs font-medium text-violet-700 hover:bg-violet-200">
+                              {imageUploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Feltöltés'}
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])} />
+                            </label>
+                          </div>
+                          {(editingStop as any).image_url && (
+                            <img src={(editingStop as any).image_url} alt="" className="mt-2 h-20 w-full rounded-lg object-cover" />
+                          )}
+                        </div>
+                        <div className="col-span-2 flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            id="is-demo"
+                            checked={(editingStop as any).is_demo || false}
+                            onChange={(e) => setEditingStop({ ...editingStop, is_demo: e.target.checked } as any)}
+                            className="h-4 w-4 rounded border-slate-300"
+                          />
+                          <Label htmlFor="is-demo" className="text-xs">Ingyenes demo megálló (fizetés nélkül is látható)</Label>
                         </div>
                       </div>
                       <div className="flex gap-2">

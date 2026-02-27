@@ -77,7 +77,7 @@ export interface ParisDistrictGuideSettings {
   description: string
 }
 
-// === LOUVRE TOUR SECTION ===
+// === LOUVRE TOUR SECTION (Promo — paid interactive product) ===
 export interface LouvreTourSectionSettings {
   visible: boolean
   sectionBadge: string
@@ -87,11 +87,25 @@ export interface LouvreTourSectionSettings {
   subtitle: string
   titleColor: string
   subtitleColor: string
-  accentColor: string
-  timelineColor: string
-  cardBgColor: string
-  wingBadgeBgColor: string
-  wingBadgeTextColor: string
+  valueProp1Title: string
+  valueProp1Description: string
+  valueProp2Title: string
+  valueProp2Description: string
+  valueProp3Title: string
+  valueProp3Description: string
+  valueProp4Title: string
+  valueProp4Description: string
+  promoCardTitle: string
+  promoCardSubtitle: string
+  promoCardDescription: string
+  promoFeature1: string
+  promoFeature2: string
+  promoFeature3: string
+  promoCtaText: string
+  purchaseCtaText: string
+  purchaseNote: string
+  promoHeaderGradientFrom: string
+  promoHeaderGradientTo: string
 }
 
 // === BOAT TOUR MODAL ===
@@ -315,18 +329,32 @@ export const defaultLandingPageSettings: LandingPageSettings = {
   },
   louvreTour: {
     visible: true,
-    sectionBadge: 'Múzeumi Túra',
-    sectionBadgeBgColor: '#EDE9FE',
-    sectionBadgeTextColor: '#7C3AED',
+    sectionBadge: 'Interaktív Louvre Túra',
+    sectionBadgeBgColor: '#F5EDE4',
+    sectionBadgeTextColor: '#8B7D55',
     title: 'Louvre – Mesterművek időutazása',
-    subtitle: 'Fedezd fel a világ legnagyobb múzeumát egy gondosan megtervezett, 3 órás útvonallal',
+    subtitle: 'Az egyetlen magyar nyelvű interaktív Louvre túravezető. 10 megálló, lenyűgöző sztorik, lépésről lépésre – a zsebedben.',
     titleColor: '#1F2937',
     subtitleColor: '#6B7280',
-    accentColor: '#7C3AED',
-    timelineColor: '#7C3AED',
-    cardBgColor: '#FFFFFF',
-    wingBadgeBgColor: '#F3F4F6',
-    wingBadgeTextColor: '#4B5563',
+    valueProp1Title: 'Magyar nyelven',
+    valueProp1Description: 'Az egyetlen magyar nyelvű interaktív Louvre túravezető.',
+    valueProp2Title: 'Spórolj az idegenvezetőn',
+    valueProp2Description: 'Élő túra 50-60€ – ez a guide töredék áron, mégis teljes élmény.',
+    valueProp3Title: 'Lépésről lépésre',
+    valueProp3Description: 'Interaktív kártyák minden megállóhoz, logikus útvonal a 3 szárnyon át.',
+    valueProp4Title: 'Saját tempóban',
+    valueProp4Description: 'Nincs csoportkényszer – állj meg, amennyit szeretnél.',
+    promoCardTitle: 'Fedezd fel a Louvre kincseit',
+    promoCardSubtitle: '10 megálló · 3 szárny · ~3 óra',
+    promoCardDescription: '10 gondosan válogatott megálló a Mona Lisától Michelangelo rabszolgáiig. Minden megállóhoz részletes sztori, érdekesség és pontos helyszín.',
+    promoFeature1: 'Interaktív, lépésről lépésre vezetés',
+    promoFeature2: 'Részletes sztorik és érdekességek',
+    promoFeature3: 'Pontos helyszínek (szárny, szint, terem)',
+    promoCtaText: 'Kipróbálom ingyen',
+    purchaseCtaText: 'Túra megvásárlása – 3 990 Ft',
+    purchaseNote: 'Egyszeri vásárlás, korlátlan használat',
+    promoHeaderGradientFrom: '#1a1a2e',
+    promoHeaderGradientTo: '#2d2d44',
   },
   flashcardsPromo: {
     visible: true,

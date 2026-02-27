@@ -1,5 +1,5 @@
 -- ============================================
--- LOUVRE TOURS — Guided Museum Tour Routes
+-- LOUVRE TOURS — Interactive Guided Museum Tour
 -- ============================================
 
 -- Main tours table
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS louvre_tours (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Tour stops table
+-- Tour stops table (with rich content for interactive guide)
 CREATE TABLE IF NOT EXISTS louvre_tour_stops (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tour_id UUID NOT NULL REFERENCES louvre_tours(id) ON DELETE CASCADE,
@@ -30,8 +30,26 @@ CREATE TABLE IF NOT EXISTS louvre_tour_stops (
   duration_minutes INTEGER NOT NULL DEFAULT 15,
   main_artwork TEXT,
   description TEXT NOT NULL DEFAULT '',
+  story TEXT NOT NULL DEFAULT '',
+  fun_fact TEXT,
   image_url TEXT,
+  is_demo BOOLEAN NOT NULL DEFAULT false,
   display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Purchase tracking
+CREATE TABLE IF NOT EXISTS louvre_tour_purchases (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_number TEXT UNIQUE,
+  guest_name TEXT NOT NULL,
+  guest_email TEXT NOT NULL,
+  guest_phone TEXT,
+  amount NUMERIC(10,2) NOT NULL DEFAULT 0,
+  payment_status TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'refunded')),
+  access_token UUID UNIQUE DEFAULT gen_random_uuid(),
+  notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -40,6 +58,9 @@ CREATE TABLE IF NOT EXISTS louvre_tour_stops (
 CREATE INDEX IF NOT EXISTS idx_louvre_tours_status ON louvre_tours(status);
 CREATE INDEX IF NOT EXISTS idx_louvre_tour_stops_tour_id ON louvre_tour_stops(tour_id);
 CREATE INDEX IF NOT EXISTS idx_louvre_tour_stops_order ON louvre_tour_stops(tour_id, display_order);
+CREATE INDEX IF NOT EXISTS idx_louvre_tour_purchases_email ON louvre_tour_purchases(guest_email);
+CREATE INDEX IF NOT EXISTS idx_louvre_tour_purchases_token ON louvre_tour_purchases(access_token);
+CREATE INDEX IF NOT EXISTS idx_louvre_tour_purchases_status ON louvre_tour_purchases(payment_status);
 
 -- Updated_at triggers
 CREATE OR REPLACE FUNCTION update_louvre_tours_updated_at()
@@ -52,30 +73,58 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER set_louvre_tours_updated_at
   BEFORE UPDATE ON louvre_tours
-  FOR EACH ROW
-  EXECUTE FUNCTION update_louvre_tours_updated_at();
+  FOR EACH ROW EXECUTE FUNCTION update_louvre_tours_updated_at();
 
 CREATE TRIGGER set_louvre_tour_stops_updated_at
   BEFORE UPDATE ON louvre_tour_stops
+  FOR EACH ROW EXECUTE FUNCTION update_louvre_tours_updated_at();
+
+CREATE TRIGGER set_louvre_tour_purchases_updated_at
+  BEFORE UPDATE ON louvre_tour_purchases
+  FOR EACH ROW EXECUTE FUNCTION update_louvre_tours_updated_at();
+
+-- Auto-generate order numbers: LT-YYYYMMDD-NNNN
+CREATE OR REPLACE FUNCTION generate_louvre_tour_order_number()
+RETURNS TRIGGER AS $$
+DECLARE
+  today_str TEXT;
+  seq_num INTEGER;
+BEGIN
+  today_str := to_char(now(), 'YYYYMMDD');
+  SELECT COALESCE(MAX(
+    CAST(SUBSTRING(order_number FROM 13) AS INTEGER)
+  ), 0) + 1 INTO seq_num
+  FROM louvre_tour_purchases
+  WHERE order_number LIKE 'LT-' || today_str || '-%';
+
+  NEW.order_number := 'LT-' || today_str || '-' || LPAD(seq_num::TEXT, 4, '0');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_louvre_tour_order_number
+  BEFORE INSERT ON louvre_tour_purchases
   FOR EACH ROW
-  EXECUTE FUNCTION update_louvre_tours_updated_at();
+  WHEN (NEW.order_number IS NULL)
+  EXECUTE FUNCTION generate_louvre_tour_order_number();
 
 -- RLS
 ALTER TABLE louvre_tours ENABLE ROW LEVEL SECURITY;
 ALTER TABLE louvre_tour_stops ENABLE ROW LEVEL SECURITY;
+ALTER TABLE louvre_tour_purchases ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read louvre_tours" ON louvre_tours
-  FOR SELECT USING (true);
-CREATE POLICY "Auth manage louvre_tours" ON louvre_tours
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Public read louvre_tours" ON louvre_tours FOR SELECT USING (true);
+CREATE POLICY "Auth manage louvre_tours" ON louvre_tours FOR ALL USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Public read louvre_tour_stops" ON louvre_tour_stops
-  FOR SELECT USING (true);
-CREATE POLICY "Auth manage louvre_tour_stops" ON louvre_tour_stops
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Public read louvre_tour_stops" ON louvre_tour_stops FOR SELECT USING (true);
+CREATE POLICY "Auth manage louvre_tour_stops" ON louvre_tour_stops FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Public insert louvre_tour_purchases" ON louvre_tour_purchases FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read louvre_tour_purchases" ON louvre_tour_purchases FOR SELECT USING (true);
+CREATE POLICY "Auth manage louvre_tour_purchases" ON louvre_tour_purchases FOR ALL USING (auth.role() = 'authenticated');
 
 -- ============================================
--- SEED DATA: Louvre – Mesterművek időutazása
+-- SEED DATA
 -- ============================================
 
 INSERT INTO louvre_tours (title, slug, subtitle, duration_text, summary_text, tips, status, display_order)
@@ -83,29 +132,77 @@ VALUES (
   'Louvre – Mesterművek időutazása',
   'louvre-mestermuvek-idoutazasa',
   '3 órás túra a világ legnagyobb múzeumában',
-  '3 órás túra',
-  'Ajánlott sorrend: kezdés a Sully-szárnnyal, majd Denon-szárny (lépcső fel), végül Richelieu-szárny (leereszkedés). Összes idő: kb. 3 óra (séta és rövid magyarázat belekalkulálva).',
-  'A múzeum nagy, ezért érdemes térképet vinni, a termek számai segítenek orientálódni.',
+  '~3 óra · 10 megálló · 3 szárny',
+  'Ajánlott sorrend: kezdés a Sully-szárnnyal, majd Denon-szárny (lépcső fel), végül Richelieu-szárny (leereszkedés).',
+  'A múzeum nagy, ezért érdemes térképet vinni – a termek számai segítenek orientálódni.',
   'published',
   0
 );
 
--- Get the tour ID for stops
 DO $$
 DECLARE
   tour_uuid UUID;
 BEGIN
   SELECT id INTO tour_uuid FROM louvre_tours WHERE slug = 'louvre-mestermuvek-idoutazasa';
 
-  INSERT INTO louvre_tour_stops (tour_id, stop_number, title, location_wing, location_floor, location_rooms, duration_minutes, main_artwork, description, display_order) VALUES
-  (tour_uuid, 1, 'A vár mélyén – középkori erőd', 'Sully-szárny', 'Földszint', 'Salles 133–137', 10, NULL, 'Louvre eredeti 12. századi falai és vármaradványai. Figyeld meg az erőd struktúráját, a vizesárkok nyomait, a múzeum történetének kezdetét.', 1),
-  (tour_uuid, 2, 'Ókori Egyiptom', 'Sully-szárny', 'Földszint', 'Salles 300–348', 20, 'Taniszi Szfinx', 'A szfinx mérete, anyaga (gránit), az uralkodói hatalom szimbóluma. Az ókori egyiptomi művészet egyik legkiemelkedőbb darabja.', 2),
-  (tour_uuid, 3, 'Görög és római antikvitások', 'Sully-szárny', 'Földszint', 'Salles 400–433', 20, 'Milói Vénusz (Salle 345)', 'A test arányait, mozgását, az antik szépségfogalom megjelenését érdemes megfigyelni. A görög szobrászat csúcspontja.', 3),
-  (tour_uuid, 4, 'Hellenisztikus dráma: Szamothrakéi Niké', 'Denon-szárny', '1. emelet', 'Salle 703 – Daru-lépcső', 15, 'Szamothrakéi Niké', 'A mozgás dinamikája, a drámai hatás, az energiát sugárzó formák. A Daru-lépcső tetején áll, monumentális elhelyezésben.', 4),
-  (tour_uuid, 5, 'Itáliai reneszánsz: Mona Lisa', 'Denon-szárny', '1. emelet', 'Salle 711', 20, 'Mona Lisa (Leonardo da Vinci)', 'Figyeld a mosolyt, a tekintetet, Leonardo sfumato technikáját. A világ leghíresebb festménye üveg mögött, mindig tömegben.', 5),
-  (tour_uuid, 6, 'Itáliai reneszánsz: A kánai menyegző', 'Denon-szárny', '1. emelet', 'Salle 711', 15, 'A kánai menyegző (Veronese)', 'Monumentális kompozíció, 130 alak, a tér és a mozgás érzékeltetése. A Mona Lisával szemben lóg – a kontrasztot érdemes átérezni.', 6),
-  (tour_uuid, 7, 'Napóleon koronázása', 'Denon-szárny', '1. emelet', 'Salle 702–705', 15, 'Napóleon koronázása (David)', 'A hatalom vizuális megjelenítése. Hatalmas méretű festmény, David mesterműve a francia történelem megörökítésében.', 7),
-  (tour_uuid, 8, 'A Szabadság vezeti a népet', 'Denon-szárny', '1. emelet', 'Salle 700', 10, 'A Szabadság vezeti a népet (Delacroix)', 'Forradalom, allegória – a hatalom és a szabadság vizuális kifejezése, a drámai kompozíció. A francia romantika ikonja.', 8),
-  (tour_uuid, 9, 'A Medúza tutaja', 'Denon-szárny', '1. emelet', 'Salle 700', 20, 'A Medúza tutaja (Géricault)', 'A kétségbeesést, a drámai fényt, a túlélés témáját figyeld. A romantika egyik legmegrázóbb alkotása.', 9),
-  (tour_uuid, 10, 'Michelangelo rabszolgái', 'Richelieu-szárny', 'Földszint', 'Salle 403', 20, 'Haldokló rabszolga, Lázadó rabszolga', 'A márvány küzdelmét, a formák és mozgás feszültségét érdemes megfigyelni. Michelangelo befejezetlenül hagyott remekművei.', 10);
+  INSERT INTO louvre_tour_stops (tour_id, stop_number, title, location_wing, location_floor, location_rooms, duration_minutes, main_artwork, description, story, fun_fact, is_demo, display_order) VALUES
+  (tour_uuid, 1, 'A vár mélyén – középkori erőd', 'Sully-szárny', 'Földszint', 'Salles 133–137', 10, NULL,
+   'Louvre eredeti 12. századi falai és vármaradványai.',
+   'Mielőtt múzeum lett volna, a Louvre egy középkori erőd volt, amelyet Fülöp Ágost francia király építtetett 1190 körül. Az eredeti vár hatalmas, kör alakú öregtoronnyal (donjon) rendelkezett, amelyet vizesárok vett körül. Ma az erőd alapjainak maradványai a múzeum legalsó szintjén tekinthetők meg – a vastag kőfalak és a vizesárok nyomai évszázadok történetét mesélik el. Figyeld meg az erőd struktúráját: a falak vastagsága elárulja, milyen komoly védelmi szerepet töltött be az építmény.',
+   'A Louvre-t eredetileg nem palotának, hanem erődnek építették a vikingek elleni védelemre!',
+   true, 1),
+
+  (tour_uuid, 2, 'Ókori Egyiptom', 'Sully-szárny', 'Földszint', 'Salles 300–348', 20, 'Taniszi Szfinx',
+   'Az ókori egyiptomi művészet egyik legkiemelkedőbb darabja.',
+   'A Louvre egyiptomi gyűjteménye a világ egyik leggazdagabbja, köszönhetően Jean-François Champollionnak, aki megfejtette a hieroglifákat. A Taniszi Szfinx – egy hatalmas gránit szobor – az uralkodói hatalom megtestesítője. A szfinx arcvonásai több fáraót is ábrázolhatnak, mivel az egyiptomiak gyakran újrafaragták a szobrokat. Figyeld meg a szfinx méretét és a gránit megmunkálásának finomságát – mindez kéziszerszámokkal készült, több ezer évvel ezelőtt.',
+   'A Taniszi Szfinx-et a 19. században találták meg, és olyan nehéz volt, hogy különleges hajóval szállították Franciaországba.',
+   true, 2),
+
+  (tour_uuid, 3, 'Görög és római antikvitások – Milói Vénusz', 'Sully-szárny', 'Földszint', 'Salle 345', 20, 'Milói Vénusz',
+   'A görög szobrászat csúcspontja – az antik szépségfogalom megtestesítője.',
+   'A Milói Vénusz (Kr.e. 130-100 körül) a görög szobrászat egyik legismertebb alkotása. Milosz szigetén találta egy paraszt 1820-ban, és azonnal Franciaországba szállították. A szobor Aphroditét, a szerelem istennőjét ábrázolja. Hiányzó karjai rejtély: senki sem tudja biztosan, milyen pozícióban voltak eredetileg. A test arányai, az enyhe csípő-elfordulás (contrapposto) és a drapéria kezelése a hellenisztikus művészet csúcsát mutatják. Figyeld meg, hogyan sugároz nyugalmat és erőt egyszerre.',
+   'A szobor két részből áll – a felső és alsó felet külön faragták, majd csapokkal illesztették össze.',
+   false, 3),
+
+  (tour_uuid, 4, 'Szamothrakéi Niké', 'Denon-szárny', '1. emelet', 'Salle 703 – Daru-lépcső', 15, 'Szamothrakéi Niké',
+   'A mozgás dinamikája és a drámai energia a hellenisztikus művészet csúcsa.',
+   'A Szamothrakéi Niké (Kr.e. 190 körül) a győzelem szárnyas istennőjét ábrázolja, amint egy hajó orrára száll le. A Daru-lépcső tetején áll – ez az elhelyezés szándékos, hogy alulról felnézve a szobor még monumentálisabbnak tűnjön. A szél fújta ruha, a kitárt szárnyak és a dinamikus testhelyzet páratlan drámai hatást kelt. Figyeld meg, hogyan tapad a vékony anyag a testre, feltárva az alatta lévő formákat – ez a "nedves drapéria" technika a hellenisztikus szobrászat jellegzetessége.',
+   'A szobrot 118 darabra törve találták meg Szamothraké szigetén 1863-ban, és évekig tartott az összerakása.',
+   false, 4),
+
+  (tour_uuid, 5, 'Mona Lisa', 'Denon-szárny', '1. emelet', 'Salle 711', 20, 'Mona Lisa (Leonardo da Vinci)',
+   'A világ leghíresebb festménye – Leonardo sfumato technikájának csúcsa.',
+   'Leonardo da Vinci 1503 és 1519 között festette a Mona Lisát, és soha nem adta ki a kezéből – magával vitte Franciaországba, ahol I. Ferenc király vásárolta meg. A kép titka a sfumato technikában rejlik: Leonardo a kontúrokat elmosta, lágy átmeneteket hozva létre, ami élethű, szinte lélegző arcot eredményez. A mosoly rejtélye optikai illúzió: ha a szemére nézel, mosolyog – ha a szájára nézel, eltűnik. A háttér tájkép szándékosan aszimmetrikus, ami a kép mélységérzetét fokozza. Tipp: először a Mona Lisát nézd meg, majd fordulj meg – a vele szemben lógó hatalmas Kánai menyegző legalább olyan lenyűgöző.',
+   'A Mona Lisa 1911-ben eltűnt a Louvre-ból! Egy olasz festő, Vincenzo Peruggia lopta el, és két évig rejtegette az ágy alatt.',
+   false, 5),
+
+  (tour_uuid, 6, 'A kánai menyegző', 'Denon-szárny', '1. emelet', 'Salle 711', 15, 'A kánai menyegző (Veronese)',
+   'A Louvre legnagyobb festménye – 130 alak monumentális kompozícióban.',
+   'Paolo Veronese 1563-ban festette ezt a hatalmas vásznat (677 × 994 cm) egy velencei kolostor étkezőjébe. A bibliai jelenet – Jézus első csodája, a víz borrá változtatása – itt egy pazar velencei lakomaként jelenik meg. A 130 alakot tartalmazó kompozícióban kortárs személyiségek is felismerhetők. Figyeld meg a tér mélységét, a színek gazdagságát és a mozgás érzékeltetését. A Mona Lisával szemben lóg – a méretbeli és stílusbeli kontraszt szándékos.',
+   'Napóleon hadserege hozta el a festményt Velencéből 1797-ben. Olyan nagy volt, hogy a szállításhoz ketté kellett vágni.',
+   false, 6),
+
+  (tour_uuid, 7, 'Napóleon koronázása', 'Denon-szárny', '1. emelet', 'Salle 702', 15, 'Napóleon koronázása (David)',
+   'A hatalom vizuális megjelenítése – David monumentális mesterműve.',
+   'Jacques-Louis David 1807-ben fejezte be ezt a 6×10 méteres monumentális festményt, amely Napóleon 1804-es koronázási szertartását ábrázolja a Notre-Dame-ban. A kép propagandacélú: Napóleon saját magát koronázza meg (nem a pápa), ezzel hangsúlyozva, hogy hatalma nem az egyháztól, hanem saját magától ered. A festményen több mint 200 alak szerepel, mindegyik portrészerű pontossággal. David több részletet is megváltoztatott a valósághoz képest – például Napóleon anyját is belefestette, bár a koronázáson nem volt jelen.',
+   'David két változatot is festett – a másik ma a Versailles-i palotában van.',
+   false, 7),
+
+  (tour_uuid, 8, 'A Szabadság vezeti a népet', 'Denon-szárny', '1. emelet', 'Salle 700', 10, 'A Szabadság vezeti a népet (Delacroix)',
+   'A francia romantika ikonja – forradalom és allegória egyetlen képben.',
+   'Eugène Delacroix 1830-ban festette a képet, az ugyanazon évi júliusi forradalom ihletésére. A központi alak, Marianne – a francia köztársaság allegorikus alakja – a trikolórt lobogtatva vezeti a felkelőket a barikádokon át. A kép ötvözi az allegóriát a nyers realizmussal: Marianne eszményített alak, de körülötte valódi sebesültek és halottak fekszenek. A füst, a mozgás és a drámai fények a romantikus festészet jellegzetességei.',
+   'Ez a festmény ihlette a Szabadság-szobrot is – Bartholdi, a szobrász, bevallottan Delacroix képéből merített.',
+   false, 8),
+
+  (tour_uuid, 9, 'A Medúza tutaja', 'Denon-szárny', '1. emelet', 'Salle 700', 20, 'A Medúza tutaja (Géricault)',
+   'A romantika egyik legmegrázóbb alkotása – a kétségbeesés és túlélés drámája.',
+   'Théodore Géricault 1819-ben festette a képet, amely egy valódi tragédiát ábrázol: a Méduse francia hadihajó 1816-os hajótörését. 147 embert zsúfoltak egy rögtönzött tutajra, és 13 nap után csak 15-en élték túl – kannibalizmus és őrület közepette. Géricault megszállottan kutatta a témát: hullaszobákat látogatott, túlélőkkel beszélt. A kép kompozíciója piramis alakú – az alján a halottak és haldoklók, a csúcsán egy alak integet egy távoli hajónak. Figyeld meg a drámai fényt és a testek feszültségét.',
+   'Géricault a festmény kedvéért hónapokat töltött hullaszobákban, hogy a halott testek ábrázolása minél hitelesebb legyen.',
+   false, 9),
+
+  (tour_uuid, 10, 'Michelangelo rabszolgái', 'Richelieu-szárny', 'Földszint', 'Salle 403', 20, 'Haldokló rabszolga, Lázadó rabszolga',
+   'Michelangelo befejezetlenül hagyott remekművei – a márvány küzdelme.',
+   'Michelangelo eredetileg II. Gyula pápa síremlékéhez tervezte ezeket a szobrokat (1513-1516 körül), de a projekt soha nem készült el a tervezett formában. A Haldokló rabszolga álomszerű, beletörődő pózt mutat – mintha a lélek szabadulna a test fogságából. A Lázadó rabszolga ezzel szemben küzd a láncai ellen, teste feszült, izmok feszülnek. Michelangelo szándékosan hagyta befejezetlenül: a „non finito" technika azt sugallja, hogy az alakok a márványból próbálnak kiszabadulni. Figyeld meg, hol csiszolt és hol nyers a felület.',
+   'A szobrokat Michelangelo Roberto Strozinak ajándékozta, aki továbbadta a francia királynak – így kerültek Párizsba.',
+   false, 10);
 END $$;

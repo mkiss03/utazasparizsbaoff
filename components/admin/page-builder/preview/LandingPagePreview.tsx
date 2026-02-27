@@ -267,7 +267,7 @@ export default function LandingPagePreview({
           {/* ========== LOUVRE TOUR ========== */}
           {settings.louvreTour.visible && (
             <PreviewSection sectionKey="louvreTour" active={activeSection === 'louvreTour'} onClick={onSectionClick} label="Louvre Túra">
-              <div className="bg-white px-12 py-16">
+              <div className="bg-[#FAF7F2] px-12 py-16">
                 <div className="text-center">
                   <span
                     className="inline-block rounded-full px-4 py-1 text-xs font-medium"
@@ -282,39 +282,33 @@ export default function LandingPagePreview({
                     {settings.louvreTour.subtitle}
                   </p>
                 </div>
-                {/* Timeline mockup */}
-                <div className="mx-auto mt-8 max-w-md">
-                  <div className="relative pl-8">
-                    <div className="absolute left-3 top-0 h-full w-0.5 rounded-full" style={{ backgroundColor: `${settings.louvreTour.timelineColor}30` }} />
-                    {[
-                      { n: 1, title: 'Középkori erőd', wing: 'Sully', dur: '10p' },
-                      { n: 2, title: 'Ókori Egyiptom', wing: 'Sully', dur: '20p' },
-                      { n: 3, title: 'Milói Vénusz', wing: 'Sully', dur: '20p' },
-                      { n: 4, title: 'Szamothrakéi Niké', wing: 'Denon', dur: '15p' },
-                      { n: 5, title: 'Mona Lisa', wing: 'Denon', dur: '20p' },
-                    ].map((s) => (
-                      <div key={s.n} className="relative mb-4 flex items-start gap-3">
-                        <div
-                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white"
-                          style={{ backgroundColor: settings.louvreTour.timelineColor }}
-                        >
-                          {s.n}
+                {/* Promo card mockup */}
+                <div className="mx-auto mt-8 max-w-md overflow-hidden rounded-2xl border shadow-lg">
+                  <div
+                    className="p-6 text-center text-white"
+                    style={{ background: `linear-gradient(135deg, ${settings.louvreTour.promoHeaderGradientFrom}, ${settings.louvreTour.promoHeaderGradientTo})` }}
+                  >
+                    <p className="text-lg font-bold">{settings.louvreTour.promoCardTitle}</p>
+                    <p className="mt-1 text-sm opacity-80">{settings.louvreTour.promoCardSubtitle}</p>
+                  </div>
+                  <div className="bg-white p-5">
+                    <p className="text-xs text-slate-600">{settings.louvreTour.promoCardDescription}</p>
+                    <div className="mt-3 space-y-1.5">
+                      {[settings.louvreTour.promoFeature1, settings.louvreTour.promoFeature2, settings.louvreTour.promoFeature3].map((f, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-slate-600">
+                          <CheckCircle className="h-3.5 w-3.5 shrink-0 text-[#B8A472]" />
+                          {f}
                         </div>
-                        <div className="flex-1 rounded-lg border border-slate-100 p-2.5" style={{ backgroundColor: settings.louvreTour.cardBgColor }}>
-                          <div className="flex items-center justify-between">
-                            <p className="text-[11px] font-bold text-slate-700">{s.title}</p>
-                            <span className="text-[9px] text-slate-400">{s.dur}</span>
-                          </div>
-                          <span
-                            className="mt-1 inline-block rounded px-1.5 py-0.5 text-[8px] font-medium"
-                            style={{ backgroundColor: settings.louvreTour.wingBadgeBgColor, color: settings.louvreTour.wingBadgeTextColor }}
-                          >
-                            {s.wing}
-                          </span>
-                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="rounded-lg bg-[#1a1a2e] py-2 text-center text-[10px] font-semibold text-white">
+                        {settings.louvreTour.promoCtaText}
                       </div>
-                    ))}
-                    <div className="text-center text-[9px] text-slate-400">... +5 további megálló</div>
+                      <div className="rounded-lg border-2 border-[#B8A472] py-2 text-center text-[10px] font-semibold text-[#8B7D55]">
+                        {settings.louvreTour.purchaseCtaText}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

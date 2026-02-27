@@ -699,8 +699,28 @@ export interface LouvreTourStop {
   duration_minutes: number
   main_artwork?: string
   description: string
+  story: string
+  fun_fact?: string
   image_url?: string
+  is_demo: boolean
   display_order: number
+  created_at: string
+  updated_at: string
+}
+
+// Louvre Tour purchase tracking
+export type LouvreTourPurchaseStatus = 'pending' | 'completed' | 'refunded'
+
+export interface LouvreTourPurchase {
+  id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  amount: number
+  payment_status: LouvreTourPurchaseStatus
+  access_token: string
+  notes?: string
   created_at: string
   updated_at: string
 }
