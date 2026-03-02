@@ -1,11 +1,28 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { Save, Loader2, RotateCcw, CheckCircle, Paintbrush } from 'lucide-react'
-import { LandingPageSettings, defaultLandingPageSettings, SECTION_META } from '@/lib/types/landing-page'
+import { LandingPageSettings, defaultLandingPageSettings, SECTION_META, DEFAULT_SECTION_ORDER } from '@/lib/types/landing-page'
 import { revalidateLandingPage } from '@/app/actions/revalidate'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 import SectionAccordion from '@/components/admin/page-builder/SectionAccordion'
 import PreviewToolbar, { DeviceMode } from '@/components/admin/page-builder/preview/PreviewToolbar'
@@ -44,6 +61,37 @@ const editorComponents: Record<string, React.ComponentType<any>> = {
   boatTour: BoatTourEditor,
 }
 
+/** Sortable wrapper — passes drag handle props to children */
+function SortableSectionItem({
+  id,
+  children,
+}: {
+  id: string
+  children: (dragHandleProps: React.HTMLAttributes<HTMLDivElement>) => React.ReactNode
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children({ ...attributes, ...listeners })}
+    </div>
+  )
+}
+
 export default function PageBuilderPage() {
   const supabase = createClient()
   const [settings, setSettings] = useState<LandingPageSettings>(defaultLandingPageSettings)
@@ -51,6 +99,39 @@ export default function PageBuilderPage() {
   const [openSection, setOpenSection] = useState<string | null>('hero')
   const [device, setDevice] = useState<DeviceMode>('desktop')
   const hasInitialized = useRef(false)
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
+
+  // Compute ordered section meta based on sectionOrder
+  const orderedMeta = useMemo(() => {
+    const order = settings.sectionOrder || DEFAULT_SECTION_ORDER
+    const metaMap = new Map(SECTION_META.map((m) => [m.key, m]))
+    const ordered = order
+      .map((key) => metaMap.get(key))
+      .filter((m): m is (typeof SECTION_META)[number] => !!m)
+    // Append any sections not yet in the order (e.g. newly added sections)
+    SECTION_META.forEach((m) => {
+      if (!order.includes(m.key)) ordered.push(m)
+    })
+    return ordered
+  }, [settings.sectionOrder])
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const order = settings.sectionOrder || [...DEFAULT_SECTION_ORDER]
+    const oldIndex = order.indexOf(active.id as string)
+    const newIndex = order.indexOf(over.id as string)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const newOrder = arrayMove(order, oldIndex, newIndex)
+    setSettings((prev) => ({ ...prev, sectionOrder: newOrder }))
+  }
 
   // Load landing_page_settings — once only, no auto-refetch
   const { data: dbRow, isLoading: isLoadingSettings } = useQuery({
@@ -103,7 +184,12 @@ export default function PageBuilderPage() {
     // Merge saved landing_page_settings (if exists)
     if (dbRow?.settings) {
       const savedSettings = dbRow.settings as any
+      // Handle sectionOrder (array) separately
+      if (Array.isArray(savedSettings.sectionOrder)) {
+        merged.sectionOrder = savedSettings.sectionOrder
+      }
       for (const key of Object.keys(defaultLandingPageSettings) as (keyof LandingPageSettings)[]) {
+        if (key === 'sectionOrder') continue // already handled
         if (savedSettings[key]) {
           merged[key] = { ...(defaultLandingPageSettings as any)[key], ...savedSettings[key] }
         }
@@ -266,30 +352,38 @@ export default function PageBuilderPage() {
         {/* Left: Editor panel */}
         <div className="w-[400px] flex-shrink-0 overflow-y-auto border-r border-slate-200 bg-white">
           <div className="p-3 space-y-1.5">
-            {SECTION_META.map((meta) => {
-              const sectionKey = meta.key as keyof LandingPageSettings
-              const EditorComponent = editorComponents[meta.key]
-              if (!EditorComponent) return null
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={orderedMeta.map((m) => m.key)} strategy={verticalListSortingStrategy}>
+                {orderedMeta.map((meta) => {
+                  const sectionKey = meta.key as keyof LandingPageSettings
+                  const EditorComponent = editorComponents[meta.key]
+                  if (!EditorComponent) return null
 
-              return (
-                <SectionAccordion
-                  key={meta.key}
-                  sectionKey={meta.key}
-                  label={meta.label}
-                  icon={meta.icon}
-                  isVisible={settings[sectionKey].visible}
-                  isOpen={openSection === meta.key}
-                  onToggle={() =>
-                    setOpenSection(openSection === meta.key ? null : meta.key)
-                  }
-                >
-                  <EditorComponent
-                    settings={settings[sectionKey]}
-                    onChange={(updates: any) => updateSection(sectionKey, updates)}
-                  />
-                </SectionAccordion>
-              )
-            })}
+                  return (
+                    <SortableSectionItem key={meta.key} id={meta.key}>
+                      {(dragHandleProps) => (
+                        <SectionAccordion
+                          sectionKey={meta.key}
+                          label={meta.label}
+                          icon={meta.icon}
+                          isVisible={settings[sectionKey].visible}
+                          isOpen={openSection === meta.key}
+                          onToggle={() =>
+                            setOpenSection(openSection === meta.key ? null : meta.key)
+                          }
+                          dragHandleProps={dragHandleProps}
+                        >
+                          <EditorComponent
+                            settings={settings[sectionKey]}
+                            onChange={(updates: any) => updateSection(sectionKey, updates)}
+                          />
+                        </SectionAccordion>
+                      )}
+                    </SortableSectionItem>
+                  )
+                })}
+              </SortableContext>
+            </DndContext>
           </div>
         </div>
 

@@ -40,9 +40,10 @@ CREATE TABLE IF NOT EXISTS louvre_tour_stops (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Add new columns if they don't exist (for upgrades from v1 schema)
+-- Add new columns if they don't exist (for upgrades)
 DO $$
 BEGIN
+  -- louvre_tour_stops v2 columns
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'louvre_tour_stops' AND column_name = 'story') THEN
     ALTER TABLE louvre_tour_stops ADD COLUMN story TEXT NOT NULL DEFAULT '';
   END IF;
@@ -54,6 +55,16 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'louvre_tour_stops' AND column_name = 'is_demo') THEN
     ALTER TABLE louvre_tour_stops ADD COLUMN is_demo BOOLEAN NOT NULL DEFAULT false;
+  END IF;
+  -- louvre_tours v3 columns (pricing, cover image)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'louvre_tours' AND column_name = 'price_huf') THEN
+    ALTER TABLE louvre_tours ADD COLUMN price_huf INTEGER;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'louvre_tours' AND column_name = 'price_eur') THEN
+    ALTER TABLE louvre_tours ADD COLUMN price_eur INTEGER;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'louvre_tours' AND column_name = 'cover_image_url') THEN
+    ALTER TABLE louvre_tours ADD COLUMN cover_image_url TEXT;
   END IF;
 END $$;
 

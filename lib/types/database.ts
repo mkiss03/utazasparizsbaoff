@@ -682,6 +682,9 @@ export interface LouvreTour {
   summary_text?: string
   tips?: string
   image_url?: string
+  cover_image_url?: string
+  price_huf?: number
+  price_eur?: number
   status: LouvreTourStatus
   display_order: number
   created_at: string

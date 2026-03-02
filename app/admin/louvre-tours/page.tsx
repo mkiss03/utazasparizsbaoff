@@ -261,9 +261,35 @@ export default function LouvreToursPage() {
               />
             </div>
             <div className="space-y-1.5">
+              <Label>Ár (HUF)</Label>
+              <Input
+                type="number"
+                value={editingTour.price_huf ?? ''}
+                onChange={(e) => setEditingTour({ ...editingTour, price_huf: e.target.value ? Number(e.target.value) : undefined })}
+                placeholder="pl. 3990"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Ár (EUR)</Label>
+              <Input
+                type="number"
+                value={editingTour.price_eur ?? ''}
+                onChange={(e) => setEditingTour({ ...editingTour, price_eur: e.target.value ? Number(e.target.value) : undefined })}
+                placeholder="pl. 10"
+              />
+            </div>
+            <div className="col-span-2 space-y-1.5">
+              <Label>Borítókép URL</Label>
+              <Input
+                value={editingTour.cover_image_url || ''}
+                onChange={(e) => setEditingTour({ ...editingTour, cover_image_url: e.target.value })}
+                placeholder="https://... (opcionális borítókép)"
+              />
+            </div>
+            <div className="space-y-1.5">
               <Label>Státusz</Label>
               <select
-                className="flex h-10 w-full rounded-lg border-2 border-champagne-400 bg-white px-3 py-2 text-sm"
+                className="flex h-10 w-full rounded-lg border-2 border-slate-200 bg-white px-3 py-2 text-sm"
                 value={editingTour.status || 'draft'}
                 onChange={(e) => setEditingTour({ ...editingTour, status: e.target.value as LouvreTour['status'] })}
               >
@@ -293,7 +319,7 @@ export default function LouvreToursPage() {
       {tours?.length === 0 && !editingTour ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center">
           <Landmark className="mx-auto h-12 w-12 text-slate-300" />
-          <p className="mt-3 text-sm text-slate-500">Még nincs Louvre túra. Hozz létre az elsőt!</p>
+          <p className="mt-3 text-sm text-slate-500">Még nincs túra. Hozz létre az elsőt!</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -315,6 +341,11 @@ export default function LouvreToursPage() {
                         <Clock className="h-3 w-3" />
                         {tour.duration_text}
                       </span>
+                      {tour.price_huf && (
+                        <span className="font-semibold text-slate-700">
+                          {tour.price_huf.toLocaleString('hu-HU')} Ft
+                        </span>
+                      )}
                       <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                         tour.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'
                       }`}>

@@ -115,7 +115,7 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'Louvre Túra',
+    title: 'Túra Segédletek',
     href: '/admin/louvre-tours',
     icon: MapPin,
     type: 'item',
