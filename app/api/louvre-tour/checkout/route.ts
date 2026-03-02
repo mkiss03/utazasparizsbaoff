@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
               name: 'Louvre Interaktív Túra',
               description: '10 megálló · 3 szárny · ~3 óra — Korlátlan hozzáférés',
             },
-            unit_amount: PRICE_HUF,
+            unit_amount: PRICE_HUF * 100,
           },
           quantity: 1,
         },
