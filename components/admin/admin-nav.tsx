@@ -22,6 +22,8 @@ import {
   Palette,
   Landmark,
   Paintbrush,
+  Store,
+  CheckSquare,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -161,6 +163,22 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
+    title: 'PIACTÉR KEZELÉS',
+    type: 'section',
+  },
+  {
+    title: 'Eladók',
+    href: '/admin/vendors',
+    icon: Store,
+    type: 'item',
+  },
+  {
+    title: 'Csomag Jóváhagyás',
+    href: '/admin/bundle-approvals',
+    icon: CheckSquare,
+    type: 'item',
+  },
+  {
     title: 'MARKETING',
     type: 'section',
   },
@@ -187,6 +205,10 @@ const navItems: NavItem[] = enableFlashcards
       if (item.title === 'Csomagok') return false
       if (item.title === 'Városi Árazás') return false
       if (item.title === 'Rendelések') return false
+      // Remove PIACTÉR KEZELÉS section and its items
+      if (item.title === 'PIACTÉR KEZELÉS') return false
+      if (item.title === 'Eladók') return false
+      if (item.title === 'Csomag Jóváhagyás') return false
       return true
     })
 

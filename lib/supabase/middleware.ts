@@ -41,5 +41,15 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // Protect /marketplace/vendor/* routes (require auth)
+  if (request.nextUrl.pathname.startsWith('/marketplace/vendor') && !user) {
+    // Allow /marketplace/vendor/register without auth
+    if (request.nextUrl.pathname !== '/marketplace/vendor/register') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/marketplace/login'
+      return NextResponse.redirect(url)
+    }
+  }
+
   return supabaseResponse
 }

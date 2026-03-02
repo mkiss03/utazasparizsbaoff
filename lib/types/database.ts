@@ -129,6 +129,34 @@ export interface Subscriber {
 // MARKETPLACE TYPES (City Pass Model)
 // ============================================
 
+export type BundleStatus = 'draft' | 'submitted_for_review' | 'approved' | 'rejected' | 'published'
+
+export type OnboardingStep = 0 | 1 | 2 | 3 | 4
+// 0 = Waiting for approval
+// 1 = Fill out profile
+// 2 = Create first bundle
+// 3 = Add cards to bundle
+// 4 = Submitted for review
+
+export interface VendorProfile {
+  id: string
+  role: UserRole
+  is_approved: boolean
+  vendor_display_name?: string
+  vendor_bio?: string
+  vendor_city?: string
+  vendor_website?: string
+  vendor_avatar_url?: string
+  vendor_application_text?: string
+  vendor_applied_at?: string
+  vendor_approved_at?: string
+  vendor_rejection_reason?: string
+  onboarding_step: OnboardingStep
+  commission_rate: number
+  created_at: string
+  updated_at: string
+}
+
 export interface Bundle {
   id: string
   title: string
@@ -140,6 +168,10 @@ export interface Bundle {
   category?: string
   author_id: string
   is_published: boolean
+  status: BundleStatus
+  rejection_reason?: string
+  submitted_at?: string
+  approved_at?: string
   total_cards: number
   total_sales: number
   rating: number

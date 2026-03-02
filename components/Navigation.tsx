@@ -25,7 +25,7 @@ export default function Navigation() {
 
   const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
 
-  const allNavItems = [
+  const allNavItems: { name: string; href: string; target?: string }[] = [
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
@@ -35,6 +35,7 @@ export default function Navigation() {
     { name: 'Galéria', href: '/galeria' },
     { name: 'Párizsi Napló', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
+    { name: 'Piactér', href: '/marketplace', target: '_blank' },
   ]
 
   // Filter out Városbérletek if flashcards feature is disabled
@@ -85,6 +86,8 @@ export default function Navigation() {
                 <motion.a
                   key={item.name}
                   href={item.href}
+                  target={item.target}
+                  rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
@@ -144,6 +147,8 @@ export default function Navigation() {
             <motion.a
               key={item.name}
               href={item.href}
+              target={item.target}
+              rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
               initial={{ opacity: 0, x: 50 }}
               animate={{
                 opacity: isOpen ? 1 : 0,
