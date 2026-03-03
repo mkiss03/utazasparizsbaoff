@@ -35,9 +35,20 @@ export default async function BundleDetailPage({ params }: Props) {
     .eq('bundle_id', bundle.id)
     .order('card_order', { ascending: true })
 
-  // TODO: Check if user has city access
-  // For now, assume they don't have access (demo mode)
-  const hasAccess = false
+  // Check if user has an active City Pass for this bundle's city
+  let hasAccess = false
+  const { data: { user } } = await supabase.auth.getUser()
+  if (user) {
+    const { data: activePurchase } = await supabase
+      .from('user_purchases')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('city', bundle.city)
+      .eq('is_active', true)
+      .gte('expires_at', new Date().toISOString())
+      .maybeSingle()
+    hasAccess = !!activePurchase
+  }
 
   return (
     <main className="relative min-h-screen bg-slate-50">

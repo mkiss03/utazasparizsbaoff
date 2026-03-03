@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import FlipCard from '@/components/FlipCard'
-import { Lock, MapPin, Layers, Clock, ChevronLeft, Sparkles } from 'lucide-react'
+import { Lock, MapPin, Layers, Clock, ChevronLeft, Sparkles, GraduationCap } from 'lucide-react'
 import type { Bundle, Flashcard } from '@/lib/types/database'
 
 interface BundleDetailClientProps {
@@ -20,16 +20,14 @@ export default function BundleDetailClient({
 }: BundleDetailClientProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0)
 
-  // Demo cards: First 3 are unlocked for preview
-  const demoCardsCount = 3
-  const demoCards = flashcards.slice(0, demoCardsCount)
-  const lockedCardsCount = Math.max(0, flashcards.length - demoCardsCount)
+  // Demo cards: use is_demo flag, fallback to first 3 if no demo cards flagged
+  const demoCards = flashcards.filter((c) => c.is_demo)
+  const effectiveDemoCards = demoCards.length > 0 ? demoCards : flashcards.slice(0, 3)
+  const lockedCardsCount = Math.max(0, flashcards.length - effectiveDemoCards.length)
 
-  const currentCard = hasAccess
-    ? flashcards[currentCardIndex]
-    : demoCards[currentCardIndex]
-
-  const totalCards = hasAccess ? flashcards.length : demoCardsCount
+  const visibleCards = hasAccess ? flashcards : effectiveDemoCards
+  const currentCard = visibleCards[currentCardIndex]
+  const totalCards = visibleCards.length
 
   const handleNext = () => {
     if (currentCardIndex < totalCards - 1) {
@@ -126,10 +124,10 @@ export default function BundleDetailClient({
                   <h3 className="font-semibold">Korlátozott előnézet</h3>
                 </div>
                 <p className="mb-4 text-sm text-slate-700">
-                  {demoCardsCount} a {flashcards.length} flashcard közül tekinthető meg. Nyisd fel az összes tartalmat egy {bundle.city} Város Pass vásárlásával!
+                  {effectiveDemoCards.length} a {flashcards.length} flashcard közül tekinthető meg. Nyisd fel az összes tartalmat egy {bundle.city} Város Pass vásárlásával!
                 </p>
                 <Link
-                  href="/pricing"
+                  href={`/pricing?city=${encodeURIComponent(bundle.city)}`}
                   className="inline-flex items-center gap-2 rounded-full bg-french-red-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-red-600"
                 >
                   <Sparkles className="h-4 w-4" />
@@ -147,6 +145,13 @@ export default function BundleDetailClient({
                 <p className="mt-2 text-sm text-slate-700">
                   Teljes hozzáféréssel rendelkezel az összes {flashcards.length} flashcard-hoz ebben a csomagban.
                 </p>
+                <Link
+                  href={`/bundles/${bundle.slug}/study`}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-french-blue-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-blue-600"
+                >
+                  <GraduationCap className="h-5 w-5" />
+                  Tanulás indítása
+                </Link>
               </div>
             )}
           </div>
@@ -212,7 +217,7 @@ export default function BundleDetailClient({
                     Teljes hozzáférést szerezhetsz az összes flashcard-hoz egy {bundle.city} Város Pass-sal.
                   </p>
                   <Link
-                    href="/pricing"
+                    href={`/pricing?city=${encodeURIComponent(bundle.city)}`}
                     className="inline-block w-full rounded-lg bg-french-red-500 py-3 text-center font-semibold text-white transition-all hover:bg-french-red-600"
                   >
                     Árak megtekintése
