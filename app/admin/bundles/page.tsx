@@ -31,10 +31,15 @@ export default function BundlesAdminPage() {
   const { role, userId, isLoading: roleLoading, isSuperAdmin, isVendor } = useUserRole()
   const [isCreating, setIsCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [coverImageUploading, setCoverImageUploading] = useState(false)
   const [formData, setFormData] = useState({
     city: '',
     title: '',
     description: '',
+    short_description: '',
+    difficulty_level: '' as '' | 'beginner' | 'intermediate' | 'advanced',
+    estimated_time_minutes: '',
+    category: '',
   })
 
   console.log('BundlesAdminPage rendered, userId:', userId, 'roleLoading:', roleLoading)
@@ -103,10 +108,14 @@ export default function BundlesAdminPage() {
       // Auto-generate slug from title
       const slug = generateSlug(data.title)
 
-      const bundleData = {
+      const bundleData: Record<string, unknown> = {
         city: data.city,
         title: data.title,
         description: data.description,
+        short_description: data.short_description || null,
+        difficulty_level: data.difficulty_level || null,
+        estimated_time_minutes: data.estimated_time_minutes ? parseInt(data.estimated_time_minutes, 10) : null,
+        category: data.category || null,
         slug,
       }
 
@@ -149,6 +158,10 @@ export default function BundlesAdminPage() {
       city: '',
       title: '',
       description: '',
+      short_description: '',
+      difficulty_level: '',
+      estimated_time_minutes: '',
+      category: '',
     })
   }
 
@@ -158,6 +171,10 @@ export default function BundlesAdminPage() {
       city: bundle.city,
       title: bundle.title,
       description: bundle.description || '',
+      short_description: bundle.short_description || '',
+      difficulty_level: bundle.difficulty_level || '',
+      estimated_time_minutes: bundle.estimated_time_minutes ? String(bundle.estimated_time_minutes) : '',
+      category: bundle.category || '',
     })
   }
 
@@ -169,6 +186,33 @@ export default function BundlesAdminPage() {
     setIsCreating(false)
     setEditingId(null)
     resetForm()
+  }
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCoverImageUploading(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `bundle-cover-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('discover-images')
+        .upload(fileName, file)
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage
+        .from('discover-images')
+        .getPublicUrl(fileName)
+
+      // If editing, update directly in DB
+      if (editingId) {
+        await supabase.from('bundles').update({ cover_image: publicUrl }).eq('id', editingId)
+        queryClient.invalidateQueries({ queryKey: ['bundles'] })
+      }
+    } catch {
+      alert('Hiba a kép feltöltésekor')
+    } finally {
+      setCoverImageUploading(false)
+    }
   }
 
   if (roleLoading || isLoading) {
@@ -262,7 +306,18 @@ export default function BundlesAdminPage() {
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-slate-700">
-                  Leírás *
+                  Rövid leírás
+                </label>
+                <Input
+                  value={formData.short_description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, short_description: e.target.value }))}
+                  placeholder="Rövid, 1-2 mondatos leírás a listázáshoz"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Részletes leírás *
                 </label>
                 <Textarea
                   value={formData.description}
@@ -271,6 +326,65 @@ export default function BundlesAdminPage() {
                   placeholder="A témakör részletes leírása..."
                 />
               </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Nehézségi szint
+                  </label>
+                  <select
+                    value={formData.difficulty_level}
+                    onChange={(e) => setFormData(prev => ({ ...prev, difficulty_level: e.target.value as typeof formData.difficulty_level }))}
+                    className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-french-blue-500"
+                  >
+                    <option value="">Nincs megadva</option>
+                    <option value="beginner">Kezdő</option>
+                    <option value="intermediate">Középhaladó</option>
+                    <option value="advanced">Haladó</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Becsült idő (perc)
+                  </label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={formData.estimated_time_minutes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, estimated_time_minutes: e.target.value }))}
+                    placeholder="pl. 15"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Kategória
+                  </label>
+                  <Input
+                    value={formData.category}
+                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                    placeholder="pl. Nyelv, Kultúra, Közlekedés"
+                  />
+                </div>
+              </div>
+
+              {editingId && (
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Borítókép feltöltése
+                  </label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverImageUpload}
+                    disabled={coverImageUploading}
+                  />
+                  {coverImageUploading && (
+                    <p className="mt-1 text-xs text-slate-500">Feltöltés...</p>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

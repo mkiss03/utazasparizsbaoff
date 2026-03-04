@@ -19,6 +19,7 @@ import type { Bundle, CityPricing } from '@/lib/types/database'
 interface MarketplaceShopClientProps {
   bundles: Bundle[]
   cityPricing: CityPricing[]
+  initialCity?: string
 }
 
 type SortOption = 'newest' | 'cards' | 'popular'
@@ -45,9 +46,10 @@ const sortLabels: Record<SortOption, string> = {
 export default function MarketplaceShopClient({
   bundles,
   cityPricing,
+  initialCity,
 }: MarketplaceShopClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCity, setSelectedCity] = useState<string>('all')
+  const [selectedCity, setSelectedCity] = useState<string>(initialCity || 'all')
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyFilter>('all')
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [showFilters, setShowFilters] = useState(false)

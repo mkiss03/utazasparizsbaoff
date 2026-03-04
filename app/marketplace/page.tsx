@@ -9,7 +9,12 @@ export const metadata = {
   description: 'Fedezd fel a városfelfedező flashcard csomagokat. Válassz témakört és kezdj el tanulni!',
 }
 
-export default async function MarketplacePage() {
+interface Props {
+  searchParams: Promise<{ city?: string }>
+}
+
+export default async function MarketplacePage({ searchParams }: Props) {
+  const { city } = await searchParams
   const supabase = await createClient()
 
   // Fetch published bundles
@@ -29,6 +34,7 @@ export default async function MarketplacePage() {
     <MarketplaceShopClient
       bundles={(bundles as Bundle[]) || []}
       cityPricing={(cityPricing as CityPricing[]) || []}
+      initialCity={city || undefined}
     />
   )
 }

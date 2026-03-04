@@ -35,13 +35,13 @@ export default function Navigation() {
     { name: 'Galéria', href: '/galeria' },
     { name: 'Párizsi Napló', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
-    { name: 'Piactér', href: '/marketplace', target: '_blank' },
+    { name: 'Kártyacsomagok', href: '/marketplace' },
   ]
 
   // Filter out Városbérletek if flashcards feature is disabled
   const navItems = enableFlashcards
     ? allNavItems
-    : allNavItems.filter(item => item.name !== 'Városbérletek')
+    : allNavItems.filter(item => item.name !== 'Városbérletek' && item.name !== 'Kártyacsomagok')
 
   return (
     <>

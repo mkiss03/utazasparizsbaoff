@@ -141,7 +141,7 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'FLASHCARDS',
+    title: 'KÁRTYACSOMAGOK & PIACTÉR',
     type: 'section',
   },
   {
@@ -161,10 +161,6 @@ const allNavItems: NavItem[] = [
     href: '/admin/orders',
     icon: ShoppingCart,
     type: 'item',
-  },
-  {
-    title: 'PIACTÉR KEZELÉS',
-    type: 'section',
   },
   {
     title: 'Eladók',
@@ -200,13 +196,11 @@ const allNavItems: NavItem[] = [
 const navItems: NavItem[] = enableFlashcards
   ? allNavItems
   : allNavItems.filter(item => {
-      // Remove FLASHCARDS section and all its items
-      if (item.title === 'FLASHCARDS') return false
+      // Remove KÁRTYACSOMAGOK & PIACTÉR section and all its items
+      if (item.title === 'KÁRTYACSOMAGOK & PIACTÉR') return false
       if (item.title === 'Csomagok') return false
       if (item.title === 'Városi Árazás') return false
       if (item.title === 'Rendelések') return false
-      // Remove PIACTÉR KEZELÉS section and its items
-      if (item.title === 'PIACTÉR KEZELÉS') return false
       if (item.title === 'Eladók') return false
       if (item.title === 'Csomag Jóváhagyás') return false
       return true

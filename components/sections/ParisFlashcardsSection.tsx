@@ -121,7 +121,7 @@ export default function ParisFlashcardsSection({ bundles = [] }: ParisTopicsSect
         >
           {bundles.map((bundle) => (
             <motion.div key={bundle.id} variants={itemVariants}>
-              <Link href={`/paris/${bundle.slug}`}>
+              <Link href={`/bundles/${bundle.slug}`}>
                 <div className="group relative h-full overflow-hidden rounded-2xl border-2 border-parisian-beige-200 bg-white shadow-lg transition-all hover:shadow-2xl hover:border-parisian-beige-400">
                   {/* Header */}
                   <div className="bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 p-6 text-white">
