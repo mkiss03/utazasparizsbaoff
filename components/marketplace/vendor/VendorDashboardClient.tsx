@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUserRole } from '@/lib/hooks/useUserRole'
 import OnboardingWizard from './OnboardingWizard'
-import { Loader2, Package, ShoppingCart, CreditCard, TrendingUp } from 'lucide-react'
+import { Loader2, Package, ShoppingCart, CreditCard, TrendingUp, Percent, DollarSign } from 'lucide-react'
 import type { VendorProfile, Bundle } from '@/lib/types/database'
 
 export default function VendorDashboardClient() {
@@ -15,6 +15,8 @@ export default function VendorDashboardClient() {
   const [totalCards, setTotalCards] = useState(0)
   const [totalOrders, setTotalOrders] = useState(0)
   const [totalRevenue, setTotalRevenue] = useState(0)
+  const [totalCommission, setTotalCommission] = useState(0)
+  const [totalNetRevenue, setTotalNetRevenue] = useState(0)
 
   useEffect(() => {
     if (!userId) return
@@ -45,16 +47,21 @@ export default function VendorDashboardClient() {
         setTotalCards(bundlesData.reduce((sum, b) => sum + (b.total_cards || 0), 0))
       }
 
-      // Fetch orders
+      // Fetch orders with commission breakdown
       const { data: ordersData } = await supabase
         .from('orders')
-        .select('amount, vendor_amount')
+        .select('amount, commission_amount, vendor_amount')
         .eq('vendor_id', userId)
         .eq('status', 'completed')
 
       if (ordersData) {
         setTotalOrders(ordersData.length)
-        setTotalRevenue(ordersData.reduce((sum, o) => sum + Number(o.vendor_amount || 0), 0))
+        const grossRevenue = ordersData.reduce((sum, o) => sum + Number(o.amount || 0), 0)
+        const commissionTotal = ordersData.reduce((sum, o) => sum + Number(o.commission_amount || 0), 0)
+        const netRevenue = ordersData.reduce((sum, o) => sum + Number(o.vendor_amount || 0), 0)
+        setTotalRevenue(grossRevenue)
+        setTotalCommission(commissionTotal)
+        setTotalNetRevenue(netRevenue)
       }
 
       setLoading(false)
@@ -79,7 +86,7 @@ export default function VendorDashboardClient() {
     )
   }
 
-  // Show onboarding wizard if not finished (step < 4 or no approved bundle)
+  // Show onboarding wizard if not finished
   const hasApprovedBundle = bundles.some((b) => b.status === 'approved' || b.status === 'published')
   const showOnboarding = !hasApprovedBundle && (profile.onboarding_step < 4 || !profile.is_approved)
 
@@ -93,7 +100,8 @@ export default function VendorDashboardClient() {
     )
   }
 
-  // Full dashboard with stats
+  const commissionRate = profile.commission_rate || 15
+
   return (
     <div>
       <h1 className="text-xl font-bold text-slate-900">
@@ -104,7 +112,7 @@ export default function VendorDashboardClient() {
       </p>
 
       {/* Stat cards */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={Package}
           label="Csomagok"
@@ -121,11 +129,40 @@ export default function VendorDashboardClient() {
           label="Rendelések"
           value={totalOrders}
         />
-        <StatCard
-          icon={TrendingUp}
-          label="Bevétel"
-          value={`€${totalRevenue.toFixed(2)}`}
-        />
+      </div>
+
+      {/* Revenue breakdown */}
+      <div className="mt-6">
+        <h2 className="text-sm font-semibold text-slate-700 mb-3">Bevétel részletezés</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <div className="flex items-center gap-2 text-slate-500">
+              <DollarSign className="h-4 w-4" />
+              <span className="text-xs font-medium">Bruttó eladás</span>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-slate-900">€{totalRevenue.toFixed(2)}</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <div className="flex items-center gap-2 text-slate-500">
+              <Percent className="h-4 w-4" />
+              <span className="text-xs font-medium">Platform jutalék ({commissionRate}%)</span>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-red-500">−€{totalCommission.toFixed(2)}</p>
+          </div>
+          <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+            <div className="flex items-center gap-2 text-green-600">
+              <TrendingUp className="h-4 w-4" />
+              <span className="text-xs font-medium">Nettó bevétel (a tied)</span>
+            </div>
+            <p className="mt-2 text-2xl font-bold text-green-700">€{totalNetRevenue.toFixed(2)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Commission info */}
+      <div className="mt-4 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
+        A platform {commissionRate}% jutalékot von le minden eladásból. A fennmaradó {100 - commissionRate}% a te bevételed.
+        A kifizetéseket havonta egyenlítjük ki.
       </div>
 
       {/* Recent bundles */}
