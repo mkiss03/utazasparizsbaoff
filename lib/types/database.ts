@@ -181,9 +181,27 @@ export interface Bundle {
   updated_at: string
 }
 
+export interface BundleTopic {
+  id: string
+  bundle_id: string
+  title: string
+  slug: string
+  description?: string
+  cover_image?: string
+  topic_order: number
+  total_cards: number
+  author_id?: string
+  is_published: boolean
+  difficulty_level?: 'beginner' | 'intermediate' | 'advanced'
+  estimated_time_minutes: number
+  created_at: string
+  updated_at: string
+}
+
 export interface Flashcard {
   id: string
   bundle_id: string
+  topic_id?: string
   question: string
   answer: string
   hint?: string

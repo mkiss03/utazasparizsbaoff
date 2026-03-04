@@ -58,7 +58,7 @@ export default function ParisFlashcardsPromoSection({ pageSettings: ps }: ParisF
           viewport={{ once: true }}
           className="mx-auto max-w-md"
         >
-          <Link href="/marketplace?city=Paris">
+          <Link href="/bundles/paris">
             <div className="group relative overflow-hidden rounded-2xl border-2 border-parisian-beige-200 bg-white shadow-lg transition-all hover:shadow-2xl hover:border-parisian-beige-400">
               {/* Header */}
               <div className="bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 p-8 text-center text-white">

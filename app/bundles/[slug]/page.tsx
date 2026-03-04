@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import BundleDetailClient from '@/components/bundles/BundleDetailClient'
-import type { Bundle, Flashcard } from '@/lib/types/database'
+import type { Bundle, BundleTopic, Flashcard } from '@/lib/types/database'
 
 // Force dynamic rendering to avoid build-time database access
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,15 @@ export default async function BundleDetailPage({ params }: Props) {
     notFound()
   }
 
-  // Fetch flashcards for this bundle
+  // Fetch published topics for this bundle
+  const { data: topics } = await supabase
+    .from('bundle_topics')
+    .select('*')
+    .eq('bundle_id', bundle.id)
+    .eq('is_published', true)
+    .order('topic_order', { ascending: true })
+
+  // Fetch flashcards for this bundle (for demo cards and backward compat)
   const { data: flashcards } = await supabase
     .from('flashcards')
     .select('*')
@@ -55,6 +63,7 @@ export default async function BundleDetailPage({ params }: Props) {
       <Navigation />
       <BundleDetailClient
         bundle={bundle as Bundle}
+        topics={(topics as BundleTopic[]) || []}
         flashcards={(flashcards as Flashcard[]) || []}
         hasAccess={hasAccess}
       />

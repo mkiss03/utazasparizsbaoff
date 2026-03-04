@@ -7,10 +7,12 @@ export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ topic?: string }>
 }
 
-export default async function StudyPage({ params }: Props) {
+export default async function StudyPage({ params, searchParams }: Props) {
   const { slug } = await params
+  const { topic: topicSlug } = await searchParams
   const supabase = await createClient()
 
   // Fetch bundle
@@ -44,7 +46,36 @@ export default async function StudyPage({ params }: Props) {
     redirect(`/bundles/${slug}`)
   }
 
-  // Fetch all flashcards
+  // Determine study title and fetch cards
+  let studyTitle = bundle.title
+
+  // If studying a specific topic, filter by topic
+  if (topicSlug) {
+    const { data: topic } = await supabase
+      .from('bundle_topics')
+      .select('*')
+      .eq('bundle_id', bundle.id)
+      .eq('slug', topicSlug)
+      .single()
+
+    if (topic) {
+      studyTitle = `${bundle.title} — ${topic.title}`
+      const { data: topicCards } = await supabase
+        .from('flashcards')
+        .select('*')
+        .eq('topic_id', topic.id)
+        .order('card_order', { ascending: true })
+
+      return (
+        <StudyClient
+          bundle={{ ...bundle, title: studyTitle } as Bundle}
+          flashcards={(topicCards as Flashcard[]) || []}
+        />
+      )
+    }
+  }
+
+  // No topic filter: fetch all cards for the bundle
   const { data: flashcards } = await supabase
     .from('flashcards')
     .select('*')
@@ -53,7 +84,7 @@ export default async function StudyPage({ params }: Props) {
 
   return (
     <StudyClient
-      bundle={bundle as Bundle}
+      bundle={{ ...bundle, title: studyTitle } as Bundle}
       flashcards={(flashcards as Flashcard[]) || []}
     />
   )
