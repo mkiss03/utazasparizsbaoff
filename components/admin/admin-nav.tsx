@@ -35,8 +35,6 @@ type NavItem = {
   type: 'item' | 'section'
 }
 
-const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
-
 const allNavItems: NavItem[] = [
   {
     title: 'Áttekintés',
@@ -192,19 +190,7 @@ const allNavItems: NavItem[] = [
   },
 ]
 
-// Filter out flashcard-related items if feature is disabled
-const navItems: NavItem[] = enableFlashcards
-  ? allNavItems
-  : allNavItems.filter(item => {
-      // Remove KÁRTYACSOMAGOK & PIACTÉR section and all its items
-      if (item.title === 'KÁRTYACSOMAGOK & PIACTÉR') return false
-      if (item.title === 'Csomagok') return false
-      if (item.title === 'Városi Árazás') return false
-      if (item.title === 'Rendelések') return false
-      if (item.title === 'Eladók') return false
-      if (item.title === 'Csomag Jóváhagyás') return false
-      return true
-    })
+const navItems: NavItem[] = allNavItems
 
 export function AdminNav() {
   const pathname = usePathname()

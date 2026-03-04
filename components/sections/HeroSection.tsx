@@ -123,16 +123,14 @@ export default function HeroSection({
                 />
               </motion.a>
 
-              {process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true' && (
-                <motion.a
-                  href="/pricing"
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="rounded-full border-2 border-parisian-beige-400 bg-transparent px-8 py-4 font-montserrat text-base font-semibold text-parisian-grey-700 transition-all duration-300 hover:border-parisian-beige-500 hover:bg-parisian-beige-50"
-                >
-                  Get City Pass
-                </motion.a>
-              )}
+              <motion.a
+                href="/pricing"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="rounded-full border-2 border-parisian-beige-400 bg-transparent px-8 py-4 font-montserrat text-base font-semibold text-parisian-grey-700 transition-all duration-300 hover:border-parisian-beige-500 hover:bg-parisian-beige-50"
+              >
+                Get City Pass
+              </motion.a>
             </motion.div>
           </motion.div>
 

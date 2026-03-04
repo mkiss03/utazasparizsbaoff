@@ -153,7 +153,6 @@ export default async function Home() {
           <LouvreToursSection key={key} tours={toursData} pageSettings={pageSettings.louvreTour} />
         )
       case 'flashcardsPromo':
-        if (process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS !== 'true') return null
         return (
           <ParisFlashcardsPromoSection key={key} pageSettings={pageSettings.flashcardsPromo} />
         )

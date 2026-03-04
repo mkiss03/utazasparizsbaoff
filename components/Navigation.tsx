@@ -23,9 +23,7 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
-
-  const allNavItems: { name: string; href: string; target?: string }[] = [
+  const navItems: { name: string; href: string; target?: string }[] = [
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
@@ -37,11 +35,6 @@ export default function Navigation() {
     { name: 'Kapcsolat', href: '/#contact' },
     { name: 'Kártyacsomagok', href: '/marketplace' },
   ]
-
-  // Filter out Városbérletek if flashcards feature is disabled
-  const navItems = enableFlashcards
-    ? allNavItems
-    : allNavItems.filter(item => item.name !== 'Városbérletek' && item.name !== 'Kártyacsomagok')
 
   return (
     <>
