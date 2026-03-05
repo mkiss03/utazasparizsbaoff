@@ -193,7 +193,7 @@ function PassCard({ pass, currentTime, isActive }: { pass: UserPass; currentTime
         {/* Action Button */}
         {isActive ? (
           <Link
-            href={`/city/${pass.city.toLowerCase()}`}
+            href={`/marketplace?city=${encodeURIComponent(pass.city)}`}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-french-blue-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-blue-600"
           >
             Tartalom elérése
@@ -201,7 +201,7 @@ function PassCard({ pass, currentTime, isActive }: { pass: UserPass; currentTime
           </Link>
         ) : (
           <Link
-            href={`/city/${pass.city.toLowerCase()}`}
+            href={`/marketplace?city=${encodeURIComponent(pass.city)}`}
             className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-french-blue-500 px-6 py-3 font-semibold text-french-blue-500 transition-all hover:bg-french-blue-50"
           >
             <Sparkles className="h-4 w-4" />

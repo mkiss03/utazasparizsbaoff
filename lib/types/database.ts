@@ -129,6 +129,34 @@ export interface Subscriber {
 // MARKETPLACE TYPES (City Pass Model)
 // ============================================
 
+export type BundleStatus = 'draft' | 'submitted_for_review' | 'approved' | 'rejected' | 'published'
+
+export type OnboardingStep = 0 | 1 | 2 | 3 | 4
+// 0 = Waiting for approval
+// 1 = Fill out profile
+// 2 = Create first bundle
+// 3 = Add cards to bundle
+// 4 = Submitted for review
+
+export interface VendorProfile {
+  id: string
+  role: UserRole
+  is_approved: boolean
+  vendor_display_name?: string
+  vendor_bio?: string
+  vendor_city?: string
+  vendor_website?: string
+  vendor_avatar_url?: string
+  vendor_application_text?: string
+  vendor_applied_at?: string
+  vendor_approved_at?: string
+  vendor_rejection_reason?: string
+  onboarding_step: OnboardingStep
+  commission_rate: number
+  created_at: string
+  updated_at: string
+}
+
 export interface Bundle {
   id: string
   title: string
@@ -140,6 +168,10 @@ export interface Bundle {
   category?: string
   author_id: string
   is_published: boolean
+  status: BundleStatus
+  rejection_reason?: string
+  submitted_at?: string
+  approved_at?: string
   total_cards: number
   total_sales: number
   rating: number
@@ -149,9 +181,27 @@ export interface Bundle {
   updated_at: string
 }
 
+export interface BundleTopic {
+  id: string
+  bundle_id: string
+  title: string
+  slug: string
+  description?: string
+  cover_image?: string
+  topic_order: number
+  total_cards: number
+  author_id?: string
+  is_published: boolean
+  difficulty_level?: 'beginner' | 'intermediate' | 'advanced'
+  estimated_time_minutes: number
+  created_at: string
+  updated_at: string
+}
+
 export interface Flashcard {
   id: string
   bundle_id: string
+  topic_id?: string
   question: string
   answer: string
   hint?: string
@@ -558,7 +608,283 @@ export interface ParisGuideConfig {
   updated_at: string
 }
 
-// Default configuration factory for Paris Guide
+// ============================================
+// WALKING TOUR TYPES (Bookable Tour Events)
+// ============================================
+
+export type WalkingTourStatus = 'draft' | 'published' | 'cancelled' | 'completed'
+export type BookingPaymentStatus = 'pending' | 'completed' | 'refunded'
+export type BookingStatus = 'confirmed' | 'cancelled_by_user' | 'cancelled_by_admin'
+
+export interface WalkingTour {
+  id: string
+  title: string
+  slug: string
+  description?: string
+  short_description?: string
+  tour_date: string
+  start_time: string
+  duration_minutes: number
+  meeting_point: string
+  meeting_point_url?: string
+  price_per_person: number
+  min_participants: number
+  max_participants: number
+  current_bookings: number
+  image_url?: string
+  highlights?: string[]
+  status: WalkingTourStatus
+  cancellation_reason?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WalkingTourBooking {
+  id: string
+  walking_tour_id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  num_participants: number
+  total_amount: number
+  payment_status: BookingPaymentStatus
+  payment_method: string
+  booking_status: BookingStatus
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WalkingTourBookingWithTour extends WalkingTourBooking {
+  walking_tours?: Pick<WalkingTour, 'title' | 'tour_date' | 'start_time'>
+}
+
+// ============================================
+// MUSEUM GUIDE TYPES (Louvre Interactive Guide)
+// ============================================
+
+export type MuseumWing = 'Denon' | 'Sully' | 'Richelieu'
+
+export interface MuseumGuideArtwork {
+  id: string
+  title: string
+  artist: string
+  year: string
+  wing: MuseumWing
+  floor: string
+  room: string
+  story: string
+  fun_fact?: string
+  image_url?: string
+  gradient: string
+  map_position_x: number
+  map_position_y: number
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
+export const GRADIENT_PRESETS = [
+  { label: 'Meleg bézs', value: 'linear-gradient(160deg, #E8DDD0 0%, #D4C9BC 40%, #C4B8A8 100%)' },
+  { label: 'Hűvös kék-szürke', value: 'linear-gradient(160deg, #D6DDE4 0%, #C4CDD6 40%, #B0BBC6 100%)' },
+  { label: 'Zsálya zöld', value: 'linear-gradient(160deg, #DDE4D6 0%, #C6D0BC 40%, #B4C0A8 100%)' },
+  { label: 'Halvány rózsaszín', value: 'linear-gradient(160deg, #E4D6DD 0%, #D0BCC6 40%, #C0A8B4 100%)' },
+  { label: 'Meleg homok', value: 'linear-gradient(160deg, #E4DED6 0%, #D0C8BC 40%, #C0B6A8 100%)' },
+  { label: 'Puha zöldeskék', value: 'linear-gradient(160deg, #D6E0E4 0%, #BCD0D4 40%, #A8C0C4 100%)' },
+  { label: 'Levendula', value: 'linear-gradient(160deg, #DDD6E4 0%, #C6BCD0 40%, #B0A8C0 100%)' },
+  { label: 'Arany homok', value: 'linear-gradient(160deg, #E8E0D0 0%, #D8CDB8 40%, #C8BAA0 100%)' },
+] as const
+
+// ============================================
+// MUSEUM GUIDE PURCHASE TYPES
+// ============================================
+
+export type MuseumGuidePurchaseStatus = 'pending' | 'completed' | 'refunded'
+
+export interface MuseumGuidePurchase {
+  id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  amount: number
+  payment_status: MuseumGuidePurchaseStatus
+  access_token: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
+// LOUVRE TOUR TYPES (Guided Museum Tour)
+// ============================================
+
+export type LouvreTourStatus = 'draft' | 'published'
+
+export interface LouvreTour {
+  id: string
+  title: string
+  slug: string
+  subtitle?: string
+  duration_text: string
+  summary_text?: string
+  tips?: string
+  image_url?: string
+  cover_image_url?: string
+  price_huf?: number
+  price_eur?: number
+  status: LouvreTourStatus
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface LouvreTourStop {
+  id: string
+  tour_id: string
+  stop_number: number
+  title: string
+  location_wing: string
+  location_floor: string
+  location_rooms: string
+  duration_minutes: number
+  main_artwork?: string
+  description: string
+  story: string
+  fun_fact?: string
+  image_url?: string
+  is_demo: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+// Louvre Tour purchase tracking
+export type LouvreTourPurchaseStatus = 'pending' | 'completed' | 'refunded'
+
+export interface LouvreTourPurchase {
+  id: string
+  order_number: string
+  guest_name: string
+  guest_email: string
+  guest_phone?: string
+  amount: number
+  payment_status: LouvreTourPurchaseStatus
+  access_token: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
+// WALKING TOUR CALENDAR SETTINGS
+// ============================================
+
+export interface WalkingTourCalendarSettings {
+  // Section header
+  sectionBadgeText: string
+  sectionBadgeBgColor: string
+  sectionBadgeTextColor: string
+  sectionTitle: string
+  sectionSubtitle: string
+  sectionTitleColor: string
+  sectionSubtitleColor: string
+
+  // Calendar header
+  headerBgFrom: string
+  headerBgTo: string
+  headerTextColor: string
+  headerNavColor: string
+
+  // Day of week headers
+  dayHeaderBgColor: string
+  dayHeaderTextColor: string
+
+  // Regular day cells
+  dayTextColor: string
+  pastDayTextColor: string
+
+  // Today highlight
+  todayBgColor: string
+  todayTextColor: string
+
+  // Tour day cells
+  tourDayBgColor: string
+  tourDayBorderColor: string
+  tourDayBorderWidth: number
+
+  // Tour badges
+  tourBadgeBgColor: string
+  tourBadgeTextColor: string
+  fullBadgeBgColor: string
+  fullBadgeTextColor: string
+  showTimeOnBadge: boolean
+
+  // Legend
+  showLegend: boolean
+  legendTourLabel: string
+  legendFullLabel: string
+
+  // Modal
+  modalHeaderBgFrom: string
+  modalHeaderBgTo: string
+  modalHeaderTextColor: string
+  modalAccentColor: string
+  bookButtonBgColor: string
+  bookButtonTextColor: string
+}
+
+export const defaultCalendarSettings: WalkingTourCalendarSettings = {
+  sectionBadgeText: 'Fedezd fel velünk',
+  sectionBadgeBgColor: '#FAF4E8',
+  sectionBadgeTextColor: '#C2AF90',
+  sectionTitle: 'Közelgő Sétatúrák',
+  sectionSubtitle: 'Csatlakozz egyedülálló, magyar nyelvű sétáinkhoz és fedezd fel Párizs rejtett kincseit',
+  sectionTitleColor: '#1A1A1A',
+  sectionSubtitleColor: '#4D4D4D',
+
+  headerBgFrom: '#1A1A1A',
+  headerBgTo: '#333333',
+  headerTextColor: '#FFFFFF',
+  headerNavColor: '#F5EDD9',
+
+  dayHeaderBgColor: '#FFFEF9',
+  dayHeaderTextColor: '#4D4D4D',
+
+  dayTextColor: '#333333',
+  pastDayTextColor: '#999999',
+
+  todayBgColor: '#1A1A1A',
+  todayTextColor: '#FFFFFF',
+
+  tourDayBgColor: '#FFF8EB',
+  tourDayBorderColor: '#D4A574',
+  tourDayBorderWidth: 2,
+
+  tourBadgeBgColor: '#D4A574',
+  tourBadgeTextColor: '#FFFFFF',
+  fullBadgeBgColor: '#FEE2E2',
+  fullBadgeTextColor: '#DC2626',
+  showTimeOnBadge: true,
+
+  showLegend: true,
+  legendTourLabel: 'Van túra',
+  legendFullLabel: 'Betelt',
+
+  modalHeaderBgFrom: '#1A1A1A',
+  modalHeaderBgTo: '#333333',
+  modalHeaderTextColor: '#FFFFFF',
+  modalAccentColor: '#D4C49E',
+  bookButtonBgColor: '#D4A574',
+  bookButtonTextColor: '#FFFFFF',
+}
+
+// ============================================
+// PARIS DISTRICT GUIDE CONFIG TYPES
+// ============================================
+
 export const createDefaultParisGuideConfig = (): Omit<ParisGuideConfig, 'id' | 'created_at' | 'updated_at'> => ({
   name: 'Paris District Guide - Default',
   globalContent: {

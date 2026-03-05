@@ -12,6 +12,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@stripe/stripe-js": "^8.8.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.0",
     "@tailwindcss/typography": "^0.5.19",
@@ -22,13 +23,14 @@
     "@tiptap/react": "^3.15.2",
     "@tiptap/starter-kit": "^3.15.2",
     "framer-motion": "^12.24.8",
-    "posthog-js": "^1.160.0",
     "lucide-react": "^0.562.0",
     "next": "14.2.35",
+    "posthog-js": "^1.160.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.70.0",
     "resend": "^6.7.0",
+    "stripe": "^20.4.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {

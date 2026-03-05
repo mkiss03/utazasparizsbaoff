@@ -37,21 +37,33 @@ interface Service {
   rawGroupSize: number
 }
 
+import type { ServicesSectionSettings } from '@/lib/types/landing-page'
+
 interface ServicesSectionProps {
   groupBookingTitle?: string
   groupBookingDescription?: string
   groupBookingButtonText?: string
   customOfferText?: string
   customOfferButtonText?: string
+  pageSettings?: ServicesSectionSettings
 }
 
 export default function ServicesSection({
-  groupBookingTitle = 'Csoportos megrendelés?',
-  groupBookingDescription = 'Nagyobb csoportok, céges rendezvények vagy különleges igények esetén egyedi árkalkulációt biztosítunk. Vegye fel velünk a kapcsolatot, és állítsunk össze Önnek személyre szabott ajánlatot!',
-  groupBookingButtonText = 'Érdekel az egyedi ajánlat',
-  customOfferText = 'Nem találja amit keres? Kérjen egyedi ajánlatot!',
-  customOfferButtonText = 'Egyedi ajánlatkérés',
+  groupBookingTitle: propGBT = 'Csoportos megrendelés?',
+  groupBookingDescription: propGBD = 'Nagyobb csoportok, céges rendezvények vagy különleges igények esetén egyedi árkalkulációt biztosítunk. Vegye fel velünk a kapcsolatot, és állítsunk össze Önnek személyre szabott ajánlatot!',
+  groupBookingButtonText: propGBBT = 'Érdekel az egyedi ajánlat',
+  customOfferText: propCOT = 'Nem találja amit keres? Kérjen egyedi ajánlatot!',
+  customOfferButtonText: propCOBT = 'Egyedi ajánlatkérés',
+  pageSettings: ps,
 }: ServicesSectionProps = {}) {
+  const groupBookingTitle = ps?.groupBookingTitle || propGBT
+  const groupBookingDescription = ps?.groupBookingDescription || propGBD
+  const groupBookingButtonText = ps?.groupBookingButtonText || propGBBT
+  const customOfferText = ps?.customOfferText || propCOT
+  const customOfferButtonText = ps?.customOfferButtonText || propCOBT
+  const sectionBadge = ps?.sectionBadge || 'Mit kínálunk'
+  const sectionTitle = ps?.title || 'Szolgáltatások'
+  const sectionSubtitle = ps?.subtitle || 'Kattints a kártyákra a részletes információkért'
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -163,13 +175,13 @@ export default function ServicesSection({
             viewport={{ once: true }}
             className="mb-4 inline-block rounded-full bg-parisian-beige-100 px-6 py-2 font-montserrat text-sm font-semibold text-parisian-grey-700"
           >
-            Mit kínálunk
+            {sectionBadge}
           </motion.span>
           <h2 className="mb-4 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl">
-            Szolgáltatások
+            {sectionTitle}
           </h2>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-parisian-grey-600 sm:text-lg md:text-xl">
-            Kattints a kártyákra a részletes információkért
+            {sectionSubtitle}
           </p>
         </motion.div>
 

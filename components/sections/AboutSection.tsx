@@ -3,18 +3,40 @@
 import { motion } from 'framer-motion'
 import { Heart, Sparkles, MapPin } from 'lucide-react'
 import Image from 'next/image'
+import type { AboutSectionSettings } from '@/lib/types/landing-page'
 
 interface AboutSectionProps {
   title?: string
   description?: string
   image?: string
+  pageSettings?: AboutSectionSettings
 }
 
 export default function AboutSection({
-  title = 'Bemutatkozás',
-  description,
-  image = '/images/viktoriaprofillouvre.jpg',
+  title: propTitle = 'Bemutatkozás',
+  description: propDescription,
+  image: propImage = '/images/viktoriaprofillouvre.jpg',
+  pageSettings: ps,
 }: AboutSectionProps) {
+  const title = ps?.title || propTitle
+  const description = ps?.description || propDescription
+  const image = ps?.aboutImage || propImage
+  const sectionBadge = ps?.sectionBadge || 'Rólam'
+  const offerCardsTitle = ps?.offerCardsTitle || 'Amit kínálok'
+  const card1Title = ps?.offerCard1Title || 'Személyre szabott élmények'
+  const card1Desc = ps?.offerCard1Description || 'Minden túra az érdeklődésedre és tempódra van szabva, legyen szó művészetről, gasztronómiáról vagy történelemről.'
+  const card2Title = ps?.offerCard2Title || 'Helyi insider tudás'
+  const card2Desc = ps?.offerCard2Description || 'Megmutatom azokat a helyeket, amiket csak a helyiek ismernek – autentikus kávézókat, rejtett udvarokat és varázslatos utcákat.'
+  const card3Title = ps?.offerCard3Title || 'Gondtalan élmény'
+  const card3Desc = ps?.offerCard3Description || 'Teljes körű szervezéstől kezdve a praktikus tippekig – minden részletre figyelek, hogy te csak élvezd Párizst.'
+  const stat1Value = ps?.stat1Value || '10+'
+  const stat1Label = ps?.stat1Label || 'év Párizsban'
+  const stat2Value = ps?.stat2Value || '1000+'
+  const stat2Label = ps?.stat2Label || 'elégedett vendég'
+  const stat3Value = ps?.stat3Value || '⭐'
+  const stat3Label = ps?.stat3Label || 'Licencelt idegenvezetés'
+  const quoteText = ps?.quoteText || 'Párizs mindig jó ötlet – és szeretném, ha a te párizsi élményeid felejthetetlenek lennének.'
+  const quoteAuthor = ps?.quoteAuthor || '— Viktória'
   // Use default image if image prop is null or empty
   const imageUrl = image && image.trim() !== '' ? image : '/images/viktoriaprofillouvre.jpg'
 
@@ -43,7 +65,7 @@ export default function AboutSection({
             viewport={{ once: true }}
             className="mb-4 inline-block rounded-full bg-parisian-beige-100 px-6 py-2 font-montserrat text-sm font-semibold text-parisian-grey-700"
           >
-            Rólam
+            {sectionBadge}
           </motion.span>
           <h2 className="mb-4 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl md:text-5xl lg:text-6xl">
             {title}
@@ -92,7 +114,7 @@ export default function AboutSection({
                 className="space-y-4"
               >
                 <h3 className="mb-6 font-playfair text-2xl font-bold text-parisian-grey-800 md:text-3xl">
-                  Amit kínálok
+                  {offerCardsTitle}
                 </h3>
 
                 <motion.div
@@ -107,10 +129,10 @@ export default function AboutSection({
                   </div>
                   <div>
                     <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
-                      Személyre szabott élmények
+                      {card1Title}
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
-                      Minden túra az érdeklődésedre és tempódra van szabva, legyen szó művészetről, gasztronómiáról vagy történelemről.
+                      {card1Desc}
                     </p>
                   </div>
                 </motion.div>
@@ -127,10 +149,10 @@ export default function AboutSection({
                   </div>
                   <div>
                     <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
-                      Helyi insider tudás
+                      {card2Title}
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
-                      Megmutatom azokat a helyeket, amiket csak a helyiek ismernek – autentikus kávézókat, rejtett udvarokat és varázslatos utcákat.
+                      {card2Desc}
                     </p>
                   </div>
                 </motion.div>
@@ -147,10 +169,10 @@ export default function AboutSection({
                   </div>
                   <div>
                     <h4 className="mb-2 font-montserrat text-base sm:text-lg font-bold text-parisian-grey-800">
-                      Gondtalan élmény
+                      {card3Title}
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
-                      Teljes körű szervezéstől kezdve a praktikus tippekig – minden részletre figyelek, hogy te csak élvezd Párizst.
+                      {card3Desc}
                     </p>
                   </div>
                 </motion.div>
@@ -165,10 +187,10 @@ export default function AboutSection({
                 className="rounded-2xl bg-parisian-beige-50 p-6"
               >
                 <p className="font-montserrat text-base italic leading-relaxed text-parisian-grey-700">
-                  &ldquo;Párizs mindig jó ötlet – és szeretném, ha a te párizsi élményeid felejthetetlenek lennének.&rdquo;
+                  &ldquo;{quoteText}&rdquo;
                 </p>
                 <p className="mt-3 font-montserrat text-sm font-semibold text-parisian-grey-600">
-                  — Viktória
+                  {quoteAuthor}
                 </p>
               </motion.div>
             </div>
@@ -210,22 +232,22 @@ export default function AboutSection({
               >
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
-                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">10+</p>
-                    <p className="font-montserrat text-sm text-parisian-grey-600">év Párizsban</p>
+                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">{stat1Value}</p>
+                    <p className="font-montserrat text-sm text-parisian-grey-600">{stat1Label}</p>
                   </div>
                 </div>
 
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
-                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">1000+</p>
-                    <p className="font-montserrat text-sm text-parisian-grey-600">elégedett vendég</p>
+                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">{stat2Value}</p>
+                    <p className="font-montserrat text-sm text-parisian-grey-600">{stat2Label}</p>
                   </div>
                 </div>
 
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
-                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">⭐</p>
-                    <p className="font-montserrat text-sm text-parisian-grey-600">Licencelt idegenvezetés</p>
+                    <p className="font-playfair text-3xl font-bold text-parisian-beige-600">{stat3Value}</p>
+                    <p className="font-montserrat text-sm text-parisian-grey-600">{stat3Label}</p>
                   </div>
                 </div>
               </motion.div>

@@ -31,6 +31,7 @@ export default function BundlesAdminPage() {
   const { role, userId, isLoading: roleLoading, isSuperAdmin, isVendor } = useUserRole()
   const [isCreating, setIsCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [coverImageUploading, setCoverImageUploading] = useState(false)
   const [formData, setFormData] = useState({
     city: '',
     title: '',
@@ -108,10 +109,14 @@ export default function BundlesAdminPage() {
       // Auto-generate slug from title
       const slug = generateSlug(data.title)
 
-      const bundleData = {
+      const bundleData: Record<string, unknown> = {
         city: data.city,
         title: data.title,
         description: data.description,
+        short_description: data.short_description || null,
+        difficulty_level: data.difficulty_level || null,
+        estimated_time_minutes: data.estimated_time_minutes ? parseInt(data.estimated_time_minutes, 10) : null,
+        category: data.category || null,
         slug,
         ...(data.difficulty_level ? { difficulty_level: data.difficulty_level } : {}),
       }
@@ -183,6 +188,33 @@ export default function BundlesAdminPage() {
     setIsCreating(false)
     setEditingId(null)
     resetForm()
+  }
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCoverImageUploading(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `bundle-cover-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('discover-images')
+        .upload(fileName, file)
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage
+        .from('discover-images')
+        .getPublicUrl(fileName)
+
+      // If editing, update directly in DB
+      if (editingId) {
+        await supabase.from('bundles').update({ cover_image: publicUrl }).eq('id', editingId)
+        queryClient.invalidateQueries({ queryKey: ['bundles'] })
+      }
+    } catch {
+      alert('Hiba a kép feltöltésekor')
+    } finally {
+      setCoverImageUploading(false)
+    }
   }
 
   if (roleLoading || isLoading) {
@@ -373,10 +405,19 @@ export default function BundlesAdminPage() {
                     size="sm"
                     variant="outline"
                     className="flex-1"
+                    onClick={() => router.push(`/admin/bundles/${bundle.id}/topics`)}
+                  >
+                    <Layers className="mr-1 h-3 w-3" />
+                    Témakörök
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => router.push(`/admin/bundles/${bundle.id}/cards`)}
+                    title="Összes kártya (témakör nélkül)"
                   >
                     <Package className="mr-1 h-3 w-3" />
-                    Kártyák ({bundle.total_cards})
+                    {bundle.total_cards}
                   </Button>
 
                   <Button

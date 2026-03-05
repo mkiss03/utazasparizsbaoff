@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   MapPin,
   Map,
-  FileText,
   PenTool,
   Mail,
   Package,
@@ -18,6 +17,13 @@ import {
   Ship,
   Globe,
   BarChart3,
+  Footprints,
+  Users,
+  Palette,
+  Landmark,
+  Paintbrush,
+  Store,
+  CheckSquare,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -29,13 +35,21 @@ type NavItem = {
   type: 'item' | 'section'
 }
 
-const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
-
 const allNavItems: NavItem[] = [
   {
     title: 'Áttekintés',
     href: '/admin/dashboard',
     icon: LayoutDashboard,
+    type: 'item',
+  },
+  {
+    title: 'OLDAL SZERKESZTŐ',
+    type: 'section',
+  },
+  {
+    title: 'Vizuális Szerkesztő',
+    href: '/admin/page-builder',
+    icon: Paintbrush,
     type: 'item',
   },
   {
@@ -79,25 +93,53 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'Hajózás Varázsló',
-    href: '/admin/cruise-wizard',
-    icon: Ship,
-    type: 'item',
-  },
-  {
     title: 'Kerületi Útmutató',
     href: '/admin/paris-guide',
     icon: Globe,
     type: 'item',
   },
   {
-    title: 'Tartalom',
-    href: '/admin/content',
-    icon: FileText,
+    title: 'TERMÉKEK',
+    type: 'section',
+  },
+  {
+    title: 'Hajózás Varázsló',
+    href: '/admin/cruise-wizard',
+    icon: Ship,
     type: 'item',
   },
   {
-    title: 'FLASHCARDS',
+    title: 'Múzeum Guide',
+    href: '/admin/museum-guide',
+    icon: Landmark,
+    type: 'item',
+  },
+  {
+    title: 'Túra Segédletek',
+    href: '/admin/louvre-tours',
+    icon: MapPin,
+    type: 'item',
+  },
+  {
+    title: 'Sétatúrák',
+    href: '/admin/walking-tours',
+    icon: Footprints,
+    type: 'item',
+  },
+  {
+    title: 'Túrafoglalások',
+    href: '/admin/walking-tours/bookings',
+    icon: Users,
+    type: 'item',
+  },
+  {
+    title: 'Naptár Beállítások',
+    href: '/admin/walking-tours/calendar-settings',
+    icon: Palette,
+    type: 'item',
+  },
+  {
+    title: 'KÁRTYACSOMAGOK & PIACTÉR',
     type: 'section',
   },
   {
@@ -119,6 +161,18 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
+    title: 'Eladók',
+    href: '/admin/vendors',
+    icon: Store,
+    type: 'item',
+  },
+  {
+    title: 'Csomag Jóváhagyás',
+    href: '/admin/bundle-approvals',
+    icon: CheckSquare,
+    type: 'item',
+  },
+  {
     title: 'MARKETING',
     type: 'section',
   },
@@ -136,17 +190,7 @@ const allNavItems: NavItem[] = [
   },
 ]
 
-// Filter out flashcard-related items if feature is disabled
-const navItems: NavItem[] = enableFlashcards
-  ? allNavItems
-  : allNavItems.filter(item => {
-      // Remove FLASHCARDS section and all its items
-      if (item.title === 'FLASHCARDS') return false
-      if (item.title === 'Csomagok') return false
-      if (item.title === 'Városi Árazás') return false
-      if (item.title === 'Rendelések') return false
-      return true
-    })
+const navItems: NavItem[] = allNavItems
 
 export function AdminNav() {
   const pathname = usePathname()

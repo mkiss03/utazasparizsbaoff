@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Quote, Star } from 'lucide-react'
+import type { TestimonialsSectionSettings } from '@/lib/types/landing-page'
 
 export interface Testimonial {
   id: string
@@ -16,13 +17,19 @@ interface TestimonialsSectionProps {
   title?: string
   subtitle?: string
   testimonials: Testimonial[]
+  pageSettings?: TestimonialsSectionSettings
 }
 
 export default function TestimonialsSection({
-  title = 'Élmények, ahogy ők megélték',
-  subtitle = 'Amit az utazóink mondanak rólunk',
-  testimonials = []
+  title: propTitle = 'Élmények, ahogy ők megélték',
+  subtitle: propSubtitle = 'Amit az utazóink mondanak rólunk',
+  testimonials = [],
+  pageSettings: ps,
 }: TestimonialsSectionProps) {
+  const title = ps?.title || propTitle
+  const subtitle = ps?.subtitle || propSubtitle
+  const ctaText = ps?.ctaText || 'Legyél Te is a következő elégedett vendégünk!'
+  const ctaButtonText = ps?.ctaButtonText || 'Foglalj most'
   if (!testimonials || testimonials.length === 0) {
     return null
   }
@@ -146,7 +153,7 @@ export default function TestimonialsSection({
           className="mt-16 text-center"
         >
           <p className="mb-6 text-lg text-parisian-grey-600">
-            Legyél Te is a következő elégedett vendégünk!
+            {ctaText}
           </p>
           <motion.a
             href="#contact"
@@ -154,7 +161,7 @@ export default function TestimonialsSection({
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 px-8 py-4 font-montserrat font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
           >
-            Foglalj most
+            {ctaButtonText}
           </motion.a>
         </motion.div>
       </div>
