@@ -35,7 +35,9 @@ export default function BundlesAdminPage() {
     city: '',
     title: '',
     description: '',
+    difficulty_level: '' as '' | 'beginner' | 'intermediate' | 'advanced',
   })
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   console.log('BundlesAdminPage rendered, userId:', userId, 'roleLoading:', roleLoading)
 
@@ -100,6 +102,9 @@ export default function BundlesAdminPage() {
 
   const saveMutation = useMutation({
     mutationFn: async ({ id, data }: { id?: string; data: typeof formData }) => {
+      if (!data.title.trim()) throw new Error('A témakör neve kötelező!')
+      if (!data.city) throw new Error('A város kiválasztása kötelező!')
+
       // Auto-generate slug from title
       const slug = generateSlug(data.title)
 
@@ -108,6 +113,7 @@ export default function BundlesAdminPage() {
         title: data.title,
         description: data.description,
         slug,
+        ...(data.difficulty_level ? { difficulty_level: data.difficulty_level } : {}),
       }
 
       if (id) {
@@ -130,6 +136,10 @@ export default function BundlesAdminPage() {
       setIsCreating(false)
       setEditingId(null)
       resetForm()
+      setSaveError(null)
+    },
+    onError: (error: Error) => {
+      setSaveError(error.message || 'Mentés sikertelen. Kérjük, próbáld újra.')
     },
   })
 
@@ -149,15 +159,19 @@ export default function BundlesAdminPage() {
       city: '',
       title: '',
       description: '',
+      difficulty_level: '',
     })
+    setSaveError(null)
   }
 
   const handleEdit = (bundle: Bundle) => {
     setEditingId(bundle.id)
+    setSaveError(null)
     setFormData({
       city: bundle.city,
       title: bundle.title,
       description: bundle.description || '',
+      difficulty_level: bundle.difficulty_level || '',
     })
   }
 
@@ -230,6 +244,12 @@ export default function BundlesAdminPage() {
               </div>
             </div>
 
+            {saveError && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {saveError}
+              </div>
+            )}
+
             <div className="grid gap-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-slate-700">
@@ -251,7 +271,7 @@ export default function BundlesAdminPage() {
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-slate-700">
-                  Témakör címe *
+                  Témakör neve *
                 </label>
                 <Input
                   value={formData.title}
@@ -262,7 +282,7 @@ export default function BundlesAdminPage() {
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-slate-700">
-                  Leírás *
+                  Leírás
                 </label>
                 <Textarea
                   value={formData.description}
@@ -270,6 +290,22 @@ export default function BundlesAdminPage() {
                   rows={4}
                   placeholder="A témakör részletes leírása..."
                 />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Nehézségi szint
+                </label>
+                <select
+                  value={formData.difficulty_level}
+                  onChange={(e) => setFormData(prev => ({ ...prev, difficulty_level: e.target.value as typeof formData.difficulty_level }))}
+                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-french-blue-500"
+                >
+                  <option value="">Válassz szintet...</option>
+                  <option value="beginner">Kezdő</option>
+                  <option value="intermediate">Középhaladó</option>
+                  <option value="advanced">Haladó</option>
+                </select>
               </div>
             </div>
           </CardContent>
