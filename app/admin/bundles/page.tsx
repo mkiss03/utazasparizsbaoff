@@ -404,6 +404,14 @@ export default function BundlesAdminPage() {
                   <Button
                     size="sm"
                     variant="outline"
+                    onClick={() => router.push(`/admin/bundles/${bundle.id}/topics`)}
+                  >
+                    <Layers className="mr-1 h-3 w-3" />
+                    Témakörök
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="flex-1"
                     onClick={() => router.push(`/admin/bundles/${bundle.id}/topics`)}
                   >

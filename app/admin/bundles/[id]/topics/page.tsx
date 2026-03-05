@@ -37,6 +37,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
   const { userId, isSuperAdmin } = useUserRole()
   const [isCreating, setIsCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -44,7 +45,6 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
     estimated_time_minutes: '',
   })
 
-  // Fetch bundle details
   const { data: bundle } = useQuery({
     queryKey: ['bundle', bundleId],
     queryFn: async () => {
@@ -66,7 +66,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
         .select('*')
         .eq('bundle_id', bundleId)
         .order('topic_order', { ascending: true })
-      return data as BundleTopic[]
+      return (data ?? []) as BundleTopic[]
     },
   })
 
@@ -83,9 +83,11 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const saveMutation = useMutation({
     mutationFn: async ({ id, data }: { id?: string; data: typeof formData }) => {
+      if (!data.title.trim()) throw new Error('A témakör neve kötelező!')
+
       const slug = generateSlug(data.title)
       const topicData = {
-        title: data.title,
+        title: data.title.trim(),
         slug,
         description: data.description || null,
         difficulty_level: data.difficulty_level || null,
@@ -117,6 +119,9 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
       setIsCreating(false)
       setEditingId(null)
       resetForm()
+    },
+    onError: (error: Error) => {
+      setSaveError(error.message || 'Mentés sikertelen. Kérjük, próbáld újra.')
     },
   })
 
@@ -158,16 +163,24 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const resetForm = () => {
     setFormData({ title: '', description: '', difficulty_level: '', estimated_time_minutes: '' })
+    setSaveError(null)
   }
 
   const handleEdit = (topic: BundleTopic) => {
     setEditingId(topic.id)
+    setSaveError(null)
     setFormData({
       title: topic.title,
       description: topic.description || '',
       difficulty_level: topic.difficulty_level || '',
       estimated_time_minutes: topic.estimated_time_minutes ? String(topic.estimated_time_minutes) : '',
     })
+  }
+
+  const handleCancel = () => {
+    setIsCreating(false)
+    setEditingId(null)
+    resetForm()
   }
 
   const handleMoveUp = (topic: BundleTopic, index: number) => {
@@ -192,6 +205,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
         <Card className="border-french-red-200">
           <CardContent className="p-12 text-center">
             <h2 className="text-xl font-bold text-french-red-500">Hozzáférés megtagadva</h2>
+            <p className="mt-2 text-slate-600">Nincs jogosultságod ennek a csomagnak a szerkesztéséhez.</p>
             <Link href="/admin/bundles">
               <Button className="mt-4 bg-french-blue-500 hover:bg-french-blue-600">
                 Vissza a csomagokhoz
@@ -237,7 +251,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
             </p>
           </div>
           <Button
-            onClick={() => setIsCreating(true)}
+            onClick={() => { setIsCreating(true); setSaveError(null) }}
             className="bg-french-red-500 hover:bg-french-red-600"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -264,12 +278,18 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
                   <Save className="mr-2 h-4 w-4" />
                   Mentés
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setIsCreating(false); setEditingId(null); resetForm() }}>
+                <Button size="sm" variant="outline" onClick={handleCancel}>
                   <X className="mr-2 h-4 w-4" />
                   Mégse
                 </Button>
               </div>
             </div>
+
+            {saveError && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {saveError}
+              </div>
+            )}
 
             <div className="grid gap-4">
               <div>
