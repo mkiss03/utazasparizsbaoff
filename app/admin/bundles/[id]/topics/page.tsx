@@ -65,7 +65,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
         .from('bundle_topics')
         .select('*')
         .eq('bundle_id', bundleId)
-        .order('topic_order', { ascending: true })
+        .order('created_at', { ascending: true })
       return (data ?? []) as BundleTopic[]
     },
   })
@@ -101,14 +101,12 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
           .eq('id', id)
         if (error) throw error
       } else {
-        const maxOrder = topics?.reduce((max, t) => Math.max(max, t.topic_order), -1) ?? -1
         const { error } = await supabase
           .from('bundle_topics')
           .insert({
             ...topicData,
             bundle_id: bundleId,
             author_id: userId,
-            topic_order: maxOrder + 1,
             is_published: false,
           })
         if (error) throw error
@@ -150,11 +148,12 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const reorderMutation = useMutation({
     mutationFn: async ({ id, newOrder }: { id: string; newOrder: number }) => {
+      // topic_order column may not exist in older DB versions — silently skip
       const { error } = await supabase
         .from('bundle_topics')
         .update({ topic_order: newOrder })
         .eq('id', id)
-      if (error) throw error
+      if (error && !error.message.includes('topic_order')) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bundle-topics', bundleId] })
