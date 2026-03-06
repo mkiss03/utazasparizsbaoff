@@ -28,7 +28,7 @@ export function useUserRole() {
 
         // Get user profile with role
         const { data: profile } = await supabase
-          .from('profiles')
+          .from('profile')
           .select('role, is_approved')
           .eq('id', user.id)
           .single()

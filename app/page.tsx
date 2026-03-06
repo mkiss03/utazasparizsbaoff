@@ -73,6 +73,15 @@ export default async function Home() {
     .eq('status', 'published')
     .order('created_at', { ascending: true })
 
+  // Fetch first published bundle slug for the flashcards promo section
+  const { data: firstBundle } = await supabase
+    .from('bundles')
+    .select('slug')
+    .or('is_published.eq.true,status.eq.published')
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
   // Fetch landing page settings (page builder)
   const { data: landingPageRow } = await supabase
     .from('landing_page_settings')
@@ -154,7 +163,7 @@ export default async function Home() {
         )
       case 'flashcardsPromo':
         return (
-          <ParisFlashcardsPromoSection key={key} pageSettings={pageSettings.flashcardsPromo} />
+          <ParisFlashcardsPromoSection key={key} pageSettings={pageSettings.flashcardsPromo} bundleSlug={firstBundle?.slug} />
         )
       case 'parisDistrictGuide':
         return <ParisDistrictGuide key={key} />

@@ -29,7 +29,6 @@ export default function Navigation() {
     { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Sétatúrák', href: '/walking-tours' },
     { name: 'Louvre Guide', href: '/museum-guide' },
-    { name: 'Városbérletek', href: '/pricing' },
     { name: 'Galéria', href: '/galeria' },
     { name: 'Párizsi Napló', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
