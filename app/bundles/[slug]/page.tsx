@@ -34,7 +34,7 @@ export default async function BundleDetailPage({ params }: Props) {
     .select('*')
     .eq('bundle_id', bundle.id)
     .eq('is_published', true)
-    .order('topic_order', { ascending: true })
+    .order('created_at', { ascending: true })
 
   // Fetch flashcards for this bundle (for demo cards and backward compat)
   const { data: flashcards } = await supabase
