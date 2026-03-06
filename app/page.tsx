@@ -77,10 +77,10 @@ export default async function Home() {
   const { data: firstBundle } = await supabase
     .from('bundles')
     .select('slug')
-    .eq('is_published', true)
+    .or('is_published.eq.true,status.eq.published')
     .order('created_at', { ascending: true })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   // Fetch landing page settings (page builder)
   const { data: landingPageRow } = await supabase

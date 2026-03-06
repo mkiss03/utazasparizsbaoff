@@ -408,10 +408,15 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant={topic.is_published ? 'outline' : 'default'}
                       onClick={() => togglePublishMutation.mutate({ id: topic.id, is_published: !topic.is_published })}
+                      className={topic.is_published ? '' : 'bg-green-600 hover:bg-green-700 text-white'}
                     >
-                      {topic.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {topic.is_published ? (
+                        <><EyeOff className="mr-1 h-3 w-3" />Elrejt</>
+                      ) : (
+                        <><Eye className="mr-1 h-3 w-3" />Közzé</>
+                      )}
                     </Button>
                     <Button
                       size="sm"

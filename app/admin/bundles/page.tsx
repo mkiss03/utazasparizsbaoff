@@ -92,7 +92,7 @@ export default function BundlesAdminPage() {
     mutationFn: async ({ id, is_published }: { id: string; is_published: boolean }) => {
       const { error } = await supabase
         .from('bundles')
-        .update({ is_published })
+        .update({ is_published, status: is_published ? 'published' : 'draft' })
         .eq('id', id)
       if (error) throw error
     },
@@ -421,18 +421,19 @@ export default function BundlesAdminPage() {
 
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant={bundle.is_published ? 'outline' : 'default'}
                     onClick={() =>
                       togglePublishMutation.mutate({
                         id: bundle.id,
                         is_published: !bundle.is_published,
                       })
                     }
+                    className={bundle.is_published ? '' : 'bg-green-600 hover:bg-green-700 text-white'}
                   >
                     {bundle.is_published ? (
-                      <EyeOff className="h-4 w-4" />
+                      <><EyeOff className="mr-1 h-4 w-4" />Vissza vázlatba</>
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <><Eye className="mr-1 h-4 w-4" />Közzétesz</>
                     )}
                   </Button>
 

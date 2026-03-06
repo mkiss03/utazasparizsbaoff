@@ -17,11 +17,11 @@ export default async function MarketplacePage({ searchParams }: Props) {
   const { city } = await searchParams
   const supabase = await createClient()
 
-  // Fetch published bundles
+  // Fetch published bundles (is_published OR status = 'published')
   const { data: bundles } = await supabase
     .from('bundles')
     .select('*')
-    .eq('is_published', true)
+    .or('is_published.eq.true,status.eq.published')
     .order('created_at', { ascending: false })
 
   return (
