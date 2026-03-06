@@ -15,11 +15,6 @@ ALTER TABLE bundle_topics ADD COLUMN IF NOT EXISTS author_id UUID REFERENCES pro
 ALTER TABLE bundle_topics ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT false;
 ALTER TABLE bundle_topics ADD COLUMN IF NOT EXISTS estimated_time_minutes INTEGER DEFAULT 10;
 
--- Populate topic_order from sort_order (if that column existed from old migration)
-UPDATE bundle_topics
-SET topic_order = COALESCE(sort_order, 0)
-WHERE topic_order = 0;
-
 -- Populate slug for any existing rows that don't have one
 UPDATE bundle_topics
 SET slug = lower(regexp_replace(
