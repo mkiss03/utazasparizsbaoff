@@ -92,7 +92,7 @@ export default function BundlesAdminPage() {
     mutationFn: async ({ id, is_published }: { id: string; is_published: boolean }) => {
       const { error } = await supabase
         .from('bundles')
-        .update({ is_published, status: is_published ? 'published' : 'draft' })
+        .update({ is_published })
         .eq('id', id)
       if (error) throw error
     },

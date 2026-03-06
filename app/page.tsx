@@ -77,7 +77,7 @@ export default async function Home() {
   const { data: firstBundle } = await supabase
     .from('bundles')
     .select('slug')
-    .or('is_published.eq.true,status.eq.published')
+    .eq('is_published', true)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()

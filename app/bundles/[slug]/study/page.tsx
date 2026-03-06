@@ -20,7 +20,7 @@ export default async function StudyPage({ params, searchParams }: Props) {
     .from('bundles')
     .select('*')
     .eq('slug', slug)
-    .or('is_published.eq.true,status.eq.published')
+    .eq('is_published', true)
     .maybeSingle()
 
   if (!bundle) {
