@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import FlipCard from '@/components/FlipCard'
 import {
@@ -15,14 +16,17 @@ import {
   GraduationCap,
   BookOpen,
   ChevronRight,
+  ShoppingCart,
 } from 'lucide-react'
 import type { Bundle, BundleTopic, Flashcard } from '@/lib/types/database'
+import { purchaseBundle } from '@/app/actions/purchaseBundle'
 
 interface BundleDetailClientProps {
   bundle: Bundle
   topics: BundleTopic[]
   flashcards: Flashcard[]
   hasAccess: boolean
+  userId?: string
 }
 
 const difficultyLabels: Record<string, string> = {
@@ -42,8 +46,24 @@ export default function BundleDetailClient({
   topics,
   flashcards,
   hasAccess,
+  userId,
 }: BundleDetailClientProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0)
+  const [isPending, startTransition] = useTransition()
+  const [purchaseError, setPurchaseError] = useState<string | null>(null)
+  const router = useRouter()
+
+  const handlePurchase = () => {
+    setPurchaseError(null)
+    startTransition(async () => {
+      const result = await purchaseBundle(bundle.id)
+      if (result.success) {
+        router.refresh()
+      } else {
+        setPurchaseError(result.error || 'Hiba történt a vásárlás során.')
+      }
+    })
+  }
   const hasTopics = topics.length > 0
 
   // Demo cards: use is_demo flag, fallback to first 3
@@ -128,15 +148,29 @@ export default function BundleDetailClient({
                   <h3 className="font-semibold">Korlátozott előnézet</h3>
                 </div>
                 <p className="mb-4 text-sm text-slate-700">
-                  Nyisd fel az összes tartalmat egy {bundle.city} City Pass vásárlásával!
+                  Vásárold meg ezt a csomagot és nyisd fel az összes témakört!
                 </p>
-                <Link
-                  href={`/pricing?city=${encodeURIComponent(bundle.city)}`}
-                  className="inline-flex items-center gap-2 rounded-full bg-french-red-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-red-600"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Teljes hozzáférés feloldása
-                </Link>
+                {purchaseError && (
+                  <p className="mb-3 rounded-lg bg-red-100 px-3 py-2 text-sm text-red-600">{purchaseError}</p>
+                )}
+                {userId ? (
+                  <button
+                    onClick={handlePurchase}
+                    disabled={isPending}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-french-red-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    {isPending ? 'Feldolgozás...' : `Megvásárolás${bundle.price > 0 ? ` — ${bundle.price} €` : ' — Ingyenes'}`}
+                  </button>
+                ) : (
+                  <Link
+                    href={`/marketplace/login?redirect=/bundles/${bundle.slug}`}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-french-red-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-red-600"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Bejelentkezés a vásárláshoz
+                  </Link>
+                )}
               </div>
             )}
 

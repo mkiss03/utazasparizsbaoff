@@ -37,9 +37,7 @@ export default async function StudyPage({ params, searchParams }: Props) {
     .from('user_purchases')
     .select('id')
     .eq('user_id', user.id)
-    .eq('city', bundle.city)
-    .eq('is_active', true)
-    .gte('expires_at', new Date().toISOString())
+    .eq('bundle_id', bundle.id)
     .maybeSingle()
 
   if (!activePurchase) {

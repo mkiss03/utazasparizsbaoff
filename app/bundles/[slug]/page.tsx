@@ -43,7 +43,7 @@ export default async function BundleDetailPage({ params }: Props) {
     .eq('bundle_id', bundle.id)
     .order('card_order', { ascending: true })
 
-  // Check if user has an active City Pass for this bundle's city
+  // Check if user purchased this bundle
   let hasAccess = false
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
@@ -51,9 +51,7 @@ export default async function BundleDetailPage({ params }: Props) {
       .from('user_purchases')
       .select('id')
       .eq('user_id', user.id)
-      .eq('city', bundle.city)
-      .eq('is_active', true)
-      .gte('expires_at', new Date().toISOString())
+      .eq('bundle_id', bundle.id)
       .maybeSingle()
     hasAccess = !!activePurchase
   }
@@ -66,6 +64,7 @@ export default async function BundleDetailPage({ params }: Props) {
         topics={(topics as BundleTopic[]) || []}
         flashcards={(flashcards as Flashcard[]) || []}
         hasAccess={hasAccess}
+        userId={user?.id}
       />
       <Footer />
     </main>
