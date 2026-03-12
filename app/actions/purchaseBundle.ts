@@ -12,15 +12,18 @@ export async function purchaseBundle(bundleId: string): Promise<{ success: boole
   }
 
   // Fetch bundle details
-  const { data: bundle } = await supabase
+  const { data: bundle, error: bundleError } = await supabase
     .from('bundles')
     .select('id, title, price, author_id')
     .eq('id', bundleId)
     .eq('is_published', true)
-    .single()
+    .maybeSingle()
 
+  if (bundleError) {
+    return { success: false, error: 'Adatbázis hiba: ' + bundleError.message }
+  }
   if (!bundle) {
-    return { success: false, error: 'A csomag nem található.' }
+    return { success: false, error: 'A csomag nem található vagy nem elérhető.' }
   }
 
   // Check if user already purchased this bundle
@@ -36,46 +39,56 @@ export async function purchaseBundle(bundleId: string): Promise<{ success: boole
   }
 
   const price = Number(bundle.price) || 0
-  const commissionRate = 0.15
-  const commissionAmount = +(price * commissionRate).toFixed(2)
-  const vendorAmount = +(price - commissionAmount).toFixed(2)
   const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
 
-  // Create order
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
-      order_number: orderNumber,
-      user_id: user.id,
-      bundle_id: bundleId,
-      vendor_id: bundle.author_id,
-      amount: price,
-      commission_amount: commissionAmount,
-      vendor_amount: vendorAmount,
-      status: 'completed',
-      payment_method: 'mock',
-    })
-    .select('id')
-    .single()
+  // Try to create order record (orders table may not exist yet)
+  let orderId: string | null = null
+  try {
+    const commissionRate = 0.15
+    const commissionAmount = +(price * commissionRate).toFixed(2)
+    const vendorAmount = +(price - commissionAmount).toFixed(2)
 
-  if (orderError || !order) {
-    return { success: false, error: 'Rendelés rögzítése sikertelen: ' + orderError?.message }
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        order_number: orderNumber,
+        user_id: user.id,
+        bundle_id: bundleId,
+        vendor_id: bundle.author_id,
+        amount: price,
+        commission_amount: commissionAmount,
+        vendor_amount: vendorAmount,
+        status: 'completed',
+        payment_method: 'mock',
+      })
+      .select('id')
+      .single()
+
+    if (!orderError && order) {
+      orderId = order.id
+    }
+  } catch {
+    // orders table may not exist — continue without it
   }
 
   // Create user purchase record
+  const purchaseData: Record<string, unknown> = {
+    user_id: user.id,
+    bundle_id: bundleId,
+  }
+  if (orderId) {
+    purchaseData.order_id = orderId
+  }
+
   const { error: purchaseError } = await supabase
     .from('user_purchases')
-    .insert({
-      user_id: user.id,
-      bundle_id: bundleId,
-      order_id: order.id,
-    })
+    .insert(purchaseData)
 
   if (purchaseError) {
     return { success: false, error: 'Hozzáférés aktiválása sikertelen: ' + purchaseError.message }
   }
 
-  revalidatePath(`/bundles`)
+  revalidatePath(`/bundles/${bundleId}`)
   revalidatePath(`/marketplace`)
 
   return { success: true }
