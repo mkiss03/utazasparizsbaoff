@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import Image from 'next/image'

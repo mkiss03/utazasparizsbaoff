@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import MuseumGuidePurchaseClient from '@/components/museum-guide/MuseumGuidePurchaseClient'
 

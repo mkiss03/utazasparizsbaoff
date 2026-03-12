@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import { CheckCircle, Sparkles, ArrowRight, MapPin } from 'lucide-react'
 

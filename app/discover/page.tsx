@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 import Link from 'next/link'
