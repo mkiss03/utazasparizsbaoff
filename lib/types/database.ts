@@ -1,5 +1,17 @@
 export type UserRole = 'super_admin' | 'vendor' | 'customer'
 
+export interface MenuSetting {
+  id: string
+  menu_key: string
+  label: string
+  href: string
+  is_active: boolean
+  sort_order: number
+  parent_group: 'parisian_experiences' | 'inspiration' | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Profile {
   id: string
   hero_title: string

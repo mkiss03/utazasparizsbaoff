@@ -24,6 +24,7 @@ import {
   Paintbrush,
   Store,
   CheckSquare,
+  Menu,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -50,6 +51,12 @@ const allNavItems: NavItem[] = [
     title: 'Vizuális Szerkesztő',
     href: '/admin/page-builder',
     icon: Paintbrush,
+    type: 'item',
+  },
+  {
+    title: 'Menü beállítások',
+    href: '/admin/menu',
+    icon: Menu,
     type: 'item',
   },
   {

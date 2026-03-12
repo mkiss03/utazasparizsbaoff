@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import Navigation from '@/components/Navigation'
+import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
 import HeroSection from '@/components/sections/HeroSection'
 import AboutSection from '@/components/sections/AboutSection'
 import ServicesSection from '@/components/sections/ServicesSection'

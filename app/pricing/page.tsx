@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import Navigation from '@/components/Navigation'
+import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import PricingClient from '@/components/pricing/PricingClient'
 import type { CityPricing } from '@/lib/types/database'

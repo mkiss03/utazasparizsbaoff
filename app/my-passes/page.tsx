@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Navigation from '@/components/Navigation'
+import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import MyPassesClient from '@/components/passes/MyPassesClient'
 

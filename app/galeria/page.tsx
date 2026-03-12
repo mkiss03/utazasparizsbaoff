@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import Navigation from '@/components/Navigation'
+import NavigationWrapper as Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 
 const galleryImages = [
