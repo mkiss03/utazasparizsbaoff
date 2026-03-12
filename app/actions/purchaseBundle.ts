@@ -14,7 +14,7 @@ export async function purchaseBundle(bundleId: string): Promise<{ success: boole
   // Fetch bundle details
   const { data: bundle, error: bundleError } = await supabase
     .from('bundles')
-    .select('id, title, price, author_id')
+    .select('id, title, author_id, city')
     .eq('id', bundleId)
     .eq('is_published', true)
     .maybeSingle()
@@ -38,7 +38,15 @@ export async function purchaseBundle(bundleId: string): Promise<{ success: boole
     return { success: false, error: 'Ezt a csomagot már megvásároltad!' }
   }
 
-  const price = Number(bundle.price) || 0
+  // Get price from city_pricing table
+  const { data: cityPricing } = await supabase
+    .from('city_pricing')
+    .select('price')
+    .eq('city', bundle.city)
+    .eq('is_active', true)
+    .maybeSingle()
+
+  const price = Number(cityPricing?.price) || 0
   const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
 
   // Try to create order record (orders table may not exist yet)
