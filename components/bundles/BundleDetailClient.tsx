@@ -164,7 +164,7 @@ export default function BundleDetailClient({
                   </button>
                 ) : (
                   <Link
-                    href={`/marketplace/login?redirect=/bundles/${bundle.slug}`}
+                    href={`/auth/login?redirect=/bundles/${bundle.slug}`}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-french-red-500 px-6 py-3 font-semibold text-white transition-all hover:bg-french-red-600"
                   >
                     <Sparkles className="h-4 w-4" />
