@@ -6,6 +6,7 @@ import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import ParisDistrictGuide from '@/components/sections/ParisDistrictGuide'
 import MuseumGuidePromoSection from '@/components/sections/MuseumGuidePromoSection'
+import ExperiencesPromoSection from '@/components/sections/ExperiencesPromoSection'
 import WalkingToursSection from '@/components/sections/WalkingToursSection'
 import LouvreToursSection from '@/components/sections/LouvreToursSection'
 import BlogSection from '@/components/sections/BlogSection'
@@ -14,7 +15,7 @@ import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
 import BoatTourModal from '@/components/BoatTourModal'
-import type { Profile, Post, LouvreTour } from '@/lib/types/database'
+import type { Profile, Post, LouvreTour, Experience } from '@/lib/types/database'
 import { defaultLandingPageSettings, DEFAULT_SECTION_ORDER, type LandingPageSettings } from '@/lib/types/landing-page'
 
 // Force dynamic rendering to avoid build-time database access
@@ -81,6 +82,14 @@ export default async function Home() {
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
+
+  // Fetch active experiences for promo section
+  const { data: activeExperiences } = await supabase
+    .from('experiences')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: true })
+    .limit(4)
 
   // Fetch landing page settings (page builder)
   const { data: landingPageRow } = await supabase
@@ -170,6 +179,14 @@ export default async function Home() {
       case 'museumGuidePromo':
         return (
           <MuseumGuidePromoSection key={key} pageSettings={pageSettings.museumGuidePromo} />
+        )
+      case 'experiencesPromo':
+        return (
+          <ExperiencesPromoSection
+            key={key}
+            settings={pageSettings.experiencesPromo}
+            experiences={(activeExperiences || []) as Experience[]}
+          />
         )
       case 'testimonials':
         return (

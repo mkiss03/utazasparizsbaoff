@@ -97,6 +97,29 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Handle Experience purchase
+    if (metadata.product === 'experience') {
+      const { data: existing } = await supabase
+        .from('experience_purchases')
+        .select('id')
+        .eq('notes', `stripe:${session.id}`)
+        .maybeSingle()
+
+      if (!existing) {
+        await supabase.from('experience_purchases').insert({
+          experience_id: metadata.experience_id,
+          guest_name: metadata.guest_name,
+          guest_email: metadata.guest_email,
+          guest_phone: metadata.guest_phone || null,
+          quantity: parseInt(metadata.quantity || '1', 10),
+          unit_price: parseFloat(metadata.unit_price || '0'),
+          total_amount: parseFloat(metadata.total_amount || '0'),
+          payment_status: 'completed',
+          notes: `stripe:${session.id}`,
+        })
+      }
+    }
+
     // Handle Louvre Tour purchase
     if (metadata.product === 'louvre_tour') {
       const { data: existing } = await supabase

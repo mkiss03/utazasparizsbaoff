@@ -34,6 +34,7 @@ import AboutEditor from '@/components/admin/page-builder/editors/AboutEditor'
 import ServicesEditor from '@/components/admin/page-builder/editors/ServicesEditor'
 import FlashcardsPromoEditor from '@/components/admin/page-builder/editors/FlashcardsPromoEditor'
 import MuseumGuidePromoEditor from '@/components/admin/page-builder/editors/MuseumGuidePromoEditor'
+import ExperiencesPromoEditor from '@/components/admin/page-builder/editors/ExperiencesPromoEditor'
 import TestimonialsEditor from '@/components/admin/page-builder/editors/TestimonialsEditor'
 import BlogEditor from '@/components/admin/page-builder/editors/BlogEditor'
 import ContactEditor from '@/components/admin/page-builder/editors/ContactEditor'
@@ -53,6 +54,7 @@ const editorComponents: Record<string, React.ComponentType<any>> = {
   flashcardsPromo: FlashcardsPromoEditor,
   parisDistrictGuide: ParisDistrictGuideEditor,
   museumGuidePromo: MuseumGuidePromoEditor,
+  experiencesPromo: ExperiencesPromoEditor,
   testimonials: TestimonialsEditor,
   blog: BlogEditor,
   contact: ContactEditor,

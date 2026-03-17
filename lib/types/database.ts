@@ -1,5 +1,38 @@
 export type UserRole = 'super_admin' | 'vendor' | 'customer'
 
+export type ExperienceDesignAccent = 'VR_3D' | 'GASTRONOMY'
+
+export interface Experience {
+  id: string
+  slug: string
+  title: string
+  short_description: string
+  full_description: string
+  price: number
+  group_size: string | null
+  duration: string | null
+  image: string
+  design_accent: ExperienceDesignAccent
+  includes: string[]
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ExperiencePurchase {
+  id: string
+  experience_id: string
+  guest_name: string
+  guest_email: string
+  guest_phone: string | null
+  quantity: number
+  unit_price: number
+  total_amount: number
+  payment_status: string
+  notes: string | null
+  created_at: string
+}
+
 export interface MenuSetting {
   id: string
   menu_key: string

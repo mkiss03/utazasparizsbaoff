@@ -25,6 +25,7 @@ import {
   Store,
   CheckSquare,
   Menu,
+  Sparkles,
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -131,6 +132,12 @@ const allNavItems: NavItem[] = [
     title: 'Sétatúrák',
     href: '/admin/walking-tours',
     icon: Footprints,
+    type: 'item',
+  },
+  {
+    title: 'Párizsi Élmények',
+    href: '/admin/experiences',
+    icon: Sparkles,
     type: 'item',
   },
   {
