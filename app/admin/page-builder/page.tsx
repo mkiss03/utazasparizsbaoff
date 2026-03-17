@@ -188,7 +188,9 @@ export default function PageBuilderPage() {
       const savedSettings = dbRow.settings as any
       // Handle sectionOrder (array) separately
       if (Array.isArray(savedSettings.sectionOrder)) {
-        merged.sectionOrder = savedSettings.sectionOrder
+        // Append any new sections not yet in the saved order (e.g. newly added sections)
+        const missingKeys = DEFAULT_SECTION_ORDER.filter((k) => !savedSettings.sectionOrder.includes(k))
+        merged.sectionOrder = [...savedSettings.sectionOrder, ...missingKeys]
       }
       for (const key of Object.keys(defaultLandingPageSettings) as (keyof LandingPageSettings)[]) {
         if (key === 'sectionOrder') continue // already handled

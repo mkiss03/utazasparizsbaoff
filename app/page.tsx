@@ -106,7 +106,9 @@ export default async function Home() {
     const merged = { ...defaultLandingPageSettings } as any
     // Handle sectionOrder (array) separately
     if (Array.isArray(saved.sectionOrder)) {
-      merged.sectionOrder = saved.sectionOrder
+      // Append any new sections not yet in the saved order (e.g. newly added sections)
+      const missingKeys = DEFAULT_SECTION_ORDER.filter((k) => !saved.sectionOrder.includes(k))
+      merged.sectionOrder = [...saved.sectionOrder, ...missingKeys]
     }
     for (const key of Object.keys(defaultLandingPageSettings)) {
       if (key === 'sectionOrder') continue // already handled

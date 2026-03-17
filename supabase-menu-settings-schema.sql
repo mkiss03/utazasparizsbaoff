@@ -52,6 +52,7 @@ INSERT INTO menu_settings (menu_key, label, href, is_active, sort_order, parent_
   ('walking_tours',  'Sétatúrák',        '/walking-tours',  true, 1, 'parisian_experiences'),
   ('louvre_guide',   'Louvre Guide',      '/museum-guide',   true, 2, 'parisian_experiences'),
   ('bundles',        'Kártyacsomagok',    '/marketplace',    true, 3, 'parisian_experiences'),
+  ('experiences',    'Párizsi Élmények',  '/elmenyek',       true, 4, 'parisian_experiences'),
   ('blog',           'Párizsi Napló',     '/blog',           true, 1, 'inspiration'),
   ('gallery',        'Galéria',           '/galeria',        true, 2, 'inspiration')
 ON CONFLICT (menu_key) DO NOTHING;
