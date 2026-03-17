@@ -18,6 +18,7 @@ export interface HeroSectionSettings {
   badgeTextColor: string
   ctaBgColor: string
   ctaTextColor: string
+  showCityPassButton: boolean
 }
 
 // === ABOUT SECTION ===
@@ -308,6 +309,7 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     badgeTextColor: '#4A4A4A',
     ctaBgColor: '#C4A882',
     ctaTextColor: '#FFFFFF',
+    showCityPassButton: true,
   },
   about: {
     visible: true,
