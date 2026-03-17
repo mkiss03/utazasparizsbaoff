@@ -4,7 +4,10 @@
 -- Run this in Supabase SQL Editor
 -- ============================================
 
-CREATE TYPE IF NOT EXISTS experience_design_accent AS ENUM ('VR_3D', 'GASTRONOMY');
+DO $$ BEGIN
+  CREATE TYPE experience_design_accent AS ENUM ('VR_3D', 'GASTRONOMY');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE TABLE IF NOT EXISTS experiences (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
