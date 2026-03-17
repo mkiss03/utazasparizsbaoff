@@ -75,7 +75,6 @@ export default async function ElmenyekPage() {
                       alt={exp.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={() => {}}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                     {/* Accent badge */}
