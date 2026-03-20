@@ -55,9 +55,17 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Ship,
 }
 
-export default function BoatTourModal() {
+interface BoatTourModalProps {
+  hideFab?: boolean
+  externalOpen?: boolean
+  onExternalClose?: () => void
+}
+
+export default function BoatTourModal({ hideFab, externalOpen, onExternalClose }: BoatTourModalProps = {}) {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const effectiveOpen = externalOpen !== undefined ? externalOpen : isOpen
+  const handleClose = () => { setIsOpen(false); onExternalClose?.() }
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(0)
   const [showMap, setShowMap] = useState(false)
@@ -139,7 +147,7 @@ export default function BoatTourModal() {
 
   // Reset step when modal closes
   useEffect(() => {
-    if (!isOpen) {
+    if (!effectiveOpen) {
       const timer = setTimeout(() => {
         setCurrentStep(1)
         setDirection(0)
@@ -148,7 +156,7 @@ export default function BoatTourModal() {
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [isOpen])
+  }, [effectiveOpen])
 
   // Navigate to next/previous step
   const paginate = (newDirection: number) => {
@@ -168,7 +176,7 @@ export default function BoatTourModal() {
 
   // Handle CTA click - close modal and scroll to contact form
   const handleOrderClick = () => {
-    setIsOpen(false)
+    handleClose()
 
     // Wait for modal close animation, then scroll
     setTimeout(() => {
@@ -581,7 +589,7 @@ export default function BoatTourModal() {
     <>
       {/* Floating Action Button */}
       <AnimatePresence>
-        {isVisible && !isOpen && (
+        {isVisible && !effectiveOpen && !hideFab && (
           <motion.button
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -603,14 +611,14 @@ export default function BoatTourModal() {
 
       {/* Modal */}
       <AnimatePresence>
-        {isOpen && (
+        {effectiveOpen && (
           <>
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
               className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm"
             />
 
@@ -635,7 +643,7 @@ export default function BoatTourModal() {
                   transition={{ delay: 0.25 }}
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleClose}
                   className="absolute right-3 top-3 md:right-4 md:top-4 z-20 flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full bg-white/90 shadow-md hover:bg-white transition-colors"
                   style={{ color: styles.typography.headingColor }}
                 >
