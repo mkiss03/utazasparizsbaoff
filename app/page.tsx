@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/NavigationWrapper'
 import HeroSection from '@/components/sections/HeroSection'
 import AboutSection from '@/components/sections/AboutSection'
 import ServicesSection from '@/components/sections/ServicesSection'
 import ParisFlashcardsPromoSection from '@/components/sections/ParisFlashcardsPromoSection'
 import ParisDistrictGuide from '@/components/sections/ParisDistrictGuide'
 import MuseumGuidePromoSection from '@/components/sections/MuseumGuidePromoSection'
+import ExperiencesPromoSection from '@/components/sections/ExperiencesPromoSection'
 import WalkingToursSection from '@/components/sections/WalkingToursSection'
 import LouvreToursSection from '@/components/sections/LouvreToursSection'
 import BlogSection from '@/components/sections/BlogSection'
@@ -13,8 +14,8 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
-import BoatTourModal from '@/components/BoatTourModal'
-import type { Profile, Post, LouvreTour } from '@/lib/types/database'
+import FloatingExperiencesHub from '@/components/FloatingExperiencesHub'
+import type { Profile, Post, LouvreTour, Experience } from '@/lib/types/database'
 import { defaultLandingPageSettings, DEFAULT_SECTION_ORDER, type LandingPageSettings } from '@/lib/types/landing-page'
 
 // Force dynamic rendering to avoid build-time database access
@@ -73,6 +74,23 @@ export default async function Home() {
     .eq('status', 'published')
     .order('created_at', { ascending: true })
 
+  // Fetch first published bundle slug for the flashcards promo section
+  const { data: firstBundle } = await supabase
+    .from('bundles')
+    .select('slug')
+    .eq('is_published', true)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  // Fetch active experiences for promo section
+  const { data: activeExperiences } = await supabase
+    .from('experiences')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: true })
+    .limit(4)
+
   // Fetch landing page settings (page builder)
   const { data: landingPageRow } = await supabase
     .from('landing_page_settings')
@@ -88,7 +106,9 @@ export default async function Home() {
     const merged = { ...defaultLandingPageSettings } as any
     // Handle sectionOrder (array) separately
     if (Array.isArray(saved.sectionOrder)) {
-      merged.sectionOrder = saved.sectionOrder
+      // Append any new sections not yet in the saved order (e.g. newly added sections)
+      const missingKeys = DEFAULT_SECTION_ORDER.filter((k) => !saved.sectionOrder.includes(k))
+      merged.sectionOrder = [...saved.sectionOrder, ...missingKeys]
     }
     for (const key of Object.keys(defaultLandingPageSettings)) {
       if (key === 'sectionOrder') continue // already handled
@@ -154,13 +174,21 @@ export default async function Home() {
         )
       case 'flashcardsPromo':
         return (
-          <ParisFlashcardsPromoSection key={key} pageSettings={pageSettings.flashcardsPromo} />
+          <ParisFlashcardsPromoSection key={key} pageSettings={pageSettings.flashcardsPromo} bundleSlug={firstBundle?.slug} />
         )
       case 'parisDistrictGuide':
         return <ParisDistrictGuide key={key} />
       case 'museumGuidePromo':
         return (
           <MuseumGuidePromoSection key={key} pageSettings={pageSettings.museumGuidePromo} />
+        )
+      case 'experiencesPromo':
+        return (
+          <ExperiencesPromoSection
+            key={key}
+            settings={pageSettings.experiencesPromo}
+            experiences={(activeExperiences || []) as Experience[]}
+          />
         )
       case 'testimonials':
         return (
@@ -207,7 +235,7 @@ export default async function Home() {
           <Footer key={key} staticTexts={textsMap} pageSettings={pageSettings.footer} />
         )
       case 'boatTour':
-        return <BoatTourModal key={key} />
+        return <FloatingExperiencesHub key={key} visible={ps['boatTour']?.visible} />
       default:
         return null
     }

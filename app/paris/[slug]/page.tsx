@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import ParisTopicDetailClient from '@/components/paris/ParisTopicDetailClient'
 import type { Bundle, Flashcard } from '@/lib/types/database'

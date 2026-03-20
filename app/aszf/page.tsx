@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import { createClient } from '@/lib/supabase/server'
 import { FileText } from 'lucide-react'

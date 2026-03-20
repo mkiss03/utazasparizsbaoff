@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import CheckoutClient from '@/components/checkout/CheckoutClient'
 import type { CityPricing } from '@/lib/types/database'

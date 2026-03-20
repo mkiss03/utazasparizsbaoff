@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
+import Navigation from '@/components/NavigationWrapper'
 import Footer from '@/components/Footer'
 import { CheckCircle, Landmark, Mail, ArrowRight } from 'lucide-react'
 

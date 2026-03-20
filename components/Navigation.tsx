@@ -1,47 +1,133 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { Menu, X, ChevronDown } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import type { MenuSetting } from '@/lib/types/database'
 
-export default function Navigation() {
+interface NavigationProps {
+  menuSettings?: MenuSetting[]
+}
+
+// Default fallback settings when DB table not seeded yet
+const DEFAULT_SETTINGS: MenuSetting[] = [
+  { id: '1', menu_key: 'walking_tours',  label: 'Sétatúrák',      href: '/walking-tours', is_active: true, sort_order: 1, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
+  { id: '2', menu_key: 'louvre_guide',   label: 'Louvre Guide',   href: '/museum-guide',  is_active: true, sort_order: 2, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
+  { id: '3', menu_key: 'bundles',        label: 'Kártyacsomagok', href: '/marketplace',   is_active: true, sort_order: 3, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
+  { id: '4', menu_key: 'blog',           label: 'Párizsi Napló',  href: '/blog',          is_active: true, sort_order: 1, parent_group: 'inspiration',          created_at: '', updated_at: '' },
+  { id: '5', menu_key: 'gallery',        label: 'Galéria',        href: '/galeria',        is_active: true, sort_order: 2, parent_group: 'inspiration',          created_at: '', updated_at: '' },
+]
+
+export default function Navigation({ menuSettings }: NavigationProps) {
+  const settings = menuSettings && menuSettings.length > 0 ? menuSettings : DEFAULT_SETTINGS
+
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
   const { scrollY } = useScroll()
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.98)']
+    ['rgba(250, 247, 242, 0)', 'rgba(250, 247, 242, 0.98)']
   )
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navItems: { name: string; href: string; target?: string }[] = [
-    { name: 'Kezdőlap', href: '/' },
-    { name: 'Rólam', href: '/#about' },
-    { name: 'Szolgáltatások', href: '/#services' },
-    { name: 'Sétatúrák', href: '/walking-tours' },
-    { name: 'Louvre Guide', href: '/museum-guide' },
-    { name: 'Városbérletek', href: '/pricing' },
-    { name: 'Galéria', href: '/galeria' },
-    { name: 'Párizsi Napló', href: '/blog' },
-    { name: 'Kapcsolat', href: '/#contact' },
-    { name: 'Kártyacsomagok', href: '/marketplace' },
-  ]
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  // Close mobile menu on resize
+  useEffect(() => {
+    const handler = () => { if (window.innerWidth >= 768) setIsOpen(false) }
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  const activeByGroup = (group: string) =>
+    settings.filter((s) => s.parent_group === group && s.is_active)
+      .sort((a, b) => a.sort_order - b.sort_order)
+
+  const experienceItems = activeByGroup('parisian_experiences')
+  const inspirationItems = activeByGroup('inspiration')
+
+  const DropdownMenu = ({ items, groupKey }: { items: MenuSetting[]; groupKey: string }) => {
+    if (items.length === 0) return null
+    const isOpen = openDropdown === groupKey
+    return (
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="absolute left-1/2 top-full mt-2 w-52 -translate-x-1/2 overflow-hidden rounded-xl border border-parisian-beige-200 bg-white shadow-xl"
+          >
+            {items.map((item) => (
+              <a
+                key={item.menu_key}
+                href={item.href}
+                onClick={() => setOpenDropdown(null)}
+                className="block px-5 py-3 text-sm font-medium text-parisian-grey-700 transition-colors hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+              >
+                {item.label}
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    )
+  }
+
+  const DesktopDropdownTrigger = ({
+    label,
+    groupKey,
+    items,
+  }: {
+    label: string
+    groupKey: string
+    items: MenuSetting[]
+  }) => {
+    if (items.length === 0) return null
+    const active = openDropdown === groupKey
+    return (
+      <div className="relative" ref={groupKey === 'parisian_experiences' ? dropdownRef : undefined}>
+        <button
+          onClick={() => setOpenDropdown(active ? null : groupKey)}
+          className="flex items-center gap-1 font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
+        >
+          {label}
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-200 ${active ? 'rotate-180' : ''}`}
+          />
+        </button>
+        <DropdownMenu items={items} groupKey={groupKey} />
+      </div>
+    )
+  }
 
   return (
     <>
       <motion.nav
         style={{ backgroundColor }}
         className={`fixed left-0 right-0 top-0 z-40 transition-all duration-300 ${
-          isScrolled ? 'shadow-lg backdrop-blur-md' : ''
+          isScrolled ? 'shadow-md backdrop-blur-md' : ''
         }`}
       >
         <div className="container mx-auto px-4">
@@ -54,7 +140,7 @@ export default function Navigation() {
               transition={{ duration: 0.5 }}
               className="flex items-center gap-3"
             >
-              <div className="relative h-20 w-20">
+              <div className="relative h-20 w-20 flex-shrink-0">
                 <Image
                   src="/images/logofix-removebg-preview.png"
                   alt="Utazás Párizsba"
@@ -63,7 +149,7 @@ export default function Navigation() {
                   priority
                 />
               </div>
-              <span className="font-playfair text-xl font-bold text-parisian-grey-800 hidden sm:inline">
+              <span className="hidden font-playfair text-xl font-bold text-parisian-grey-800 sm:inline">
                 Utazás <span className="text-parisian-beige-500">Párizsba</span>
               </span>
             </motion.a>
@@ -73,27 +159,39 @@ export default function Navigation() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="hidden items-center gap-8 md:flex"
+              className="hidden items-center gap-7 md:flex"
             >
-              {navItems.map((item, index) => (
-                <motion.a
-                  key={item.name}
-                  href={item.href}
-                  target={item.target}
-                  rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="relative font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
-                >
-                  {item.name}
-                  <motion.span
-                    className="absolute -bottom-1 left-0 h-0.5 w-0 bg-parisian-beige-400 transition-all duration-300 hover:w-full"
-                    whileHover={{ width: '100%' }}
-                  />
-                </motion.a>
-              ))}
+              {/* Rólam */}
+              <a
+                href="/#about"
+                className="font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
+              >
+                Rólam
+              </a>
+
+              {/* Párizsi Élmények dropdown */}
+              <DesktopDropdownTrigger
+                label="Párizsi Élmények"
+                groupKey="parisian_experiences"
+                items={experienceItems}
+              />
+
+              {/* Inspiráció dropdown */}
+              <DesktopDropdownTrigger
+                label="Inspiráció"
+                groupKey="inspiration"
+                items={inspirationItems}
+              />
+
+              {/* Kapcsolat */}
+              <a
+                href="/#contact"
+                className="font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
+              >
+                Kapcsolat
+              </a>
+
+              {/* Hírlevél CTA */}
               <motion.a
                 href="#newsletter"
                 whileHover={{ scale: 1.05 }}
@@ -105,70 +203,148 @@ export default function Navigation() {
             </motion.div>
 
             {/* Mobile Menu Button */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+            <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden"
+              className="md:hidden p-2"
               aria-label="Toggle menu"
             >
               {isOpen ? (
-                <X className="h-8 w-8 text-parisian-grey-700" />
+                <X className="h-7 w-7 text-parisian-grey-700" />
               ) : (
-                <Menu className="h-8 w-8 text-parisian-grey-700" />
+                <Menu className="h-7 w-7 text-parisian-grey-700" />
               )}
-            </motion.button>
+            </button>
           </div>
         </div>
       </motion.nav>
 
       {/* Mobile Menu */}
-      <motion.div
-        initial={{ opacity: 0, x: '100%' }}
-        animate={{
-          opacity: isOpen ? 1 : 0,
-          x: isOpen ? 0 : '100%',
-        }}
-        transition={{ duration: 0.3 }}
-        className={`fixed right-0 top-24 z-30 h-screen w-full bg-white/98 backdrop-blur-lg shadow-xl md:hidden ${
-          isOpen ? 'pointer-events-auto' : 'pointer-events-none'
-        }`}
-      >
-        <div className="flex flex-col items-center gap-8 p-8">
-          {navItems.map((item, index) => (
-            <motion.a
-              key={item.name}
-              href={item.href}
-              target={item.target}
-              rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{
-                opacity: isOpen ? 1 : 0,
-                x: isOpen ? 0 : 50,
-              }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-semibold text-parisian-grey-800"
-            >
-              {item.name}
-            </motion.a>
-          ))}
-          <motion.a
-            href="#newsletter"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-              opacity: isOpen ? 1 : 0,
-              scale: isOpen ? 1 : 0.8,
-            }}
-            transition={{ duration: 0.3, delay: 0.4 }}
-            onClick={() => setIsOpen(false)}
-            className="rounded-full bg-parisian-beige-400 px-8 py-3 text-xl font-semibold text-white"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="fixed right-0 top-24 z-30 h-[calc(100vh-6rem)] w-full overflow-y-auto bg-white/98 shadow-xl backdrop-blur-lg md:hidden"
           >
-            Hírlevél
-          </motion.a>
-        </div>
-      </motion.div>
+            <div className="flex flex-col gap-1 p-6">
+              {/* Rólam */}
+              <a
+                href="/#about"
+                onClick={() => setIsOpen(false)}
+                className="rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+              >
+                Rólam
+              </a>
+
+              {/* Párizsi Élmények accordion */}
+              {experienceItems.length > 0 && (
+                <div>
+                  <button
+                    onClick={() =>
+                      setMobileOpenGroup(
+                        mobileOpenGroup === 'parisian_experiences' ? null : 'parisian_experiences'
+                      )
+                    }
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+                  >
+                    Párizsi Élmények
+                    <ChevronDown
+                      className={`h-5 w-5 transition-transform ${
+                        mobileOpenGroup === 'parisian_experiences' ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {mobileOpenGroup === 'parisian_experiences' && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden pl-4"
+                      >
+                        {experienceItems.map((item) => (
+                          <a
+                            key={item.menu_key}
+                            href={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                          >
+                            {item.label}
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Inspiráció accordion */}
+              {inspirationItems.length > 0 && (
+                <div>
+                  <button
+                    onClick={() =>
+                      setMobileOpenGroup(
+                        mobileOpenGroup === 'inspiration' ? null : 'inspiration'
+                      )
+                    }
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+                  >
+                    Inspiráció
+                    <ChevronDown
+                      className={`h-5 w-5 transition-transform ${
+                        mobileOpenGroup === 'inspiration' ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {mobileOpenGroup === 'inspiration' && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden pl-4"
+                      >
+                        {inspirationItems.map((item) => (
+                          <a
+                            key={item.menu_key}
+                            href={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                          >
+                            {item.label}
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Kapcsolat */}
+              <a
+                href="/#contact"
+                onClick={() => setIsOpen(false)}
+                className="rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+              >
+                Kapcsolat
+              </a>
+
+              {/* Hírlevél */}
+              <a
+                href="#newsletter"
+                onClick={() => setIsOpen(false)}
+                className="mx-4 mt-4 rounded-full bg-parisian-beige-400 px-8 py-3 text-center text-lg font-semibold text-white hover:bg-parisian-beige-500"
+              >
+                Hírlevél
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

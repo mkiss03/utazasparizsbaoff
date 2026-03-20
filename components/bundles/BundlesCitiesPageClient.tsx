@@ -70,7 +70,7 @@ export default function BundlesCitiesPageClient({ cities }: BundlesCitiesPageCli
           >
             {cities.map((cityData) => (
               <motion.div key={cityData.city} variants={itemVariants}>
-                <Link href={`/paris-flashcards`}>
+                <Link href={`/bundles/${cityData.bundles[0]?.slug || 'paris'}`}>
                   <div className="group relative h-full overflow-hidden rounded-2xl border-2 border-parisian-beige-200 bg-white shadow-lg transition-all hover:shadow-2xl hover:border-parisian-beige-400">
                     {/* Header - Gradient Background */}
                     <div className="bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 p-8 text-white">
@@ -154,17 +154,17 @@ export default function BundlesCitiesPageClient({ cities }: BundlesCitiesPageCli
           className="mt-20 rounded-2xl border-2 border-parisian-beige-200 bg-white p-8 text-center shadow-lg md:p-12"
         >
           <h3 className="mb-2 font-playfair text-2xl font-bold text-parisian-grey-800">
-            Egy Város Pass, korlátlan hozzáférés
+            Vásárolj csomagot, tanulj saját tempódban
           </h3>
           <p className="mb-6 max-w-2xl text-parisian-grey-600">
-            Egyetlen Pass vásárlásával az összes város összes tanulási csomagához hozzáférést kapsz. Tanulj a saját tempódban!
+            Minden csomag egyszeri vásárlással érhető el. Válaszd ki a számodra érdekes várost és kezdd el a tanulást!
           </p>
           <Link
-            href="/pricing"
+            href="/marketplace"
             className="inline-flex items-center gap-2 rounded-full bg-parisian-beige-400 px-8 py-3 font-semibold text-white transition-all hover:bg-parisian-beige-500"
           >
             <Sparkles className="h-4 w-4" />
-            Városbérletek megtekintése
+            Összes csomag megtekintése
           </Link>
         </motion.div>
       </div>
