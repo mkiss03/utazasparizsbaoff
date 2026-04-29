@@ -2,8 +2,9 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 import type { MenuSetting } from '@/lib/types/database'
 
 interface NavigationProps {
@@ -25,6 +26,18 @@ export default function Navigation({ menuSettings }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null)
+  const [navExperiences, setNavExperiences] = useState<{ slug: string; title: string }[]>([])
+
+  // Load active experiences for the dropdown
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('experiences')
+      .select('slug, title')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => { if (data) setNavExperiences(data as { slug: string; title: string }[]) })
+  }, [])
 
   const { scrollY } = useScroll()
   const backgroundColor = useTransform(
@@ -62,6 +75,16 @@ export default function Navigation({ menuSettings }: NavigationProps) {
   const inspirationItems = activeByGroup('inspiration')
   const serviceItems = activeByGroup('services')
 
+  // Fallback service items when DB not seeded yet
+  const FALLBACK_SERVICES = [
+    { label: 'Sétatúrák', href: '/#services' },
+    { label: 'Repülőtéri Transzfer', href: '/#services' },
+    { label: 'Programszervezés', href: '/#services' },
+  ]
+  const resolvedServiceItems = serviceItems.length > 0
+    ? serviceItems.map((s) => ({ label: s.label, href: s.href }))
+    : FALLBACK_SERVICES
+
   const openBoatTour = () => {
     window.dispatchEvent(new CustomEvent('open-boat-tour'))
     setOpenDropdown(null)
@@ -72,9 +95,8 @@ export default function Navigation({ menuSettings }: NavigationProps) {
 
   const DropdownMenu = ({ items, groupKey }: { items: MenuSetting[]; groupKey: string }) => {
     const visible = openDropdown === groupKey
-    const hasBoatTour = groupKey === 'parisian_experiences'
-
-    if (items.length === 0 && !hasBoatTour) return null
+    const isExperiences = groupKey === 'parisian_experiences'
+    const isServices = groupKey === 'services'
 
     return (
       <AnimatePresence>
@@ -87,27 +109,56 @@ export default function Navigation({ menuSettings }: NavigationProps) {
             onClick={(e) => e.stopPropagation()}
             className="absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-parisian-beige-200 bg-white shadow-xl"
           >
-            {/* Hajózás a Szajnán — special modal trigger */}
-            {hasBoatTour && (
-              <button onClick={openBoatTour} className={linkClass}>
-                Hajózás a Szajnán
-              </button>
-            )}
-            {items.map((item) => (
-              item.href === '#boat-tour' ? (
-                <button key={item.menu_key} onClick={openBoatTour} className={linkClass}>
-                  {item.label}
+            {/* Párizsi Élmények: Hajózás + experiences table + menu_settings items */}
+            {isExperiences && (
+              <>
+                <button onClick={openBoatTour} className={linkClass}>
+                  Hajózás a Szajnán
                 </button>
-              ) : (
-                <a
-                  key={item.menu_key}
-                  href={item.href}
-                  onClick={() => setOpenDropdown(null)}
-                  className={linkClass}
-                >
-                  {item.label}
-                </a>
-              )
+                {navExperiences.map((exp) => (
+                  <a
+                    key={exp.slug}
+                    href={`/elmenyek/${exp.slug}`}
+                    onClick={() => setOpenDropdown(null)}
+                    className={linkClass}
+                  >
+                    {exp.title}
+                  </a>
+                ))}
+              </>
+            )}
+            {/* Párizsi Élmények: extra menu_settings items (Sétatúrák, Kártyacsomagok stb.) */}
+            {isExperiences && items.filter((i) => i.href !== '#boat-tour').map((item) => (
+              <a
+                key={item.menu_key}
+                href={item.href}
+                onClick={() => setOpenDropdown(null)}
+                className={linkClass}
+              >
+                {item.label}
+              </a>
+            ))}
+            {/* Szolgáltatások: DB vagy fallback */}
+            {isServices && resolvedServiceItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setOpenDropdown(null)}
+                className={linkClass}
+              >
+                {item.label}
+              </a>
+            ))}
+            {/* Inspiráció és egyéb csoportok */}
+            {!isExperiences && !isServices && items.map((item) => (
+              <a
+                key={item.menu_key}
+                href={item.href}
+                onClick={() => setOpenDropdown(null)}
+                className={linkClass}
+              >
+                {item.label}
+              </a>
             ))}
           </motion.div>
         )}
@@ -305,18 +356,28 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                       >
                         Hajózás a Szajnán
                       </button>
-                      {experienceItems.map((item) =>
-                        item.href === '#boat-tour' ? null : (
-                          <a
-                            key={item.menu_key}
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
-                          >
-                            {item.label}
-                          </a>
-                        )
-                      )}
+                      {/* Élmények az experiences táblából */}
+                      {navExperiences.map((exp) => (
+                        <a
+                          key={exp.slug}
+                          href={`/elmenyek/${exp.slug}`}
+                          onClick={() => setIsOpen(false)}
+                          className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                        >
+                          {exp.title}
+                        </a>
+                      ))}
+                      {/* Egyéb menu_settings elemek (Sétatúrák, Kártyacsomagok stb.) */}
+                      {experienceItems.filter((i) => i.href !== '#boat-tour').map((item) => (
+                        <a
+                          key={item.menu_key}
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                        >
+                          {item.label}
+                        </a>
+                      ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -348,24 +409,16 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden pl-4"
                     >
-                      {serviceItems.length > 0 ? serviceItems.map((item) => (
+                      {resolvedServiceItems.map((item) => (
                         <a
-                          key={item.menu_key}
+                          key={item.label}
                           href={item.href}
                           onClick={() => setIsOpen(false)}
                           className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
                         >
                           {item.label}
                         </a>
-                      )) : (
-                        <a
-                          href="/#services"
-                          onClick={() => setIsOpen(false)}
-                          className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
-                        >
-                          Összes szolgáltatás
-                        </a>
-                      )}
+                      ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
