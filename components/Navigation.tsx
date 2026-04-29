@@ -10,10 +10,9 @@ interface NavigationProps {
   menuSettings?: MenuSetting[]
 }
 
-// Default fallback settings when DB table not seeded yet
 const DEFAULT_SETTINGS: MenuSetting[] = [
   { id: '1', menu_key: 'walking_tours',  label: 'Sétatúrák',      href: '/walking-tours', is_active: true, sort_order: 1, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
-  { id: '2', menu_key: 'louvre_guide',   label: 'Louvre Guide',   href: '/museum-guide',  is_active: true, sort_order: 2, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
+  { id: '2', menu_key: 'louvre_guide',   label: 'Louvre Guide',   href: '/museum-guide',  is_active: false, sort_order: 2, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
   { id: '3', menu_key: 'bundles',        label: 'Kártyacsomagok', href: '/marketplace',   is_active: true, sort_order: 3, parent_group: 'parisian_experiences', created_at: '', updated_at: '' },
   { id: '4', menu_key: 'blog',           label: 'Párizsi Napló',  href: '/blog',          is_active: true, sort_order: 1, parent_group: 'inspiration',          created_at: '', updated_at: '' },
   { id: '5', menu_key: 'gallery',        label: 'Galéria',        href: '/galeria',        is_active: true, sort_order: 2, parent_group: 'inspiration',          created_at: '', updated_at: '' },
@@ -26,7 +25,6 @@ export default function Navigation({ menuSettings }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { scrollY } = useScroll()
   const backgroundColor = useTransform(
@@ -41,16 +39,13 @@ export default function Navigation({ menuSettings }: NavigationProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click — only active when a dropdown is open
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpenDropdown(null)
-      }
-    }
+    if (!openDropdown) return
+    const handler = () => setOpenDropdown(null)
     document.addEventListener('click', handler)
     return () => document.removeEventListener('click', handler)
-  }, [])
+  }, [openDropdown])
 
   // Close mobile menu on resize
   useEffect(() => {
@@ -65,29 +60,54 @@ export default function Navigation({ menuSettings }: NavigationProps) {
 
   const experienceItems = activeByGroup('parisian_experiences')
   const inspirationItems = activeByGroup('inspiration')
+  const serviceItems = activeByGroup('services')
+
+  const openBoatTour = () => {
+    window.dispatchEvent(new CustomEvent('open-boat-tour'))
+    setOpenDropdown(null)
+    setIsOpen(false)
+  }
+
+  const linkClass = 'block px-5 py-3 text-sm font-medium text-parisian-grey-700 transition-colors hover:bg-parisian-beige-50 hover:text-parisian-beige-600 text-left w-full'
 
   const DropdownMenu = ({ items, groupKey }: { items: MenuSetting[]; groupKey: string }) => {
-    if (items.length === 0) return null
-    const isOpen = openDropdown === groupKey
+    const visible = openDropdown === groupKey
+    const hasBoatTour = groupKey === 'parisian_experiences'
+
+    if (items.length === 0 && !hasBoatTour) return null
+
     return (
       <AnimatePresence>
-        {isOpen && (
+        {visible && (
           <motion.div
             initial={{ opacity: 0, y: -8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-1/2 top-full mt-2 w-52 -translate-x-1/2 overflow-hidden rounded-xl border border-parisian-beige-200 bg-white shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+            className="absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-parisian-beige-200 bg-white shadow-xl"
           >
+            {/* Hajózás a Szajnán — special modal trigger */}
+            {hasBoatTour && (
+              <button onClick={openBoatTour} className={linkClass}>
+                Hajózás a Szajnán
+              </button>
+            )}
             {items.map((item) => (
-              <a
-                key={item.menu_key}
-                href={item.href}
-                onClick={() => setOpenDropdown(null)}
-                className="block px-5 py-3 text-sm font-medium text-parisian-grey-700 transition-colors hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
-              >
-                {item.label}
-              </a>
+              item.href === '#boat-tour' ? (
+                <button key={item.menu_key} onClick={openBoatTour} className={linkClass}>
+                  {item.label}
+                </button>
+              ) : (
+                <a
+                  key={item.menu_key}
+                  href={item.href}
+                  onClick={() => setOpenDropdown(null)}
+                  className={linkClass}
+                >
+                  {item.label}
+                </a>
+              )
             ))}
           </motion.div>
         )}
@@ -99,17 +119,22 @@ export default function Navigation({ menuSettings }: NavigationProps) {
     label,
     groupKey,
     items,
+    alwaysShow,
   }: {
     label: string
     groupKey: string
     items: MenuSetting[]
+    alwaysShow?: boolean
   }) => {
-    if (items.length === 0) return null
+    if (items.length === 0 && !alwaysShow) return null
     const active = openDropdown === groupKey
     return (
-      <div className="relative" ref={groupKey === 'parisian_experiences' ? dropdownRef : undefined}>
+      <div className="relative">
         <button
-          onClick={() => setOpenDropdown(active ? null : groupKey)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpenDropdown(active ? null : groupKey)
+          }}
           className="flex items-center gap-1 font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
         >
           {label}
@@ -174,15 +199,16 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                 label="Párizsi Élmények"
                 groupKey="parisian_experiences"
                 items={experienceItems}
+                alwaysShow
               />
 
-              {/* Szolgáltatások */}
-              <a
-                href="/#services"
-                className="font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
-              >
-                Szolgáltatások
-              </a>
+              {/* Szolgáltatások dropdown */}
+              <DesktopDropdownTrigger
+                label="Szolgáltatások"
+                groupKey="services"
+                items={serviceItems}
+                alwaysShow
+              />
 
               {/* Inspiráció dropdown */}
               <DesktopDropdownTrigger
@@ -247,33 +273,40 @@ export default function Navigation({ menuSettings }: NavigationProps) {
               </a>
 
               {/* Párizsi Élmények accordion */}
-              {experienceItems.length > 0 && (
-                <div>
-                  <button
-                    onClick={() =>
-                      setMobileOpenGroup(
-                        mobileOpenGroup === 'parisian_experiences' ? null : 'parisian_experiences'
-                      )
-                    }
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
-                  >
-                    Párizsi Élmények
-                    <ChevronDown
-                      className={`h-5 w-5 transition-transform ${
-                        mobileOpenGroup === 'parisian_experiences' ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {mobileOpenGroup === 'parisian_experiences' && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden pl-4"
+              <div>
+                <button
+                  onClick={() =>
+                    setMobileOpenGroup(
+                      mobileOpenGroup === 'parisian_experiences' ? null : 'parisian_experiences'
+                    )
+                  }
+                  className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+                >
+                  Párizsi Élmények
+                  <ChevronDown
+                    className={`h-5 w-5 transition-transform ${
+                      mobileOpenGroup === 'parisian_experiences' ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {mobileOpenGroup === 'parisian_experiences' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden pl-4"
+                    >
+                      {/* Hajózás a Szajnán — modal trigger */}
+                      <button
+                        onClick={openBoatTour}
+                        className="block w-full rounded-lg px-4 py-2.5 text-left text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
                       >
-                        {experienceItems.map((item) => (
+                        Hajózás a Szajnán
+                      </button>
+                      {experienceItems.map((item) =>
+                        item.href === '#boat-tour' ? null : (
                           <a
                             key={item.menu_key}
                             href={item.href}
@@ -282,21 +315,61 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                           >
                             {item.label}
                           </a>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
+                        )
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-              {/* Szolgáltatások */}
-              <a
-                href="/#services"
-                onClick={() => setIsOpen(false)}
-                className="rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
-              >
-                Szolgáltatások
-              </a>
+              {/* Szolgáltatások accordion */}
+              <div>
+                <button
+                  onClick={() =>
+                    setMobileOpenGroup(
+                      mobileOpenGroup === 'services' ? null : 'services'
+                    )
+                  }
+                  className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+                >
+                  Szolgáltatások
+                  <ChevronDown
+                    className={`h-5 w-5 transition-transform ${
+                      mobileOpenGroup === 'services' ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {mobileOpenGroup === 'services' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden pl-4"
+                    >
+                      {serviceItems.length > 0 ? serviceItems.map((item) => (
+                        <a
+                          key={item.menu_key}
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                        >
+                          {item.label}
+                        </a>
+                      )) : (
+                        <a
+                          href="/#services"
+                          onClick={() => setIsOpen(false)}
+                          className="block rounded-lg px-4 py-2.5 text-base font-medium text-parisian-grey-600 hover:bg-parisian-beige-50 hover:text-parisian-beige-600"
+                        >
+                          Összes szolgáltatás
+                        </a>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Inspiráció accordion */}
               {inspirationItems.length > 0 && (

@@ -66,6 +66,13 @@ export default function BoatTourModal({ hideFab, externalOpen, onExternalClose }
   const [isVisible, setIsVisible] = useState(false)
   const effectiveOpen = externalOpen !== undefined ? externalOpen : isOpen
   const handleClose = () => { setIsOpen(false); onExternalClose?.() }
+
+  // Listen for nav trigger
+  useEffect(() => {
+    const handler = () => setIsOpen(true)
+    window.addEventListener('open-boat-tour', handler)
+    return () => window.removeEventListener('open-boat-tour', handler)
+  }, [])
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(0)
   const [showMap, setShowMap] = useState(false)

@@ -14,7 +14,7 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import NewsletterSection from '@/components/sections/NewsletterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import Footer from '@/components/Footer'
-import FloatingExperiencesHub from '@/components/FloatingExperiencesHub'
+import BoatTourModal from '@/components/BoatTourModal'
 import type { Profile, Post, LouvreTour, Experience } from '@/lib/types/database'
 import { defaultLandingPageSettings, DEFAULT_SECTION_ORDER, type LandingPageSettings } from '@/lib/types/landing-page'
 
@@ -235,7 +235,7 @@ export default async function Home() {
           <Footer key={key} staticTexts={textsMap} pageSettings={pageSettings.footer} />
         )
       case 'boatTour':
-        return <FloatingExperiencesHub key={key} visible={ps['boatTour']?.visible} />
+        return null
       default:
         return null
     }
@@ -245,6 +245,8 @@ export default async function Home() {
     <main className="relative bg-parisian-cream-50">
       <Navigation />
       {sectionOrder.map((key) => renderSection(key))}
+      {/* Boat tour modal — triggered from nav via custom event */}
+      <BoatTourModal hideFab={true} />
     </main>
   )
 }
