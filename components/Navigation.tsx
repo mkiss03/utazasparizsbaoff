@@ -48,8 +48,8 @@ export default function Navigation({ menuSettings }: NavigationProps) {
         setOpenDropdown(null)
       }
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
   }, [])
 
   // Close mobile menu on resize
@@ -176,6 +176,14 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                 items={experienceItems}
               />
 
+              {/* Szolgáltatások */}
+              <a
+                href="/#services"
+                className="font-montserrat font-medium text-parisian-grey-700 transition-colors hover:text-parisian-beige-600"
+              >
+                Szolgáltatások
+              </a>
+
               {/* Inspiráció dropdown */}
               <DesktopDropdownTrigger
                 label="Inspiráció"
@@ -280,6 +288,15 @@ export default function Navigation({ menuSettings }: NavigationProps) {
                   </AnimatePresence>
                 </div>
               )}
+
+              {/* Szolgáltatások */}
+              <a
+                href="/#services"
+                onClick={() => setIsOpen(false)}
+                className="rounded-lg px-4 py-3 text-lg font-semibold text-parisian-grey-800 hover:bg-parisian-beige-50"
+              >
+                Szolgáltatások
+              </a>
 
               {/* Inspiráció accordion */}
               {inspirationItems.length > 0 && (

@@ -48,7 +48,7 @@ export default function FloatingExperiencesHub({ visible = true }: FloatingExper
   const subButtons = [
     {
       id: 'boat',
-      label: 'Hajózás Varázsló',
+      label: 'Hajózás a Szajnán',
       icon: <Ship className="h-4 w-4 flex-shrink-0" />,
       bgClass: 'bg-[#1a3a5c] hover:bg-[#1e4570]',
       onClick: () => { setBoatTourOpen(true); setHubExpanded(false) },
