@@ -30,6 +30,11 @@ export default function HeroEditor({ settings, onChange }: HeroEditorProps) {
           <TextAreaField label="Alcím" value={settings.subheadline} onChange={(v) => onChange({ subheadline: v })} rows={2} />
           <TextField label="CTA gomb szöveg" value={settings.ctaText} onChange={(v) => onChange({ ctaText: v })} />
           <TextField label="CTA link" value={settings.ctaLink} onChange={(v) => onChange({ ctaLink: v })} />
+          <ToggleField
+            label="'Get City Pass' gomb megjelenítése"
+            checked={settings.showCityPassButton ?? true}
+            onChange={(checked) => onChange({ showCityPassButton: checked })}
+          />
           <TextField label="Lebegő badge 1 cím" value={settings.floatingBadge1Title} onChange={(v) => onChange({ floatingBadge1Title: v })} />
           <TextField label="Lebegő badge 1 alcím" value={settings.floatingBadge1Subtitle} onChange={(v) => onChange({ floatingBadge1Subtitle: v })} />
           <TextField label="Lebegő badge 2 cím" value={settings.floatingBadge2Title} onChange={(v) => onChange({ floatingBadge2Title: v })} />

@@ -7,9 +7,10 @@ import type { FlashcardsPromoSettings } from '@/lib/types/landing-page'
 
 interface ParisFlashcardsPromoSectionProps {
   pageSettings?: FlashcardsPromoSettings
+  bundleSlug?: string
 }
 
-export default function ParisFlashcardsPromoSection({ pageSettings: ps }: ParisFlashcardsPromoSectionProps = {}) {
+export default function ParisFlashcardsPromoSection({ pageSettings: ps, bundleSlug }: ParisFlashcardsPromoSectionProps = {}) {
   const sectionBadge = ps?.sectionBadge || 'Párizs Tematikus Csomagok'
   const title = ps?.title || 'Város Útmutató Flashcardok'
   const subtitle = ps?.subtitle || 'Sajátítsd el Párizst az interaktív flashcard csomagjainkkal. Tanulj helyi kifejezéseket, metrótérképeket, kulturális tippeket és még sok mást!'
@@ -58,7 +59,7 @@ export default function ParisFlashcardsPromoSection({ pageSettings: ps }: ParisF
           viewport={{ once: true }}
           className="mx-auto max-w-md"
         >
-          <Link href="/bundles/paris">
+          <Link href={bundleSlug ? `/bundles/${bundleSlug}` : '/marketplace'}>
             <div className="group relative overflow-hidden rounded-2xl border-2 border-parisian-beige-200 bg-white shadow-lg transition-all hover:shadow-2xl hover:border-parisian-beige-400">
               {/* Header */}
               <div className="bg-gradient-to-r from-parisian-beige-400 to-parisian-beige-500 p-8 text-center text-white">
@@ -115,7 +116,7 @@ export default function ParisFlashcardsPromoSection({ pageSettings: ps }: ParisF
             {bottomDescription}
           </p>
           <Link
-            href="/pricing"
+            href="/marketplace"
             className="inline-flex items-center gap-2 rounded-full bg-parisian-beige-400 px-8 py-3 font-semibold text-white transition-all hover:bg-parisian-beige-500"
           >
             <Sparkles className="h-4 w-4" />

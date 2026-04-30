@@ -37,6 +37,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
   const { userId, isSuperAdmin } = useUserRole()
   const [isCreating, setIsCreating] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -44,7 +45,6 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
     estimated_time_minutes: '',
   })
 
-  // Fetch bundle details
   const { data: bundle } = useQuery({
     queryKey: ['bundle', bundleId],
     queryFn: async () => {
@@ -65,8 +65,8 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
         .from('bundle_topics')
         .select('*')
         .eq('bundle_id', bundleId)
-        .order('topic_order', { ascending: true })
-      return data as BundleTopic[]
+        .order('created_at', { ascending: true })
+      return (data ?? []) as BundleTopic[]
     },
   })
 
@@ -83,9 +83,11 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const saveMutation = useMutation({
     mutationFn: async ({ id, data }: { id?: string; data: typeof formData }) => {
+      if (!data.title.trim()) throw new Error('A témakör neve kötelező!')
+
       const slug = generateSlug(data.title)
       const topicData = {
-        title: data.title,
+        title: data.title.trim(),
         slug,
         description: data.description || null,
         difficulty_level: data.difficulty_level || null,
@@ -99,14 +101,12 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
           .eq('id', id)
         if (error) throw error
       } else {
-        const maxOrder = topics?.reduce((max, t) => Math.max(max, t.topic_order), -1) ?? -1
         const { error } = await supabase
           .from('bundle_topics')
           .insert({
             ...topicData,
             bundle_id: bundleId,
             author_id: userId,
-            topic_order: maxOrder + 1,
             is_published: false,
           })
         if (error) throw error
@@ -117,6 +117,9 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
       setIsCreating(false)
       setEditingId(null)
       resetForm()
+    },
+    onError: (error: Error) => {
+      setSaveError(error.message || 'Mentés sikertelen. Kérjük, próbáld újra.')
     },
   })
 
@@ -145,11 +148,12 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const reorderMutation = useMutation({
     mutationFn: async ({ id, newOrder }: { id: string; newOrder: number }) => {
+      // topic_order column may not exist in older DB versions — silently skip
       const { error } = await supabase
         .from('bundle_topics')
         .update({ topic_order: newOrder })
         .eq('id', id)
-      if (error) throw error
+      if (error && !error.message.includes('topic_order')) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bundle-topics', bundleId] })
@@ -158,16 +162,24 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
 
   const resetForm = () => {
     setFormData({ title: '', description: '', difficulty_level: '', estimated_time_minutes: '' })
+    setSaveError(null)
   }
 
   const handleEdit = (topic: BundleTopic) => {
     setEditingId(topic.id)
+    setSaveError(null)
     setFormData({
       title: topic.title,
       description: topic.description || '',
       difficulty_level: topic.difficulty_level || '',
       estimated_time_minutes: topic.estimated_time_minutes ? String(topic.estimated_time_minutes) : '',
     })
+  }
+
+  const handleCancel = () => {
+    setIsCreating(false)
+    setEditingId(null)
+    resetForm()
   }
 
   const handleMoveUp = (topic: BundleTopic, index: number) => {
@@ -192,6 +204,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
         <Card className="border-french-red-200">
           <CardContent className="p-12 text-center">
             <h2 className="text-xl font-bold text-french-red-500">Hozzáférés megtagadva</h2>
+            <p className="mt-2 text-slate-600">Nincs jogosultságod ennek a csomagnak a szerkesztéséhez.</p>
             <Link href="/admin/bundles">
               <Button className="mt-4 bg-french-blue-500 hover:bg-french-blue-600">
                 Vissza a csomagokhoz
@@ -237,7 +250,7 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
             </p>
           </div>
           <Button
-            onClick={() => setIsCreating(true)}
+            onClick={() => { setIsCreating(true); setSaveError(null) }}
             className="bg-french-red-500 hover:bg-french-red-600"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -264,12 +277,18 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
                   <Save className="mr-2 h-4 w-4" />
                   Mentés
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setIsCreating(false); setEditingId(null); resetForm() }}>
+                <Button size="sm" variant="outline" onClick={handleCancel}>
                   <X className="mr-2 h-4 w-4" />
                   Mégse
                 </Button>
               </div>
             </div>
+
+            {saveError && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {saveError}
+              </div>
+            )}
 
             <div className="grid gap-4">
               <div>
@@ -389,10 +408,15 @@ export default function TopicsEditor({ params }: TopicsEditorProps) {
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant={topic.is_published ? 'outline' : 'default'}
                       onClick={() => togglePublishMutation.mutate({ id: topic.id, is_published: !topic.is_published })}
+                      className={topic.is_published ? '' : 'bg-green-600 hover:bg-green-700 text-white'}
                     >
-                      {topic.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {topic.is_published ? (
+                        <><EyeOff className="mr-1 h-3 w-3" />Elrejt</>
+                      ) : (
+                        <><Eye className="mr-1 h-3 w-3" />Közzé</>
+                      )}
                     </Button>
                     <Button
                       size="sm"

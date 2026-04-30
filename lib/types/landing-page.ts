@@ -18,6 +18,7 @@ export interface HeroSectionSettings {
   badgeTextColor: string
   ctaBgColor: string
   ctaTextColor: string
+  showCityPassButton: boolean
 }
 
 // === ABOUT SECTION ===
@@ -161,6 +162,16 @@ export interface MuseumGuidePromoSettings {
   promoHeaderGradientTo: string
 }
 
+// === EXPERIENCES PROMO SECTION ===
+export interface ExperiencesPromoSettings {
+  visible: boolean
+  sectionBadge: string
+  title: string
+  subtitle: string
+  ctaText: string
+  ctaLink: string
+}
+
 // === TESTIMONIALS SECTION ===
 export interface TestimonialsSectionSettings {
   visible: boolean
@@ -248,6 +259,7 @@ export interface LandingPageSettings {
   flashcardsPromo: FlashcardsPromoSettings
   parisDistrictGuide: ParisDistrictGuideSettings
   museumGuidePromo: MuseumGuidePromoSettings
+  experiencesPromo: ExperiencesPromoSettings
   testimonials: TestimonialsSectionSettings
   blog: BlogSectionSettings
   contact: ContactSectionSettings
@@ -269,6 +281,7 @@ export const DEFAULT_SECTION_ORDER = [
   'flashcardsPromo',
   'parisDistrictGuide',
   'museumGuidePromo',
+  'experiencesPromo',
   'testimonials',
   'blog',
   'contact',
@@ -296,6 +309,7 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     badgeTextColor: '#4A4A4A',
     ctaBgColor: '#C4A882',
     ctaTextColor: '#FFFFFF',
+    showCityPassButton: true,
   },
   about: {
     visible: true,
@@ -422,6 +436,14 @@ export const defaultLandingPageSettings: LandingPageSettings = {
     promoHeaderGradientFrom: '#1a1a2e',
     promoHeaderGradientTo: '#2d2d44',
   },
+  experiencesPromo: {
+    visible: true,
+    sectionBadge: 'Exkluzív programok',
+    title: 'Különleges Párizsi Élmények',
+    subtitle: 'Fedezze fel Párizs legjobb élményeit kis csoportban, tapasztalt magyar idegenvezetővel. Notre-Dame VR-túra, gasztronómiai kalandok és még sok más.',
+    ctaText: 'Összes élmény megtekintése',
+    ctaLink: '/elmenyek',
+  },
   testimonials: {
     visible: true,
     // DB-sourced fields (site_text_content table) — empty so DB values show through
@@ -511,6 +533,7 @@ export const SECTION_META = [
   { key: 'flashcardsPromo', label: 'Flashcards Promo', icon: 'BookOpen' },
   { key: 'parisDistrictGuide', label: 'Kerületi Útmutató', icon: 'Map' },
   { key: 'museumGuidePromo', label: 'Múzeum Guide Promo', icon: 'Landmark' },
+  { key: 'experiencesPromo', label: 'Párizsi Élmények Promo', icon: 'Sparkles' },
   { key: 'testimonials', label: 'Vélemények', icon: 'Star' },
   { key: 'blog', label: 'Blog', icon: 'FileText' },
   { key: 'contact', label: 'Kapcsolat', icon: 'Mail' },
