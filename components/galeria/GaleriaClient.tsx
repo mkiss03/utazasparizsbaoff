@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 
-const galleryImages = [
+const FALLBACK_IMAGES = [
   { src: '/images/kepnezopar1.JPG', alt: 'Párizsi pillanat 1' },
   { src: '/images/kepnezopar2.jpg', alt: 'Párizsi pillanat 2' },
   { src: '/images/kepnezopar3.jpg', alt: 'Párizsi pillanat 3' },
@@ -14,22 +15,38 @@ const galleryImages = [
   { src: '/images/kepnezopar6.JPG', alt: 'Párizsi pillanat 6' },
 ]
 
-const heightClasses = ['h-80', 'h-96', 'h-72', 'h-96', 'h-64', 'h-80']
+const HEIGHT_CYCLE = ['h-80', 'h-96', 'h-72', 'h-96', 'h-64', 'h-80']
 
 export default function GaleriaClient() {
+  const [images, setImages] = useState<{ src: string; alt: string }[]>([])
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
-  const openLightbox = (index: number) => setLightboxIndex(index)
-  const closeLightbox = () => setLightboxIndex(null)
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('gallery')
+      .select('image_url, alt_text')
+      .order('display_order')
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setImages(data.map((img) => ({ src: img.image_url, alt: img.alt_text || 'Párizsi pillanat' })))
+        } else {
+          setImages(FALLBACK_IMAGES)
+        }
+      })
+      .catch(() => setImages(FALLBACK_IMAGES))
+  }, [])
+
+  const total = images.length
 
   const goToPrev = () => {
     if (lightboxIndex === null) return
-    setLightboxIndex(lightboxIndex === 0 ? galleryImages.length - 1 : lightboxIndex - 1)
+    setLightboxIndex(lightboxIndex === 0 ? total - 1 : lightboxIndex - 1)
   }
 
   const goToNext = () => {
     if (lightboxIndex === null) return
-    setLightboxIndex(lightboxIndex === galleryImages.length - 1 ? 0 : lightboxIndex + 1)
+    setLightboxIndex(lightboxIndex === total - 1 ? 0 : lightboxIndex + 1)
   }
 
   return (
@@ -53,7 +70,7 @@ export default function GaleriaClient() {
       {/* Masonry Grid */}
       <section className="container mx-auto px-4 pb-20">
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-          {galleryImages.map((image, index) => (
+          {images.map((image, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -62,8 +79,8 @@ export default function GaleriaClient() {
               className="mb-4 break-inside-avoid"
             >
               <div
-                className={`group relative cursor-pointer overflow-hidden rounded-xl ${heightClasses[index]} shadow-md transition-shadow duration-300 hover:shadow-xl`}
-                onClick={() => openLightbox(index)}
+                className={`group relative cursor-pointer overflow-hidden rounded-xl ${HEIGHT_CYCLE[index % HEIGHT_CYCLE.length]} shadow-md transition-shadow duration-300 hover:shadow-xl`}
+                onClick={() => setLightboxIndex(index)}
               >
                 <Image
                   src={image.src}
@@ -87,10 +104,10 @@ export default function GaleriaClient() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
-            onClick={closeLightbox}
+            onClick={() => setLightboxIndex(null)}
           >
             <button
-              onClick={closeLightbox}
+              onClick={() => setLightboxIndex(null)}
               className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
               aria-label="Bezárás"
             >
@@ -120,8 +137,8 @@ export default function GaleriaClient() {
               onClick={(e) => e.stopPropagation()}
             >
               <Image
-                src={galleryImages[lightboxIndex].src}
-                alt={galleryImages[lightboxIndex].alt}
+                src={images[lightboxIndex].src}
+                alt={images[lightboxIndex].alt}
                 fill
                 className="rounded-lg object-contain"
                 sizes="90vw"
@@ -129,7 +146,7 @@ export default function GaleriaClient() {
               />
             </motion.div>
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
-              {lightboxIndex + 1} / {galleryImages.length}
+              {lightboxIndex + 1} / {total}
             </div>
           </motion.div>
         )}
