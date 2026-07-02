@@ -59,7 +59,7 @@ export default function Navigation() {
             >
               <div className="relative h-[5.5rem] w-[5.5rem]">
                 <Image
-                  src="/images/logofix-removebg-preview.png"
+                  src="/images/logofix-removebg-preview2.png"
                   alt="Utazás Párizsba"
                   fill
                   className="object-contain"
