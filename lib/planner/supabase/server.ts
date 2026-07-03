@@ -8,8 +8,10 @@ import { cookies } from 'next/headers'
 export async function createPlannerClient() {
   const cookieStore = await cookies()
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_PLANNER_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_PLANNER_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     db: { schema: 'planner' },
