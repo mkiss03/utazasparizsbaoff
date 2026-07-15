@@ -1,12 +1,14 @@
 import type { Pace } from '@/lib/planner/types'
 
 export type CompanionType = 'paar' | 'csalad' | 'baratok' | 'egyedul'
-export type Season = 'tavasz' | 'nyar' | 'osz' | 'tel' | null
+export type FlightStatus = 'booked' | 'planning-self' | 'wants-help'
 
 /** A step-gráf csomópontjai. A tényleges bejárt útvonal a válaszoktól függ. */
 export type StepKey =
   | 'opening'
-  | 'season'
+  | 'flight-status'
+  | 'flight-dates'
+  | 'travel-window'
   | 'companion'
   | 'family'
   | 'interests'
@@ -17,8 +19,13 @@ export type StepKey =
   | 'closing'
 
 export interface WizardState {
-  days: number
-  season: Season
+  flightStatus: FlightStatus | null
+  /** datetime-local input értékek (pl. "2026-09-12T14:30"), csak ha van jegy. */
+  tripStart: string
+  tripEnd: string
+  /** input[type=month] érték (pl. "2026-09"), csak ha még nincs jegy. */
+  approxMonth: string
+  approxDays: number
   companion: CompanionType | null
   kidsAge: string | null
   interests: string[]
@@ -30,8 +37,11 @@ export interface WizardState {
 }
 
 export const INITIAL_WIZARD_STATE: WizardState = {
-  days: 4,
-  season: null,
+  flightStatus: null,
+  tripStart: '',
+  tripEnd: '',
+  approxMonth: '',
+  approxDays: 4,
   companion: null,
   kidsAge: null,
   interests: [],
@@ -58,8 +68,12 @@ export const COMPANION_TAG: Record<CompanionType, string> = {
 export function nextStepAfter(current: StepKey, state: WizardState): StepKey {
   switch (current) {
     case 'opening':
-      return 'season'
-    case 'season':
+      return 'flight-status'
+    case 'flight-status':
+      return state.flightStatus === 'booked' ? 'flight-dates' : 'travel-window'
+    case 'flight-dates':
+      return 'companion'
+    case 'travel-window':
       return 'companion'
     case 'companion':
       return state.companion === 'csalad' ? 'family' : 'interests'
@@ -83,7 +97,9 @@ export function nextStepAfter(current: StepKey, state: WizardState): StepKey {
 /** Kanonikus súlyok a folyamatjelzőhöz -- az elágazó lépések a szomszédjuk közelébe esnek. */
 export const STEP_PROGRESS_WEIGHT: Record<StepKey, number> = {
   opening: 0,
-  season: 1,
+  'flight-status': 1,
+  'flight-dates': 1.5,
+  'travel-window': 1.5,
   companion: 2,
   family: 2.5,
   interests: 3,
@@ -95,3 +111,33 @@ export const STEP_PROGRESS_WEIGHT: Record<StepKey, number> = {
 }
 
 export const MAX_PROGRESS_WEIGHT = 7
+
+/** A repülési dátumokból (ha vannak) hány napra tervezzen a motor. */
+export function computeTripDays(state: WizardState): number {
+  if (state.flightStatus === 'booked' && state.tripStart && state.tripEnd) {
+    const start = new Date(state.tripStart).getTime()
+    const end = new Date(state.tripEnd).getTime()
+    if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+      return Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)))
+    }
+  }
+  return state.approxDays
+}
+
+/** ISO dátum (YYYY-MM-DD) a motor nyitvatartás-validációjához, ha ismert a pontos érkezés. */
+export function tripStartDateOnly(state: WizardState): string | undefined {
+  if (state.flightStatus === 'booked' && state.tripStart) {
+    return state.tripStart.slice(0, 10)
+  }
+  return undefined
+}
+
+/** Tél hónapokban (dec-feb) a motor beltéri programokat priorizál. */
+export function deriveWeatherFallback(state: WizardState): boolean {
+  const monthSource =
+    state.flightStatus === 'booked' && state.tripStart ? state.tripStart.slice(5, 7) : state.approxMonth.slice(5, 7)
+
+  const month = Number(monthSource)
+  if (!month) return false
+  return month === 12 || month === 1 || month === 2
+}

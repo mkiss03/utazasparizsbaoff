@@ -17,9 +17,11 @@ const PACE_STEPS: { value: Pace; label: string; description: string }[] = [
 ]
 
 const PACE_INDEX: Record<Pace, number> = { relaxed: 0, moderate: 1, packed: 2 }
+const INDEX_PACE: Pace[] = ['relaxed', 'moderate', 'packed']
 
 export default function PaceStep({ value, onChange, onNext, onBack }: PaceStepProps) {
   const activeIndex = PACE_INDEX[value]
+  const progressPercent = (activeIndex / (PACE_STEPS.length - 1)) * 100
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-4">
@@ -38,22 +40,21 @@ export default function PaceStep({ value, onChange, onNext, onBack }: PaceStepPr
         transition={{ duration: 0.6, delay: 0.15 }}
         className="mt-12 w-full max-w-xl"
       >
-        <div className="relative mb-8 h-2 rounded-full bg-parisian-beige-100">
-          <motion.div
-            animate={{ width: `${(activeIndex / (PACE_STEPS.length - 1)) * 100}%` }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="absolute inset-y-0 left-0 rounded-full bg-parisian-beige-400"
-          />
-          {PACE_STEPS.map((step, index) => (
-            <motion.button
-              key={step.value}
-              type="button"
-              onClick={() => onChange(step.value)}
-              whileTap={{ scale: 0.9 }}
-              style={{ left: `${(index / (PACE_STEPS.length - 1)) * 100}%` }}
-              className="absolute top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-parisian-beige-400 shadow-md"
-              aria-label={step.label}
-            />
+        <input
+          type="range"
+          min={0}
+          max={PACE_STEPS.length - 1}
+          step={1}
+          value={activeIndex}
+          onChange={(event) => onChange(INDEX_PACE[Number(event.target.value)])}
+          style={{ ['--range-progress' as string]: `${progressPercent}%` }}
+          className="planner-range mb-4"
+          aria-label="Tempó"
+        />
+
+        <div className="mb-8 flex justify-between px-1 font-montserrat text-xs text-parisian-grey-400">
+          {PACE_STEPS.map((step) => (
+            <span key={step.value}>{step.label}</span>
           ))}
         </div>
 

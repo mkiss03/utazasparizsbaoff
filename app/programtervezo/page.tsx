@@ -13,27 +13,26 @@ import CuratorBadge from './_components/CuratorBadge'
 import DietaryStep from './_components/DietaryStep'
 import DreamMomentStep from './_components/DreamMomentStep'
 import FamilyDetailsStep from './_components/FamilyDetailsStep'
+import FlightDatesStep from './_components/FlightDatesStep'
+import FlightStatusStep from './_components/FlightStatusStep'
 import InterestsStep from './_components/InterestsStep'
 import OpeningStep from './_components/OpeningStep'
 import PaceStep from './_components/PaceStep'
-import SeasonStep from './_components/SeasonStep'
+import TravelWindowStep from './_components/TravelWindowStep'
 import {
   COMPANION_TAG,
   INITIAL_WIZARD_STATE,
+  computeTripDays,
+  deriveWeatherFallback,
   nextStepAfter,
+  tripStartDateOnly,
+  type FlightStatus,
   type StepKey,
   type WizardState,
 } from './_components/types'
 import { ProgressBar, WizardLogo, stepTransition, stepVariants } from './_components/WizardShell'
 
 const HIGHLIGHT_COUNT = 3
-
-const SEASON_LABEL: Record<string, string> = {
-  tavasz: 'Tavasszal',
-  nyar: 'Nyáron',
-  osz: 'Ősszel',
-  tel: 'Télen',
-}
 
 function pickHighlights(draftDays: ItineraryDay[]): ProgramItem[] {
   const seen = new Set<string>()
@@ -69,16 +68,20 @@ export default function ProgramtervezoPage() {
     setHistory((current) => (current.length > 1 ? current.slice(0, -1) : current))
   }, [])
 
+  // A "kikkel utazol" és a "van repjegyed" válaszok új ágat nyithatnak, ezért
+  // a léptetésnek a FRISS értékkel kell döntenie, nem a még el nem évült
+  // React state-tel -- egy atomi handler garantálja ezt mindkét mezőnél.
   const selectCompanion = useCallback(
     (companion: WizardState['companion']) => {
       setState((current) => ({ ...current, companion }))
-      setHistory((current) => [
-        ...current,
-        nextStepAfter('companion', { ...state, companion }),
-      ])
+      setHistory((current) => [...current, nextStepAfter('companion', { ...state, companion })])
     },
     [state]
   )
+
+  const selectFlightStatus = useCallback((flightStatus: FlightStatus) => {
+    setState((current) => ({ ...current, flightStatus }))
+  }, [])
 
   const toggleInterest = useCallback((interest: string) => {
     setState((current) => ({
@@ -107,10 +110,11 @@ export default function ProgramtervezoPage() {
       : state.interests
 
     const preferences: TravelerPreferences = {
-      days: state.days,
+      days: computeTripDays(state),
       pace: state.pace,
       interests,
-      weatherFallback: state.season === 'tel',
+      startDate: tripStartDateOnly(state),
+      weatherFallback: deriveWeatherFallback(state),
     }
 
     const draft = generateItinerary(mockCatalog, mockRules, preferences)
@@ -123,7 +127,10 @@ export default function ProgramtervezoPage() {
         contactName: state.name || undefined,
         draft,
         guestContext: {
-          season: state.season ? SEASON_LABEL[state.season] : undefined,
+          flightStatus: state.flightStatus,
+          tripStart: state.tripStart || undefined,
+          tripEnd: state.tripEnd || undefined,
+          approxMonth: state.approxMonth || undefined,
           companion: state.companion,
           kidsAge: state.kidsAge,
           dietary: state.dietary,
@@ -158,17 +165,31 @@ export default function ProgramtervezoPage() {
           transition={stepTransition}
           className="h-full w-full"
         >
-          {step === 'opening' && (
-            <OpeningStep
-              days={state.days}
-              onChangeDays={(days) => setState((current) => ({ ...current, days }))}
+          {step === 'opening' && <OpeningStep onNext={goNext} />}
+          {step === 'flight-status' && (
+            <FlightStatusStep
+              value={state.flightStatus}
+              onSelect={selectFlightStatus}
               onNext={goNext}
+              onBack={goBack}
             />
           )}
-          {step === 'season' && (
-            <SeasonStep
-              value={state.season}
-              onSelect={(season) => setState((current) => ({ ...current, season }))}
+          {step === 'flight-dates' && (
+            <FlightDatesStep
+              tripStart={state.tripStart}
+              tripEnd={state.tripEnd}
+              onChangeStart={(tripStart) => setState((current) => ({ ...current, tripStart }))}
+              onChangeEnd={(tripEnd) => setState((current) => ({ ...current, tripEnd }))}
+              onNext={goNext}
+              onBack={goBack}
+            />
+          )}
+          {step === 'travel-window' && (
+            <TravelWindowStep
+              approxMonth={state.approxMonth}
+              approxDays={state.approxDays}
+              onChangeMonth={(approxMonth) => setState((current) => ({ ...current, approxMonth }))}
+              onChangeDays={(approxDays) => setState((current) => ({ ...current, approxDays }))}
               onNext={goNext}
               onBack={goBack}
             />

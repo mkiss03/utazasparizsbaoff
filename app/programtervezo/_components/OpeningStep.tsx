@@ -2,19 +2,13 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import { Minus, Plus } from 'lucide-react'
 import { useCallback } from 'react'
 
 interface OpeningStepProps {
-  days: number
-  onChangeDays: (days: number) => void
   onNext: () => void
 }
 
-const MIN_DAYS = 1
-const MAX_DAYS = 14
-
-export default function OpeningStep({ days, onChangeDays, onNext }: OpeningStepProps) {
+export default function OpeningStep({ onNext }: OpeningStepProps) {
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
   const springX = useSpring(mouseX, { stiffness: 40, damping: 20 })
@@ -40,10 +34,12 @@ export default function OpeningStep({ days, onChangeDays, onNext }: OpeningStepP
         className="absolute inset-0 -m-6"
       >
         <Image
-          src="/images/eiffel1.jpeg"
-          alt="Párizs"
+          src="/images/stock1.jpeg"
+          alt="Párizs a Szajna partjáról napnyugtakor, háttérben az Eiffel-toronnyal"
           fill
           priority
+          sizes="100vw"
+          quality={90}
           className="object-cover"
         />
       </motion.div>
@@ -64,49 +60,20 @@ export default function OpeningStep({ days, onChangeDays, onNext }: OpeningStepP
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="mb-10 max-w-2xl font-playfair text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl"
+          className="mb-4 max-w-2xl font-playfair text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl"
         >
-          Hány napod van Párizsra?
+          Tervezzük meg együtt a párizsi utadat
         </motion.h1>
 
-        <motion.div
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mb-10 flex items-center gap-6 rounded-full bg-white/10 px-6 py-4 backdrop-blur-md"
+          className="mb-10 max-w-md font-montserrat text-white/80"
         >
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.9 }}
-            onClick={() => onChangeDays(Math.max(MIN_DAYS, days - 1))}
-            disabled={days <= MIN_DAYS}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-parisian-grey-800 transition-opacity disabled:opacity-30"
-            aria-label="Kevesebb nap"
-          >
-            <Minus className="h-5 w-5" />
-          </motion.button>
-
-          <motion.span
-            key={days}
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.25 }}
-            className="w-24 font-playfair text-5xl font-bold text-white"
-          >
-            {days}
-          </motion.span>
-
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.9 }}
-            onClick={() => onChangeDays(Math.min(MAX_DAYS, days + 1))}
-            disabled={days >= MAX_DAYS}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-parisian-grey-800 transition-opacity disabled:opacity-30"
-            aria-label="Több nap"
-          >
-            <Plus className="h-5 w-5" />
-          </motion.button>
-        </motion.div>
+          Néhány kérdés az utazásodról és az érdeklődésedről -- a végén Viktória személyesen
+          állítja össze a végleges tervet
+        </motion.p>
 
         <motion.button
           type="button"

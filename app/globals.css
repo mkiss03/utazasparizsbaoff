@@ -65,6 +65,50 @@ body {
     overflow-x: hidden;
     perspective: 1px;
   }
+
+  /* Programtervező -- diszkrét, 3-pozíciós tempó-csúszka natív input[range]-en,
+     hogy a húzás/kattintás fizikáját a böngésző kezelje (nem egyedi pozícionálás). */
+  .planner-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      to right,
+      #ebe0bb 0%,
+      #ebe0bb var(--range-progress, 50%),
+      #f5edd9 var(--range-progress, 50%),
+      #f5edd9 100%
+    );
+    outline: none;
+  }
+
+  .planner-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background: #ebe0bb;
+    border: 4px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+
+  .planner-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    background: #ebe0bb;
+    border: 4px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+
+  .planner-range::-moz-range-track {
+    background: transparent;
+  }
 }
 
 /* Prose Content - Fix text overflow and word wrapping */
