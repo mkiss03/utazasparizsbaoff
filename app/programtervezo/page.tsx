@@ -4,8 +4,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { saveDraftAsRequest } from '@/lib/actions/planner'
 import { generateItinerary } from '@/lib/planner/engine'
-import { mockCatalog, mockDestinationId, mockRules } from '@/lib/planner/mock-catalog'
+import { mockDestinationId, mockRules } from '@/lib/planner/mock-catalog'
 import type { ItineraryDay, ProgramItem, TravelerPreferences } from '@/lib/planner/types'
+import ArrivalLogisticsStep from './_components/ArrivalLogisticsStep'
+import BudgetStep from './_components/BudgetStep'
+import { buildAdjustedCatalog } from './_components/catalogAdjust'
 import CompanionStep from './_components/CompanionStep'
 import ClosingStep from './_components/ClosingStep'
 import ContactStep from './_components/ContactStep'
@@ -15,9 +18,11 @@ import DreamMomentStep from './_components/DreamMomentStep'
 import FamilyDetailsStep from './_components/FamilyDetailsStep'
 import FlightDatesStep from './_components/FlightDatesStep'
 import FlightStatusStep from './_components/FlightStatusStep'
+import InterestDetailStep from './_components/InterestDetailStep'
 import InterestsStep from './_components/InterestsStep'
 import OpeningStep from './_components/OpeningStep'
 import PaceStep from './_components/PaceStep'
+import PlacePreviewStep from './_components/PlacePreviewStep'
 import TravelWindowStep from './_components/TravelWindowStep'
 import {
   COMPANION_TAG,
@@ -26,13 +31,26 @@ import {
   deriveWeatherFallback,
   nextStepAfter,
   tripStartDateOnly,
-  type FlightStatus,
   type StepKey,
   type WizardState,
 } from './_components/types'
 import { ProgressBar, WizardLogo, stepTransition, stepVariants } from './_components/WizardShell'
 
 const HIGHLIGHT_COUNT = 3
+
+type Patch = Partial<WizardState> | ((state: WizardState) => Partial<WizardState>)
+
+/**
+ * Minden bejárt lépés a saját teljes state-pillanatképét viszi magával.
+ * Ez teszi lehetővé, hogy a "Vissza" gomb ne csak a képernyőt, hanem a
+ * hozzá tartozó adatokat (pl. az érdeklődés-mélyítő hátralévő sorát) is
+ * pontosan visszaállítsa -- egy közös state + külön step-history korábban
+ * ezt elrontotta volna a hurkoknál.
+ */
+interface WizardSnapshot {
+  step: StepKey
+  state: WizardState
+}
 
 function pickHighlights(draftDays: ItineraryDay[]): ProgramItem[] {
   const seen = new Set<string>()
@@ -49,57 +67,88 @@ function pickHighlights(draftDays: ItineraryDay[]): ProgramItem[] {
   return items.sort((a, b) => b.priority - a.priority).slice(0, HIGHLIGHT_COUNT)
 }
 
+function resolvePatch(patch: Patch, state: WizardState): Partial<WizardState> {
+  return typeof patch === 'function' ? patch(state) : patch
+}
+
 export default function ProgramtervezoPage() {
-  const [history, setHistory] = useState<StepKey[]>(['opening'])
-  const [state, setState] = useState<WizardState>(INITIAL_WIZARD_STATE)
+  const [history, setHistory] = useState<WizardSnapshot[]>([
+    { step: 'opening', state: INITIAL_WIZARD_STATE },
+  ])
   const [highlights, setHighlights] = useState<ProgramItem[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const step = history[history.length - 1]
+  const current = history[history.length - 1]
+  const { step, state } = current
 
-  const goNext = useCallback(() => {
-    setHistory((current) => {
-      const currentStep = current[current.length - 1]
-      return [...current, nextStepAfter(currentStep, state)]
+  /** Adatot ír a JELENLEGI lépéshez, lépés-váltás nélkül (pl. gépelés, checkbox). */
+  const updateCurrent = useCallback((patch: Patch) => {
+    setHistory((h) => {
+      const last = h[h.length - 1]
+      const updatedState = { ...last.state, ...resolvePatch(patch, last.state) }
+      return [...h.slice(0, -1), { step: last.step, state: updatedState }]
     })
-  }, [state])
+  }, [])
+
+  /** Elmenti a patch-et ÉS új lépésre lép -- a döntés mindig a friss (patch utáni) adaton alapul. */
+  const advance = useCallback((patch: Patch = {}) => {
+    setHistory((h) => {
+      const last = h[h.length - 1]
+      const updatedState = { ...last.state, ...resolvePatch(patch, last.state) }
+      const nextStep = nextStepAfter(last.step, updatedState)
+      return [...h, { step: nextStep, state: updatedState }]
+    })
+  }, [])
 
   const goBack = useCallback(() => {
-    setHistory((current) => (current.length > 1 ? current.slice(0, -1) : current))
+    setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h))
   }, [])
 
-  // A "kikkel utazol" és a "van repjegyed" válaszok új ágat nyithatnak, ezért
-  // a léptetésnek a FRISS értékkel kell döntenie, nem a még el nem évült
-  // React state-tel -- egy atomi handler garantálja ezt mindkét mezőnél.
-  const selectCompanion = useCallback(
-    (companion: WizardState['companion']) => {
-      setState((current) => ({ ...current, companion }))
-      setHistory((current) => [...current, nextStepAfter('companion', { ...state, companion })])
+  const toggleInterest = useCallback(
+    (interest: string) => {
+      updateCurrent((s) => ({
+        interests: s.interests.includes(interest)
+          ? s.interests.filter((i) => i !== interest)
+          : [...s.interests, interest],
+      }))
     },
-    [state]
+    [updateCurrent]
   )
 
-  const selectFlightStatus = useCallback((flightStatus: FlightStatus) => {
-    setState((current) => ({ ...current, flightStatus }))
-  }, [])
+  const finishInterests = useCallback(() => {
+    advance((s) => ({ interestQueue: [...s.interests] }))
+  }, [advance])
 
-  const toggleInterest = useCallback((interest: string) => {
-    setState((current) => ({
-      ...current,
-      interests: current.interests.includes(interest)
-        ? current.interests.filter((i) => i !== interest)
-        : [...current.interests, interest],
-    }))
-  }, [])
+  const answerInterestDetail = useCallback(
+    (subcategories: string[]) => {
+      advance((s) => {
+        const [category, ...rest] = s.interestQueue
+        return {
+          interestQueue: rest,
+          interestDetails: { ...s.interestDetails, [category]: subcategories },
+        }
+      })
+    },
+    [advance]
+  )
 
-  const toggleDietary = useCallback((option: string) => {
-    setState((current) => ({
-      ...current,
-      dietary: current.dietary.includes(option)
-        ? current.dietary.filter((d) => d !== option)
-        : [...current.dietary, option],
-    }))
-  }, [])
+  const toggleDietary = useCallback(
+    (option: string) => {
+      updateCurrent((s) => ({
+        dietary: s.dietary.includes(option)
+          ? s.dietary.filter((d) => d !== option)
+          : [...s.dietary, option],
+      }))
+    },
+    [updateCurrent]
+  )
+
+  const finishPlacePreview = useCallback(
+    (liked: string[], disliked: string[]) => {
+      advance({ likedItemIds: liked, dislikedItemIds: disliked })
+    },
+    [advance]
+  )
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true)
@@ -117,7 +166,8 @@ export default function ProgramtervezoPage() {
       weatherFallback: deriveWeatherFallback(state),
     }
 
-    const draft = generateItinerary(mockCatalog, mockRules, preferences)
+    const adjustedCatalog = buildAdjustedCatalog(state)
+    const draft = generateItinerary(adjustedCatalog, mockRules, preferences)
     setHighlights(pickHighlights(draft.days))
 
     try {
@@ -130,10 +180,16 @@ export default function ProgramtervezoPage() {
           flightStatus: state.flightStatus,
           tripStart: state.tripStart || undefined,
           tripEnd: state.tripEnd || undefined,
+          airport: state.airport,
+          arrivalTransport: state.arrivalTransport,
           approxMonth: state.approxMonth || undefined,
+          budgetBand: state.budgetBand,
           companion: state.companion,
           kidsAge: state.kidsAge,
+          interestDetails: state.interestDetails,
           dietary: state.dietary,
+          likedItemIds: state.likedItemIds,
+          dislikedItemIds: state.dislikedItemIds,
           dreamMoment: state.dreamMoment || undefined,
         },
       })
@@ -143,11 +199,14 @@ export default function ProgramtervezoPage() {
     }
 
     setIsSubmitting(false)
-    setHistory((current) => [...current, 'closing'])
-  }, [state])
+    advance()
+  }, [state, advance])
 
   const isDarkStep = step === 'opening'
   const showCuratorBadge = step !== 'opening' && step !== 'closing'
+
+  const currentInterestCategory = state.interestQueue[0]
+  const animationKey = step === 'interest-detail' ? `interest-detail-${currentInterestCategory}` : step
 
   return (
     <div className="fixed inset-0 h-screen w-screen bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50">
@@ -157,7 +216,7 @@ export default function ProgramtervezoPage() {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={step}
+          key={animationKey}
           variants={stepVariants}
           initial="enter"
           animate="center"
@@ -165,12 +224,12 @@ export default function ProgramtervezoPage() {
           transition={stepTransition}
           className="h-full w-full"
         >
-          {step === 'opening' && <OpeningStep onNext={goNext} />}
+          {step === 'opening' && <OpeningStep onNext={() => advance()} />}
           {step === 'flight-status' && (
             <FlightStatusStep
               value={state.flightStatus}
-              onSelect={selectFlightStatus}
-              onNext={goNext}
+              onSelect={(flightStatus) => updateCurrent({ flightStatus })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
@@ -178,9 +237,19 @@ export default function ProgramtervezoPage() {
             <FlightDatesStep
               tripStart={state.tripStart}
               tripEnd={state.tripEnd}
-              onChangeStart={(tripStart) => setState((current) => ({ ...current, tripStart }))}
-              onChangeEnd={(tripEnd) => setState((current) => ({ ...current, tripEnd }))}
-              onNext={goNext}
+              onChangeStart={(tripStart) => updateCurrent({ tripStart })}
+              onChangeEnd={(tripEnd) => updateCurrent({ tripEnd })}
+              onNext={() => advance()}
+              onBack={goBack}
+            />
+          )}
+          {step === 'arrival-logistics' && (
+            <ArrivalLogisticsStep
+              airport={state.airport}
+              transport={state.arrivalTransport}
+              onChangeAirport={(airport) => updateCurrent({ airport })}
+              onChangeTransport={(arrivalTransport) => updateCurrent({ arrivalTransport })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
@@ -188,20 +257,32 @@ export default function ProgramtervezoPage() {
             <TravelWindowStep
               approxMonth={state.approxMonth}
               approxDays={state.approxDays}
-              onChangeMonth={(approxMonth) => setState((current) => ({ ...current, approxMonth }))}
-              onChangeDays={(approxDays) => setState((current) => ({ ...current, approxDays }))}
-              onNext={goNext}
+              onChangeMonth={(approxMonth) => updateCurrent({ approxMonth })}
+              onChangeDays={(approxDays) => updateCurrent({ approxDays })}
+              onNext={() => advance()}
+              onBack={goBack}
+            />
+          )}
+          {step === 'budget' && (
+            <BudgetStep
+              value={state.budgetBand}
+              onSelect={(budgetBand) => updateCurrent({ budgetBand })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
           {step === 'companion' && (
-            <CompanionStep value={state.companion} onSelect={selectCompanion} onBack={goBack} />
+            <CompanionStep
+              value={state.companion}
+              onSelect={(companion) => advance({ companion })}
+              onBack={goBack}
+            />
           )}
           {step === 'family' && (
             <FamilyDetailsStep
               value={state.kidsAge}
-              onSelect={(kidsAge) => setState((current) => ({ ...current, kidsAge }))}
-              onNext={goNext}
+              onSelect={(kidsAge) => updateCurrent({ kidsAge })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
@@ -209,7 +290,17 @@ export default function ProgramtervezoPage() {
             <InterestsStep
               selected={state.interests}
               onToggle={toggleInterest}
-              onNext={goNext}
+              onNext={finishInterests}
+              onBack={goBack}
+            />
+          )}
+          {step === 'interest-detail' && currentInterestCategory && (
+            <InterestDetailStep
+              key={currentInterestCategory}
+              category={currentInterestCategory}
+              positionInQueue={state.interests.length - state.interestQueue.length + 1}
+              totalInQueue={state.interests.length}
+              onSubmit={answerInterestDetail}
               onBack={goBack}
             />
           )}
@@ -217,23 +308,26 @@ export default function ProgramtervezoPage() {
             <DietaryStep
               selected={state.dietary}
               onToggle={toggleDietary}
-              onNext={goNext}
+              onNext={() => advance()}
               onBack={goBack}
             />
+          )}
+          {step === 'place-preview' && (
+            <PlacePreviewStep state={state} onFinish={finishPlacePreview} onBack={goBack} />
           )}
           {step === 'pace' && (
             <PaceStep
               value={state.pace}
-              onChange={(pace) => setState((current) => ({ ...current, pace }))}
-              onNext={goNext}
+              onChange={(pace) => updateCurrent({ pace })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
           {step === 'dream' && (
             <DreamMomentStep
               value={state.dreamMoment}
-              onChange={(dreamMoment) => setState((current) => ({ ...current, dreamMoment }))}
-              onNext={goNext}
+              onChange={(dreamMoment) => updateCurrent({ dreamMoment })}
+              onNext={() => advance()}
               onBack={goBack}
             />
           )}
@@ -241,8 +335,8 @@ export default function ProgramtervezoPage() {
             <ContactStep
               name={state.name}
               email={state.email}
-              onChangeName={(name) => setState((current) => ({ ...current, name }))}
-              onChangeEmail={(email) => setState((current) => ({ ...current, email }))}
+              onChangeName={(name) => updateCurrent({ name })}
+              onChangeEmail={(email) => updateCurrent({ email })}
               onSubmit={handleSubmit}
               onBack={goBack}
               isSubmitting={isSubmitting}
