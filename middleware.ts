@@ -4,7 +4,7 @@ import { updateSession } from '@/lib/supabase/middleware'
 // A Programszervező modul (lásd a tervdokumentumot) minden route-ja csak a
 // NEXT_PUBLIC_FEATURE_PLANNER flag mögött él. Flag nélkül 404-et adunk,
 // mielőtt bármi más (session-frissítés, renderelés) lefutna.
-const PLANNER_ROUTE_PREFIXES = ['/labs/planner', '/programtervezo']
+const PLANNER_ROUTE_PREFIXES = ['/labs/planner', '/programtervezo', '/admin/programtervezo-editor']
 
 function isPlannerRouteBlocked(pathname: string): boolean {
   const isPlannerRoute = PLANNER_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))
