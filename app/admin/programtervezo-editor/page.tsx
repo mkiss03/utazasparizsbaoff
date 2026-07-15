@@ -65,14 +65,32 @@ function EditorInner() {
 
   useEffect(() => {
     let cancelled = false
-    loadFlow(mockDestinationId).then((result) => {
-      if (cancelled) return
-      const graph = result.graph && result.graph.nodes.length > 0 ? result.graph : buildSeedFlow()
-      const { nodes: rfNodes, edges: rfEdges } = graphToReactFlow(graph)
-      setNodes(rfNodes)
-      setEdges(rfEdges)
-      setIsLoading(false)
-    })
+
+    // Ha a mentett flow betöltése bármiért elhasal (pl. a planner Supabase
+    // projekt vagy a flows tábla még nincs bekötve/lefuttatva), az editor a
+    // beépített seed flow-val induljon el üres kézzel várakozás helyett.
+    loadFlow(mockDestinationId)
+      .then((result) => {
+        if (cancelled) return
+        if (result.error) setSaveMessage(`Betöltési figyelmeztetés: ${result.error} -- a mostani flow az alapértelmezett.`)
+        const graph = result.graph && result.graph.nodes.length > 0 ? result.graph : buildSeedFlow()
+        const { nodes: rfNodes, edges: rfEdges } = graphToReactFlow(graph)
+        setNodes(rfNodes)
+        setEdges(rfEdges)
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        if (cancelled) return
+        setSaveMessage(
+          `Betöltési hiba (${error instanceof Error ? error.message : 'ismeretlen'}) -- a mostani flow az alapértelmezett.`
+        )
+        const graph = buildSeedFlow()
+        const { nodes: rfNodes, edges: rfEdges } = graphToReactFlow(graph)
+        setNodes(rfNodes)
+        setEdges(rfEdges)
+        setIsLoading(false)
+      })
+
     return () => {
       cancelled = true
     }
