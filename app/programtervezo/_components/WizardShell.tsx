@@ -2,23 +2,22 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { MAX_PROGRESS_WEIGHT, STEP_PROGRESS_WEIGHT, type StepKey } from './types'
 
-const TOTAL_STEPS = 6
+export function ProgressBar({ step, isDark }: { step: StepKey; isDark: boolean }) {
+  const percent = Math.min(100, (STEP_PROGRESS_WEIGHT[step] / MAX_PROGRESS_WEIGHT) * 100)
 
-export function ProgressDots({ step, isDark }: { step: number; isDark: boolean }) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-6 z-30 flex justify-center gap-2">
-      {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
-        <motion.div
-          key={index}
-          animate={{
-            width: index === step ? 28 : 8,
-            opacity: index <= step ? 1 : 0.35,
-          }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-          className={`h-2 rounded-full shadow-sm ${isDark ? 'bg-white' : 'bg-parisian-beige-500'}`}
-        />
-      ))}
+    <div
+      className={`pointer-events-none fixed inset-x-0 top-0 z-30 h-1 ${
+        isDark ? 'bg-white/20' : 'bg-parisian-beige-100'
+      }`}
+    >
+      <motion.div
+        animate={{ width: `${percent}%` }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={`h-full ${isDark ? 'bg-white' : 'bg-parisian-beige-400'}`}
+      />
     </div>
   )
 }
@@ -35,6 +34,18 @@ export function WizardLogo({ isDark }: { isDark: boolean }) {
     </Link>
   )
 }
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0 },
+}
+
+export { container as staggerContainer, item as staggerItem }
 
 export const stepVariants = {
   enter: { opacity: 0, x: 40 },

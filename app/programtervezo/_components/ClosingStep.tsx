@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import type { ProgramItem } from '@/lib/planner/types'
+import TrustStats from './TrustStats'
 
 interface ClosingStepProps {
   name: string
@@ -106,6 +107,8 @@ export default function ClosingStep({ name, highlights }: ClosingStepProps) {
           </p>
         </div>
       </motion.div>
+
+      <TrustStats />
     </div>
   )
 }

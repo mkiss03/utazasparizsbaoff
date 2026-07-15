@@ -9,13 +9,31 @@ import type { ItineraryDay, ProgramItem, TravelerPreferences } from '@/lib/plann
 import CompanionStep from './_components/CompanionStep'
 import ClosingStep from './_components/ClosingStep'
 import ContactStep from './_components/ContactStep'
+import CuratorBadge from './_components/CuratorBadge'
+import DietaryStep from './_components/DietaryStep'
+import DreamMomentStep from './_components/DreamMomentStep'
+import FamilyDetailsStep from './_components/FamilyDetailsStep'
 import InterestsStep from './_components/InterestsStep'
 import OpeningStep from './_components/OpeningStep'
 import PaceStep from './_components/PaceStep'
-import { COMPANION_TAG, INITIAL_WIZARD_STATE, type WizardState } from './_components/types'
-import { ProgressDots, WizardLogo, stepTransition, stepVariants } from './_components/WizardShell'
+import SeasonStep from './_components/SeasonStep'
+import {
+  COMPANION_TAG,
+  INITIAL_WIZARD_STATE,
+  nextStepAfter,
+  type StepKey,
+  type WizardState,
+} from './_components/types'
+import { ProgressBar, WizardLogo, stepTransition, stepVariants } from './_components/WizardShell'
 
 const HIGHLIGHT_COUNT = 3
+
+const SEASON_LABEL: Record<string, string> = {
+  tavasz: 'Tavasszal',
+  nyar: 'Nyáron',
+  osz: 'Ősszel',
+  tel: 'Télen',
+}
 
 function pickHighlights(draftDays: ItineraryDay[]): ProgramItem[] {
   const seen = new Set<string>()
@@ -33,13 +51,34 @@ function pickHighlights(draftDays: ItineraryDay[]): ProgramItem[] {
 }
 
 export default function ProgramtervezoPage() {
-  const [step, setStep] = useState(0)
+  const [history, setHistory] = useState<StepKey[]>(['opening'])
   const [state, setState] = useState<WizardState>(INITIAL_WIZARD_STATE)
   const [highlights, setHighlights] = useState<ProgramItem[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const goNext = useCallback(() => setStep((current) => Math.min(current + 1, 5)), [])
-  const goBack = useCallback(() => setStep((current) => Math.max(current - 1, 0)), [])
+  const step = history[history.length - 1]
+
+  const goNext = useCallback(() => {
+    setHistory((current) => {
+      const currentStep = current[current.length - 1]
+      return [...current, nextStepAfter(currentStep, state)]
+    })
+  }, [state])
+
+  const goBack = useCallback(() => {
+    setHistory((current) => (current.length > 1 ? current.slice(0, -1) : current))
+  }, [])
+
+  const selectCompanion = useCallback(
+    (companion: WizardState['companion']) => {
+      setState((current) => ({ ...current, companion }))
+      setHistory((current) => [
+        ...current,
+        nextStepAfter('companion', { ...state, companion }),
+      ])
+    },
+    [state]
+  )
 
   const toggleInterest = useCallback((interest: string) => {
     setState((current) => ({
@@ -47,6 +86,15 @@ export default function ProgramtervezoPage() {
       interests: current.interests.includes(interest)
         ? current.interests.filter((i) => i !== interest)
         : [...current.interests, interest],
+    }))
+  }, [])
+
+  const toggleDietary = useCallback((option: string) => {
+    setState((current) => ({
+      ...current,
+      dietary: current.dietary.includes(option)
+        ? current.dietary.filter((d) => d !== option)
+        : [...current.dietary, option],
     }))
   }, [])
 
@@ -62,6 +110,7 @@ export default function ProgramtervezoPage() {
       days: state.days,
       pace: state.pace,
       interests,
+      weatherFallback: state.season === 'tel',
     }
 
     const draft = generateItinerary(mockCatalog, mockRules, preferences)
@@ -73,20 +122,31 @@ export default function ProgramtervezoPage() {
         contactEmail: state.email,
         contactName: state.name || undefined,
         draft,
+        guestContext: {
+          season: state.season ? SEASON_LABEL[state.season] : undefined,
+          companion: state.companion,
+          kidsAge: state.kidsAge,
+          dietary: state.dietary,
+          dreamMoment: state.dreamMoment || undefined,
+        },
       })
     } catch {
       // A dev DB elérhetetlensége nem szabad, hogy megakassza a vendégélményt --
-      // a kérés later manuálisan is pótolható a review queue-ból (2. fázis).
+      // a kérés később manuálisan is pótolható a review queue-ból (2. fázis).
     }
 
     setIsSubmitting(false)
-    setStep(5)
+    setHistory((current) => [...current, 'closing'])
   }, [state])
+
+  const isDarkStep = step === 'opening'
+  const showCuratorBadge = step !== 'opening' && step !== 'closing'
 
   return (
     <div className="fixed inset-0 h-screen w-screen bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50">
-      <WizardLogo isDark={step === 0} />
-      <ProgressDots step={step} isDark={step === 0} />
+      <WizardLogo isDark={isDarkStep} />
+      <ProgressBar step={step} isDark={isDarkStep} />
+      {showCuratorBadge && <CuratorBadge />}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -98,22 +158,33 @@ export default function ProgramtervezoPage() {
           transition={stepTransition}
           className="h-full w-full"
         >
-          {step === 0 && (
+          {step === 'opening' && (
             <OpeningStep
               days={state.days}
               onChangeDays={(days) => setState((current) => ({ ...current, days }))}
               onNext={goNext}
             />
           )}
-          {step === 1 && (
-            <CompanionStep
-              value={state.companion}
-              onSelect={(companion) => setState((current) => ({ ...current, companion }))}
+          {step === 'season' && (
+            <SeasonStep
+              value={state.season}
+              onSelect={(season) => setState((current) => ({ ...current, season }))}
               onNext={goNext}
               onBack={goBack}
             />
           )}
-          {step === 2 && (
+          {step === 'companion' && (
+            <CompanionStep value={state.companion} onSelect={selectCompanion} onBack={goBack} />
+          )}
+          {step === 'family' && (
+            <FamilyDetailsStep
+              value={state.kidsAge}
+              onSelect={(kidsAge) => setState((current) => ({ ...current, kidsAge }))}
+              onNext={goNext}
+              onBack={goBack}
+            />
+          )}
+          {step === 'interests' && (
             <InterestsStep
               selected={state.interests}
               onToggle={toggleInterest}
@@ -121,7 +192,15 @@ export default function ProgramtervezoPage() {
               onBack={goBack}
             />
           )}
-          {step === 3 && (
+          {step === 'dietary' && (
+            <DietaryStep
+              selected={state.dietary}
+              onToggle={toggleDietary}
+              onNext={goNext}
+              onBack={goBack}
+            />
+          )}
+          {step === 'pace' && (
             <PaceStep
               value={state.pace}
               onChange={(pace) => setState((current) => ({ ...current, pace }))}
@@ -129,7 +208,15 @@ export default function ProgramtervezoPage() {
               onBack={goBack}
             />
           )}
-          {step === 4 && (
+          {step === 'dream' && (
+            <DreamMomentStep
+              value={state.dreamMoment}
+              onChange={(dreamMoment) => setState((current) => ({ ...current, dreamMoment }))}
+              onNext={goNext}
+              onBack={goBack}
+            />
+          )}
+          {step === 'contact' && (
             <ContactStep
               name={state.name}
               email={state.email}
@@ -140,7 +227,7 @@ export default function ProgramtervezoPage() {
               isSubmitting={isSubmitting}
             />
           )}
-          {step === 5 && <ClosingStep name={state.name} highlights={highlights} />}
+          {step === 'closing' && <ClosingStep name={state.name} highlights={highlights} />}
         </motion.div>
       </AnimatePresence>
     </div>

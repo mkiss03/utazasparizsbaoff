@@ -8,6 +8,13 @@ export interface SaveDraftAsRequestInput {
   contactEmail: string
   contactName?: string
   draft: ItineraryDraft
+  /**
+   * A motor TravelerPreferences típusán túli, kizárólag emberi kurátori
+   * felülvizsgálathoz szánt kontextus (pl. szezon, étkezési preferencia,
+   * szabad szöveges "álom-pillanat"). A motor ezt nem használja fel a
+   * generáláshoz, csak a requests.preferences JSON-ba kerül bele.
+   */
+  guestContext?: Record<string, unknown>
 }
 
 export interface SaveDraftAsRequestResult {
@@ -44,7 +51,7 @@ export async function saveDraftAsRequest(
       destination_id: destination.id,
       contact_email: input.contactEmail,
       contact_name: input.contactName,
-      preferences: input.draft.preferences,
+      preferences: { ...input.draft.preferences, ...input.guestContext },
       status: 'draft_ready',
     })
     .select('id')

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Lock } from 'lucide-react'
 import { useState } from 'react'
 
 interface ContactStepProps {
@@ -90,6 +91,11 @@ export default function ContactStep({
         >
           {isSubmitting ? 'Összeállítjuk...' : 'Ízelítő kérése'}
         </motion.button>
+
+        <p className="flex items-center justify-center gap-1.5 font-montserrat text-xs text-parisian-grey-400">
+          <Lock className="h-3 w-3" />
+          Csak a programtervedhez használjuk -- spamet sosem küldünk.
+        </p>
       </motion.form>
 
       <button

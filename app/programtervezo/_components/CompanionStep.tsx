@@ -7,8 +7,10 @@ import type { CompanionType } from './types'
 
 interface CompanionStepProps {
   value: CompanionType | null
+  /** A kiválasztás egyben lépteti is a folyamatot -- a szülő dönt a következő
+   * lépésről (a "családdal" válasz külön ágat nyit), ezért itt nincs külön
+   * onNext: a state-frissítésnek addigra már érvényesülnie kell. */
   onSelect: (companion: CompanionType) => void
-  onNext: () => void
   onBack: () => void
 }
 
@@ -29,7 +31,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 }
 
-export default function CompanionStep({ value, onSelect, onNext, onBack }: CompanionStepProps) {
+export default function CompanionStep({ value, onSelect, onBack }: CompanionStepProps) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-4">
       <motion.h2
@@ -56,10 +58,7 @@ export default function CompanionStep({ value, onSelect, onNext, onBack }: Compa
               variants={item}
               whileHover={{ scale: 1.03, y: -4 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                onSelect(optionValue)
-                onNext()
-              }}
+              onClick={() => onSelect(optionValue)}
               className={`flex flex-col items-center gap-4 rounded-3xl border-2 p-8 shadow-md transition-colors ${
                 isSelected
                   ? 'border-parisian-beige-400 bg-parisian-beige-50'
