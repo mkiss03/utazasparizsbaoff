@@ -194,6 +194,9 @@ function EditorInner() {
             onPaneClick={() => setSelectedNodeId(null)}
             nodeTypes={nodeTypes}
             fitView
+            fitViewOptions={{ padding: 0.15 }}
+            minZoom={0.05}
+            maxZoom={1.5}
           >
             <Background />
             <Controls />

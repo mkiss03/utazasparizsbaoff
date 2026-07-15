@@ -39,7 +39,7 @@ const INTEREST_SUBOPTIONS: Record<string, string[]> = {
 
 export function buildSeedFlow(): FlowGraph {
   const nodes: FlowNode[] = [
-    node('opening', 'hero', 0, 200, {
+    node('opening', 'hero', 0, 500, {
       kind: 'hero',
       title: 'Tervezzük meg együtt a párizsi utadat',
       subtitle:
@@ -47,7 +47,7 @@ export function buildSeedFlow(): FlowGraph {
       backgroundImage: '/images/stock1.jpeg',
       ctaLabel: 'Kezdjük el',
     }),
-    node('flight-status', 'single-select', 340, 200, {
+    node('flight-status', 'single-select', 500, 500, {
       kind: 'single-select',
       title: 'Van már repjegyed?',
       subtitle: 'Ez segít pontosan beütemezni a napjaidat -- a nyitvatartásokkal együtt',
@@ -59,7 +59,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'wants-help', label: 'Még nincs, kérnék segítséget', description: 'Szívesen kérnék tanácsot a jegy- és szállásfoglaláshoz', icon: 'life-buoy' },
       ],
     }),
-    node('flight-dates', 'datetime-range', 680, 40, {
+    node('flight-dates', 'datetime-range', 1020, 120, {
       kind: 'datetime-range',
       title: 'Mikor vagytok kint Párizsban?',
       subtitle: 'A pontos időpontok alapján a nyitvatartásokhoz igazítjuk a napokat',
@@ -67,7 +67,7 @@ export function buildSeedFlow(): FlowGraph {
       endLabel: 'Hazautazás',
       binding: 'days-exact',
     }),
-    node('airport', 'single-select', 1020, 40, {
+    node('airport', 'single-select', 1560, 120, {
       kind: 'single-select',
       title: 'Melyik reptérre érkezel?',
       binding: 'none',
@@ -79,7 +79,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'other', label: 'Más / még nem tudom' },
       ],
     }),
-    node('transport', 'single-select', 1360, 40, {
+    node('transport', 'single-select', 2100, 120, {
       kind: 'single-select',
       title: 'Hogy jutnál be a városba?',
       binding: 'none',
@@ -91,7 +91,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'unsure', label: 'Még nem tudom', icon: 'help-circle' },
       ],
     }),
-    node('travel-window', 'month-counter', 680, 360, {
+    node('travel-window', 'month-counter', 1020, 900, {
       kind: 'month-counter',
       title: 'Nagyjából mikorra tervezed?',
       subtitle: 'Ha még nincs pontos dátum, egy hozzávetőleges hónap is elég',
@@ -100,7 +100,7 @@ export function buildSeedFlow(): FlowGraph {
       maxDays: 14,
       binding: 'days-approx',
     }),
-    node('budget', 'single-select', 1700, 200, {
+    node('budget', 'single-select', 2680, 500, {
       kind: 'single-select',
       title: 'Milyen költségkeretben gondolkodsz?',
       subtitle: 'A repjegyen és szálláson felüli napi programokra értve -- ez irányár',
@@ -113,7 +113,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'nem-tudom', label: 'Még nem tudom', description: 'Viktória vegyesen javasol majd', value: 'nem-tudom', icon: 'help-circle' },
       ],
     }),
-    node('companion', 'single-select', 2040, 200, {
+    node('companion', 'single-select', 3260, 500, {
       kind: 'single-select',
       title: 'Kikkel utazol?',
       binding: 'none',
@@ -125,7 +125,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'egyedul', label: 'Egyedül', icon: 'user' },
       ],
     }),
-    node('family-details', 'single-select', 2380, 380, {
+    node('family-details', 'single-select', 3840, 900, {
       kind: 'single-select',
       title: 'Hány évesek a gyerekek?',
       binding: 'none',
@@ -137,7 +137,7 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'felnott', label: 'Felnőtt gyerekek' },
       ],
     }),
-    node('interests', 'multi-select', 2380, 100, {
+    node('interests', 'multi-select', 3840, 120, {
       kind: 'multi-select',
       title: 'Mi érdekel?',
       subtitle: 'Válassz annyit, amennyi igaz rád',
@@ -146,7 +146,7 @@ export function buildSeedFlow(): FlowGraph {
       options: INTEREST_OPTIONS,
     }),
     ...Object.entries(INTEREST_SUBOPTIONS).map(([category, subs], index) =>
-      node(`interest-detail-${category}`, 'multi-select', 2720, -220 + index * 130, {
+      node(`interest-detail-${category}`, 'multi-select', 4440, -80 + index * 420, {
         kind: 'multi-select',
         title: `${INTEREST_OPTIONS.find((o) => o.id === category)?.label} -- mi áll hozzád közelebb?`,
         binding: 'none',
@@ -154,7 +154,7 @@ export function buildSeedFlow(): FlowGraph {
         options: subs.map((label, i) => ({ id: `${category}-sub-${i}`, label })),
       })
     ),
-    node('dietary', 'multi-select', 3060, 100, {
+    node('dietary', 'multi-select', 5040, 120, {
       kind: 'multi-select',
       title: 'Van étkezési preferenciád?',
       subtitle: 'Erre külön figyelünk az étterem-ajánlásoknál',
@@ -168,13 +168,13 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'nincs', label: 'Nincs megkötés' },
       ],
     }),
-    node('place-preview', 'swipe-cards', 3400, 100, {
+    node('place-preview', 'swipe-cards', 5620, 120, {
       kind: 'swipe-cards',
       title: 'Ez a stílus tetszik?',
       subtitle: 'Néhány konkrét helyszín az érdeklődésed alapján',
       cardCount: 6,
     }),
-    node('pace', 'single-select', 3740, 100, {
+    node('pace', 'single-select', 6160, 120, {
       kind: 'single-select',
       title: 'Milyen tempóban szeretnél haladni?',
       binding: 'pace',
@@ -185,14 +185,14 @@ export function buildSeedFlow(): FlowGraph {
         { id: 'packed', label: 'Mindent látni akarok', description: 'Sűrű, aktív napok, tele élményekkel', value: 'packed' },
       ],
     }),
-    node('dream', 'free-text', 4080, 100, {
+    node('dream', 'free-text', 6700, 120, {
       kind: 'free-text',
       title: 'Van valami, amit mindenképp szeretnél átélni Párizsban?',
       subtitle: 'Ez a rész kizárólag Viktóriához kerül',
       placeholder: 'Pl. szeretnék napfelkeltekor lenni a Sacré-Cœurnél…',
       maxLength: 300,
     }),
-    node('contact', 'contact-form', 4420, 100, {
+    node('contact', 'contact-form', 7240, 120, {
       kind: 'contact-form',
       title: 'Hova küldjük a programtervedet?',
       subtitle: 'Az elképzeléseid alapján személyesen összeállítjuk a végleges tervet, és emailben küldjük el.',
@@ -201,7 +201,7 @@ export function buildSeedFlow(): FlowGraph {
       submitLabel: 'Ízelítő kérése',
       privacyNote: 'Csak a programtervedhez használjuk -- spamet sosem küldünk.',
     }),
-    node('closing', 'closing', 4760, 100, {
+    node('closing', 'closing', 7780, 120, {
       kind: 'closing',
       title: 'Ez biztosan benne lesz…',
       subtitle: 'Ízelítő a leendő párizsi programodból',
