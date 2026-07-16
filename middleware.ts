@@ -9,8 +9,8 @@ import { updateSession } from '@/lib/supabase/middleware'
 // KÜLÖN, önálló flaggel (NEXT_PUBLIC_FEATURE_TRIP_PLANS) fut -- ez a valós
 // ügyfélfolyamat, a fenti wizard/flow-szerkesztő pedig önálló, később
 // külön értékesíthető modulként marad meg, változatlanul.
-const PLANNER_ROUTE_PREFIXES = ['/labs/planner', '/programtervezo', '/admin/programtervezo-editor']
-const TRIP_PLAN_ROUTE_PREFIXES = ['/programterv/', '/admin/programtervek']
+const PLANNER_ROUTE_PREFIXES = ['/labs/planner', '/programtervezo-legacy', '/admin/programtervezo-editor']
+const TRIP_PLAN_ROUTE_PREFIXES = ['/programterv/', '/admin/programtervek', '/programtervezo']
 
 function isBlocked(pathname: string): boolean {
   if (PLANNER_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {

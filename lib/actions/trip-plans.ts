@@ -14,6 +14,11 @@ interface TripPlanRow {
   curator_message: string | null
   is_published: boolean
   share_token: string
+  is_template: boolean
+  template_title: string | null
+  template_teaser: string | null
+  template_image: string | null
+  sort_order: number
   created_at: string
   updated_at: string
 }
@@ -30,6 +35,11 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
     curatorMessage: row.curator_message ?? '',
     isPublished: row.is_published,
     shareToken: row.share_token,
+    isTemplate: row.is_template,
+    templateTitle: row.template_title ?? '',
+    templateTeaser: row.template_teaser ?? '',
+    templateImage: row.template_image ?? '',
+    sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -62,6 +72,33 @@ export async function listTripPlans(destinationSlug: string): Promise<ListTripPl
       .select('*')
       .eq('destination_id', destinationId)
       .order('updated_at', { ascending: false })
+
+    if (error) return { plans: [], error: error.message }
+    return { plans: (data as TripPlanRow[]).map(rowToTripPlan) }
+  } catch (error) {
+    return { plans: [], error: error instanceof Error ? error.message : 'Ismeretlen hiba' }
+  }
+}
+
+// A vendégoldali /programtervezo kártyaválasztóhoz -- csak a publikált
+// sablonokat adja vissza, sorrend szerint. Az anon kulcs ehhez elég, mert
+// a "public read published trip plans" RLS policy már úgyis csak az
+// is_published=true sorokat engedi.
+export async function listPublishedTemplates(destinationSlug: string): Promise<ListTripPlansResult> {
+  try {
+    const { id: destinationId, error: destError } = await getDestinationId(destinationSlug)
+    if (!destinationId) {
+      return { plans: [], error: `Desztináció nem található: ${destinationSlug} (${destError})` }
+    }
+
+    const supabase = await createPlannerClient()
+    const { data, error } = await supabase
+      .from('trip_plans')
+      .select('*')
+      .eq('destination_id', destinationId)
+      .eq('is_template', true)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true })
 
     if (error) return { plans: [], error: error.message }
     return { plans: (data as TripPlanRow[]).map(rowToTripPlan) }
@@ -131,6 +168,11 @@ export async function createTripPlan(
         days: draft.days,
         curator_message: draft.curatorMessage || null,
         is_published: draft.isPublished,
+        is_template: draft.isTemplate,
+        template_title: draft.templateTitle || null,
+        template_teaser: draft.templateTeaser || null,
+        template_image: draft.templateImage || null,
+        sort_order: draft.sortOrder,
       })
       .select('id, share_token')
       .single()
@@ -155,6 +197,11 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
         days: draft.days,
         curator_message: draft.curatorMessage || null,
         is_published: draft.isPublished,
+        is_template: draft.isTemplate,
+        template_title: draft.templateTitle || null,
+        template_teaser: draft.templateTeaser || null,
+        template_image: draft.templateImage || null,
+        sort_order: draft.sortOrder,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

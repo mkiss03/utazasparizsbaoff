@@ -28,6 +28,11 @@ export interface TripPlan {
   curatorMessage: string
   isPublished: boolean
   shareToken: string
+  isTemplate: boolean
+  templateTitle: string
+  templateTeaser: string
+  templateImage: string
+  sortOrder: number
   createdAt: string
   updatedAt: string
 }
@@ -69,5 +74,10 @@ export function emptyTripPlanDraft(): TripPlanDraft {
     days: [createEmptyTripPlanDay('1. nap -- Érkezés')],
     curatorMessage: DEFAULT_CURATOR_MESSAGE,
     isPublished: false,
+    isTemplate: false,
+    templateTitle: '',
+    templateTeaser: '',
+    templateImage: '',
+    sortOrder: 0,
   }
 }

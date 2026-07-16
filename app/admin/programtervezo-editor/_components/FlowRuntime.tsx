@@ -3,15 +3,15 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useMemo, useState } from 'react'
 import { saveDraftAsRequest } from '@/lib/actions/planner'
-import { computePlacePreviewCandidates } from '@/app/programtervezo/_components/catalogAdjust'
+import { computePlacePreviewCandidates } from '@/app/programtervezo-legacy/_components/catalogAdjust'
 import {
   computeTripDays,
   deriveWeatherFallback,
   tripStartDateOnly,
   INITIAL_WIZARD_STATE,
   type WizardState,
-} from '@/app/programtervezo/_components/types'
-import { buildAdjustedCatalog } from '@/app/programtervezo/_components/catalogAdjust'
+} from '@/app/programtervezo-legacy/_components/types'
+import { buildAdjustedCatalog } from '@/app/programtervezo-legacy/_components/catalogAdjust'
 import { generateItinerary } from '@/lib/planner/engine'
 import { mockDestinationId, mockRules } from '@/lib/planner/mock-catalog'
 import type { ItineraryDay, ProgramItem, TravelerPreferences } from '@/lib/planner/types'

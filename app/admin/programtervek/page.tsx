@@ -67,7 +67,7 @@ export default function TripPlansListPage() {
             >
               <div>
                 <p className="font-montserrat text-base font-semibold text-parisian-grey-800">
-                  {plan.guestName || 'Névtelen vendég'}
+                  {plan.isTemplate ? plan.templateTitle || 'Névtelen sablon' : plan.guestName || 'Névtelen vendég'}
                 </p>
                 <p className="mt-0.5 font-montserrat text-sm text-parisian-grey-500">
                   {plan.dateRangeLabel} · {plan.days.length} nap
@@ -81,6 +81,13 @@ export default function TripPlansListPage() {
                     {plan.headcount}
                   </span>
                 )}
+                <span
+                  className={`rounded-full px-3 py-1 font-montserrat text-xs font-semibold ${
+                    plan.isTemplate ? 'bg-french-blue-50 text-french-blue-600' : 'bg-parisian-beige-100 text-parisian-grey-500'
+                  }`}
+                >
+                  {plan.isTemplate ? 'Sablon' : 'Egyedi'}
+                </span>
                 <span
                   className={`rounded-full px-3 py-1 font-montserrat text-xs font-semibold ${
                     plan.isPublished
