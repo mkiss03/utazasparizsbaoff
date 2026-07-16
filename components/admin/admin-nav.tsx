@@ -14,7 +14,8 @@ import {
   Tag,
   MessageSquare,
   Map,
-  Workflow
+  Workflow,
+  ClipboardList
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -28,6 +29,7 @@ type NavItem = {
 
 const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
 const enablePlanner = process.env.NEXT_PUBLIC_FEATURE_PLANNER === 'true'
+const enableTripPlans = process.env.NEXT_PUBLIC_FEATURE_TRIP_PLANS === 'true'
 
 const allNavItems: NavItem[] = [
   {
@@ -109,7 +111,17 @@ const allNavItems: NavItem[] = [
     type: 'item',
   },
   {
-    title: 'PROGRAMSZERVEZŐ',
+    title: 'PROGRAMTERVEK',
+    type: 'section',
+  },
+  {
+    title: 'Programtervek',
+    href: '/admin/programtervek',
+    icon: ClipboardList,
+    type: 'item',
+  },
+  {
+    title: 'PROGRAMSZERVEZŐ (kísérleti)',
     type: 'section',
   },
   {
@@ -120,7 +132,8 @@ const allNavItems: NavItem[] = [
   },
 ]
 
-// Flashcard- és Programszervező-elemek kiszűrése, ha a hozzájuk tartozó feature flag ki van kapcsolva
+// Flashcard-, Programtervek- és Programszervező-elemek kiszűrése, ha a
+// hozzájuk tartozó feature flag ki van kapcsolva
 const navItems: NavItem[] = allNavItems.filter((item) => {
   if (!enableFlashcards) {
     if (item.title === 'FLASHCARDS') return false
@@ -128,8 +141,12 @@ const navItems: NavItem[] = allNavItems.filter((item) => {
     if (item.title === 'Városi Árazás') return false
     if (item.title === 'Rendelések') return false
   }
+  if (!enableTripPlans) {
+    if (item.title === 'PROGRAMTERVEK') return false
+    if (item.title === 'Programtervek') return false
+  }
   if (!enablePlanner) {
-    if (item.title === 'PROGRAMSZERVEZŐ') return false
+    if (item.title === 'PROGRAMSZERVEZŐ (kísérleti)') return false
     if (item.title === 'Flow-szerkesztő') return false
   }
   return true
