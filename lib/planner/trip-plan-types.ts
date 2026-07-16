@@ -17,6 +17,8 @@ export interface TripPlanDay {
   items: TripPlanItem[]
 }
 
+export type TemplateBudget = 'economy' | 'mid' | 'premium'
+
 export interface TripPlan {
   id: string
   destinationId: string
@@ -33,6 +35,11 @@ export interface TripPlan {
   templateTeaser: string
   templateImage: string
   sortOrder: number
+  // Illesztési mezők a /programtervezo kérdőívéhez -- null = a sablon
+  // bármelyik válaszra illik ebben a szempontban.
+  templateBudget: TemplateBudget | null
+  templateDisneyDay: boolean | null
+  templateExtraNight: boolean | null
   createdAt: string
   updatedAt: string
 }
@@ -79,5 +86,8 @@ export function emptyTripPlanDraft(): TripPlanDraft {
     templateTeaser: '',
     templateImage: '',
     sortOrder: 0,
+    templateBudget: null,
+    templateDisneyDay: null,
+    templateExtraNight: null,
   }
 }

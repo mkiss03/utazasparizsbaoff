@@ -1,7 +1,7 @@
 'use server'
 
 import { createPlannerClient } from '@/lib/planner/supabase/server'
-import type { TripPlan, TripPlanDraft } from '@/lib/planner/trip-plan-types'
+import type { TemplateBudget, TripPlan, TripPlanDraft } from '@/lib/planner/trip-plan-types'
 
 interface TripPlanRow {
   id: string
@@ -19,6 +19,9 @@ interface TripPlanRow {
   template_teaser: string | null
   template_image: string | null
   sort_order: number
+  template_budget: TemplateBudget | null
+  template_disney_day: boolean | null
+  template_extra_night: boolean | null
   created_at: string
   updated_at: string
 }
@@ -40,6 +43,9 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
     templateTeaser: row.template_teaser ?? '',
     templateImage: row.template_image ?? '',
     sortOrder: row.sort_order,
+    templateBudget: row.template_budget,
+    templateDisneyDay: row.template_disney_day,
+    templateExtraNight: row.template_extra_night,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -173,6 +179,9 @@ export async function createTripPlan(
         template_teaser: draft.templateTeaser || null,
         template_image: draft.templateImage || null,
         sort_order: draft.sortOrder,
+        template_budget: draft.templateBudget,
+        template_disney_day: draft.templateDisneyDay,
+        template_extra_night: draft.templateExtraNight,
       })
       .select('id, share_token')
       .single()

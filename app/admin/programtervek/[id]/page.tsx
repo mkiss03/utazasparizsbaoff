@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react'
 import { Copy, Plus } from 'lucide-react'
 import { createTripPlan, getTripPlan, updateTripPlan } from '@/lib/actions/trip-plans'
 import { mockDestinationId } from '@/lib/planner/mock-catalog'
-import { createEmptyTripPlanDay, emptyTripPlanDraft, type TripPlanDraft } from '@/lib/planner/trip-plan-types'
+import {
+  createEmptyTripPlanDay,
+  emptyTripPlanDraft,
+  type TemplateBudget,
+  type TripPlanDraft,
+} from '@/lib/planner/trip-plan-types'
 import DayEditor from '../_components/DayEditor'
 
 export default function TripPlanEditorPage() {
@@ -101,8 +106,19 @@ export default function TripPlanEditorPage() {
         <h1 className="font-playfair text-2xl font-bold text-parisian-grey-800">
           {isNew ? 'Új programterv' : 'Programterv szerkesztése'}
         </h1>
-        {message && <span className="font-montserrat text-sm text-parisian-grey-500">{message}</span>}
       </div>
+
+      {message && (
+        <div
+          className={`mb-6 rounded-xl border-2 px-4 py-3 font-montserrat text-sm ${
+            message.startsWith('Hiba')
+              ? 'border-french-red-200 bg-french-red-50 text-french-red-600'
+              : 'border-green-200 bg-green-50 text-green-700'
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       <div className="mb-6 flex items-center justify-between rounded-2xl border-2 border-parisian-beige-200 bg-parisian-cream-50 p-5">
         <div>
@@ -173,6 +189,59 @@ export default function TripPlanEditorPage() {
                 className="w-full rounded-xl border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
               />
             </label>
+          </div>
+
+          <div className="border-t-2 border-parisian-beige-100 pt-4">
+            <p className="mb-1 font-montserrat text-sm font-semibold text-parisian-grey-800">Kérdőív-illesztés</p>
+            <p className="mb-3 font-montserrat text-xs text-parisian-grey-500">
+              A /programtervezo pár kérdést tesz fel a vendégnek, és ez alapján ajánlja a legjobban illő sablont.
+              Hagyd "Bármelyik/Mindegy"-en, ha ez a sablon nem köthető konkrét válaszhoz.
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Költségkeret</span>
+                <select
+                  value={draft.templateBudget ?? ''}
+                  onChange={(e) =>
+                    updateDraft({ templateBudget: e.target.value ? (e.target.value as TemplateBudget) : null })
+                  }
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-3 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                >
+                  <option value="">Bármelyik</option>
+                  <option value="economy">Gazdaságos</option>
+                  <option value="mid">Középkategória</option>
+                  <option value="premium">Prémium</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Disneyland-nap</span>
+                <select
+                  value={draft.templateDisneyDay === null ? '' : String(draft.templateDisneyDay)}
+                  onChange={(e) =>
+                    updateDraft({ templateDisneyDay: e.target.value === '' ? null : e.target.value === 'true' })
+                  }
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-3 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                >
+                  <option value="">Mindegy</option>
+                  <option value="true">Igen, van benne</option>
+                  <option value="false">Nincs benne</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Extra éjszaka</span>
+                <select
+                  value={draft.templateExtraNight === null ? '' : String(draft.templateExtraNight)}
+                  onChange={(e) =>
+                    updateDraft({ templateExtraNight: e.target.value === '' ? null : e.target.value === 'true' })
+                  }
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-3 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                >
+                  <option value="">Mindegy</option>
+                  <option value="true">Igen, hosszabb</option>
+                  <option value="false">Alap hosszúságú</option>
+                </select>
+              </label>
+            </div>
           </div>
         </div>
       )}
