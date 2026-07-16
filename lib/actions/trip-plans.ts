@@ -35,11 +35,13 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
   }
 }
 
-async function getDestinationId(destinationSlug: string) {
+async function getDestinationId(
+  destinationSlug: string
+): Promise<{ id: string | null; error?: string }> {
   const supabase = await createPlannerClient()
   const { data, error } = await supabase.from('destinations').select('id').eq('slug', destinationSlug).single()
-  if (error || !data) return null
-  return data.id as string
+  if (error || !data) return { id: null, error: error?.message ?? 'Nincs találat' }
+  return { id: data.id as string }
 }
 
 export interface ListTripPlansResult {
@@ -49,8 +51,10 @@ export interface ListTripPlansResult {
 
 export async function listTripPlans(destinationSlug: string): Promise<ListTripPlansResult> {
   try {
-    const destinationId = await getDestinationId(destinationSlug)
-    if (!destinationId) return { plans: [], error: `Desztináció nem található: ${destinationSlug}` }
+    const { id: destinationId, error: destError } = await getDestinationId(destinationSlug)
+    if (!destinationId) {
+      return { plans: [], error: `Desztináció nem található: ${destinationSlug} (${destError})` }
+    }
 
     const supabase = await createPlannerClient()
     const { data, error } = await supabase
@@ -110,8 +114,10 @@ export async function createTripPlan(
   draft: TripPlanDraft
 ): Promise<SaveTripPlanResult> {
   try {
-    const destinationId = await getDestinationId(destinationSlug)
-    if (!destinationId) return { success: false, error: `Desztináció nem található: ${destinationSlug}` }
+    const { id: destinationId, error: destError } = await getDestinationId(destinationSlug)
+    if (!destinationId) {
+      return { success: false, error: `Desztináció nem található: ${destinationSlug} (${destError})` }
+    }
 
     const supabase = await createPlannerClient()
     const { data, error } = await supabase
