@@ -2,7 +2,7 @@
 
 import { createPlannerClient } from '@/lib/planner/supabase/server'
 import { createPlannerAdminClient } from '@/lib/planner/supabase/admin'
-import type { TemplateBudget, TripPlan, TripPlanDraft } from '@/lib/planner/trip-plan-types'
+import type { TemplateBudget, TemplateDisneyIntensity, TripPlan, TripPlanDraft } from '@/lib/planner/trip-plan-types'
 
 interface TripPlanRow {
   id: string
@@ -21,8 +21,9 @@ interface TripPlanRow {
   template_image: string | null
   sort_order: number
   template_budget: TemplateBudget | null
-  template_disney_day: boolean | null
+  template_disney_intensity: TemplateDisneyIntensity | null
   template_extra_night: boolean | null
+  template_highlights: string[]
   created_at: string
   updated_at: string
 }
@@ -45,8 +46,9 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
     templateImage: row.template_image ?? '',
     sortOrder: row.sort_order,
     templateBudget: row.template_budget,
-    templateDisneyDay: row.template_disney_day,
+    templateDisneyIntensity: row.template_disney_intensity,
     templateExtraNight: row.template_extra_night,
+    templateHighlights: row.template_highlights ?? [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -188,8 +190,9 @@ export async function createTripPlan(
         template_image: draft.templateImage || null,
         sort_order: draft.sortOrder,
         template_budget: draft.templateBudget,
-        template_disney_day: draft.templateDisneyDay,
+        template_disney_intensity: draft.templateDisneyIntensity,
         template_extra_night: draft.templateExtraNight,
+        template_highlights: draft.templateHighlights,
       })
       .select('id, share_token')
       .single()
@@ -219,6 +222,10 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
         template_teaser: draft.templateTeaser || null,
         template_image: draft.templateImage || null,
         sort_order: draft.sortOrder,
+        template_budget: draft.templateBudget,
+        template_disney_intensity: draft.templateDisneyIntensity,
+        template_extra_night: draft.templateExtraNight,
+        template_highlights: draft.templateHighlights,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

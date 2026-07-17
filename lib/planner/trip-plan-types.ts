@@ -19,6 +19,8 @@ export interface TripPlanDay {
 
 export type TemplateBudget = 'economy' | 'mid' | 'premium'
 
+export type TemplateDisneyIntensity = 'none' | 'one_day_one_park' | 'one_day_two_parks' | 'two_days_two_parks'
+
 export interface TripPlan {
   id: string
   destinationId: string
@@ -38,8 +40,9 @@ export interface TripPlan {
   // Illesztési mezők a /programtervezo kérdőívéhez -- null = a sablon
   // bármelyik válaszra illik ebben a szempontban.
   templateBudget: TemplateBudget | null
-  templateDisneyDay: boolean | null
+  templateDisneyIntensity: TemplateDisneyIntensity | null
   templateExtraNight: boolean | null
+  templateHighlights: string[]
   createdAt: string
   updatedAt: string
 }
@@ -87,7 +90,8 @@ export function emptyTripPlanDraft(): TripPlanDraft {
     templateImage: '',
     sortOrder: 0,
     templateBudget: null,
-    templateDisneyDay: null,
+    templateDisneyIntensity: null,
     templateExtraNight: null,
+    templateHighlights: [],
   }
 }

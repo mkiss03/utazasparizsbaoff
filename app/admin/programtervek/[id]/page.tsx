@@ -9,8 +9,10 @@ import {
   createEmptyTripPlanDay,
   emptyTripPlanDraft,
   type TemplateBudget,
+  type TemplateDisneyIntensity,
   type TripPlanDraft,
 } from '@/lib/planner/trip-plan-types'
+import { ATTRACTION_OPTIONS } from '@/lib/planner/attraction-options'
 import DayEditor from '../_components/DayEditor'
 
 export default function TripPlanEditorPage() {
@@ -42,6 +44,16 @@ export default function TripPlanEditorPage() {
 
   function updateDraft(patch: Partial<TripPlanDraft>) {
     setDraft((current) => (current ? { ...current, ...patch } : current))
+  }
+
+  function toggleHighlight(tag: string) {
+    if (!draft) return
+    const has = draft.templateHighlights.includes(tag)
+    updateDraft({
+      templateHighlights: has
+        ? draft.templateHighlights.filter((t) => t !== tag)
+        : [...draft.templateHighlights, tag],
+    })
   }
 
   function updateDay(index: number, day: TripPlanDraft['days'][number]) {
@@ -214,20 +226,6 @@ export default function TripPlanEditorPage() {
                 </select>
               </label>
               <label className="block">
-                <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Disneyland-nap</span>
-                <select
-                  value={draft.templateDisneyDay === null ? '' : String(draft.templateDisneyDay)}
-                  onChange={(e) =>
-                    updateDraft({ templateDisneyDay: e.target.value === '' ? null : e.target.value === 'true' })
-                  }
-                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-3 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
-                >
-                  <option value="">Mindegy</option>
-                  <option value="true">Igen, van benne</option>
-                  <option value="false">Nincs benne</option>
-                </select>
-              </label>
-              <label className="block">
                 <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Extra éjszaka</span>
                 <select
                   value={draft.templateExtraNight === null ? '' : String(draft.templateExtraNight)}
@@ -241,6 +239,49 @@ export default function TripPlanEditorPage() {
                   <option value="false">Alap hosszúságú</option>
                 </select>
               </label>
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-xs font-medium text-parisian-grey-700">Disneyland</span>
+                <select
+                  value={draft.templateDisneyIntensity ?? ''}
+                  onChange={(e) =>
+                    updateDraft({
+                      templateDisneyIntensity: e.target.value ? (e.target.value as TemplateDisneyIntensity) : null,
+                    })
+                  }
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-3 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                >
+                  <option value="">Mindegy</option>
+                  <option value="none">Nincs benne</option>
+                  <option value="one_day_one_park">1 nap, 1 park</option>
+                  <option value="one_day_two_parks">1 nap, 2 park</option>
+                  <option value="two_days_two_parks">2 nap, 2 park</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-4">
+              <span className="mb-2 block font-montserrat text-xs font-medium text-parisian-grey-700">
+                Kiemelt helyszínek (a nevezetesség-kipipálós kérdésnél számít)
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {ATTRACTION_OPTIONS.map((option) => {
+                  const isSelected = draft.templateHighlights.includes(option.tag)
+                  return (
+                    <button
+                      key={option.tag}
+                      type="button"
+                      onClick={() => toggleHighlight(option.tag)}
+                      className={`rounded-full border-2 px-3 py-1.5 font-montserrat text-xs font-medium transition-colors ${
+                        isSelected
+                          ? 'border-parisian-beige-400 bg-parisian-beige-100 text-parisian-grey-800'
+                          : 'border-parisian-beige-200 bg-white text-parisian-grey-500 hover:border-parisian-beige-300'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>

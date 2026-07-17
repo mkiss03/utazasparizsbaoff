@@ -32,13 +32,21 @@ export default function TripPlansListPage() {
             Kézzel összeállított, napra bontott programterv egy adott foglaláshoz.
           </p>
         </div>
-        <Link
-          href="/admin/programtervek/new"
-          className="flex items-center gap-2 rounded-full bg-parisian-beige-400 px-5 py-2.5 font-montserrat text-sm font-semibold text-white hover:bg-parisian-beige-500"
-        >
-          <Plus className="h-4 w-4" />
-          Új programterv
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/programtervek/utmutato"
+            className="rounded-full border-2 border-parisian-beige-300 px-5 py-2.5 font-montserrat text-sm font-semibold text-parisian-grey-700 hover:border-parisian-beige-400"
+          >
+            Repülő + szállás útmutató
+          </Link>
+          <Link
+            href="/admin/programtervek/new"
+            className="flex items-center gap-2 rounded-full bg-parisian-beige-400 px-5 py-2.5 font-montserrat text-sm font-semibold text-white hover:bg-parisian-beige-500"
+          >
+            <Plus className="h-4 w-4" />
+            Új programterv
+          </Link>
+        </div>
       </div>
 
       {error && (
