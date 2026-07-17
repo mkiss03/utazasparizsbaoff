@@ -1,6 +1,7 @@
 'use server'
 
 import { createPlannerClient } from '@/lib/planner/supabase/server'
+import { createPlannerAdminClient } from '@/lib/planner/supabase/admin'
 import type { TemplateBudget, TripPlan, TripPlanDraft } from '@/lib/planner/trip-plan-types'
 
 interface TripPlanRow {
@@ -72,7 +73,9 @@ export async function listTripPlans(destinationSlug: string): Promise<ListTripPl
       return { plans: [], error: `Desztináció nem található: ${destinationSlug} (${destError})` }
     }
 
-    const supabase = await createPlannerClient()
+    // Admin-only lista -- vázlatokat (is_published=false) is látnia kell,
+    // amit a publikus RLS policy nem engedne, ezért service-role kliens.
+    const supabase = createPlannerAdminClient()
     const { data, error } = await supabase
       .from('trip_plans')
       .select('*')
@@ -120,7 +123,8 @@ export interface GetTripPlanResult {
 
 export async function getTripPlan(id: string): Promise<GetTripPlanResult> {
   try {
-    const supabase = await createPlannerClient()
+    // Admin-only szerkesztő -- vázlatot is be kell tudnia tölteni.
+    const supabase = createPlannerAdminClient()
     const { data, error } = await supabase.from('trip_plans').select('*').eq('id', id).single()
     if (error || !data) return { plan: null, error: error?.message ?? 'Nem található' }
     return { plan: rowToTripPlan(data as TripPlanRow) }
@@ -162,7 +166,11 @@ export async function createTripPlan(
       return { success: false, error: `Desztináció nem található: ${destinationSlug} (${destError})` }
     }
 
-    const supabase = await createPlannerClient()
+    // Az admin session a fő oldal Supabase projektjén él, nem a planneren
+    // -- ott a kérés mindig anonként érkezne, amit az "admin full access"
+    // RLS policy (auth.role()='authenticated') elutasítana. Service-role
+    // kliens kerüli meg ezt, admin-only route mögötti server actionben.
+    const supabase = createPlannerAdminClient()
     const { data, error } = await supabase
       .from('trip_plans')
       .insert({
@@ -195,7 +203,7 @@ export async function createTripPlan(
 
 export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<SaveTripPlanResult> {
   try {
-    const supabase = await createPlannerClient()
+    const supabase = createPlannerAdminClient()
     const { data, error } = await supabase
       .from('trip_plans')
       .update({
@@ -226,7 +234,7 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
 
 export async function deleteTripPlan(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await createPlannerClient()
+    const supabase = createPlannerAdminClient()
     const { error } = await supabase.from('trip_plans').delete().eq('id', id)
     if (error) return { success: false, error: error.message }
     return { success: true }
