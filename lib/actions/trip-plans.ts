@@ -8,6 +8,8 @@ interface TripPlanRow {
   id: string
   destination_id: string
   guest_name: string | null
+  guest_email: string | null
+  guest_notes: string | null
   date_range_label: string
   accommodation: string | null
   headcount: number | null
@@ -33,6 +35,8 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
     id: row.id,
     destinationId: row.destination_id,
     guestName: row.guest_name ?? '',
+    guestEmail: row.guest_email ?? '',
+    guestNotes: row.guest_notes ?? '',
     dateRangeLabel: row.date_range_label,
     accommodation: row.accommodation ?? '',
     headcount: row.headcount,
@@ -178,6 +182,8 @@ export async function createTripPlan(
       .insert({
         destination_id: destinationId,
         guest_name: draft.guestName || null,
+        guest_email: draft.guestEmail || null,
+        guest_notes: draft.guestNotes || null,
         date_range_label: draft.dateRangeLabel,
         accommodation: draft.accommodation || null,
         headcount: draft.headcount,
@@ -211,6 +217,8 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
       .from('trip_plans')
       .update({
         guest_name: draft.guestName || null,
+        guest_email: draft.guestEmail || null,
+        guest_notes: draft.guestNotes || null,
         date_range_label: draft.dateRangeLabel,
         accommodation: draft.accommodation || null,
         headcount: draft.headcount,
@@ -229,6 +237,58 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
+      .select('id, share_token')
+      .single()
+
+    if (error || !data) return { success: false, error: error?.message ?? 'Ismeretlen hiba' }
+    return { success: true, id: data.id, shareToken: data.share_token }
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Ismeretlen hiba' }
+  }
+}
+
+// A /programtervezo kérdéssorának végén hívjuk: a legjobban illő,
+// PUBLIKÁLT sablon tartalmát lemásoljuk egy ÚJ, is_published=false,
+// is_template=false vázlatba, a vendég kapcsolati adataival és a
+// kérdőív-válaszok összefoglalójával. Ez a vázlat innentől a megszokott
+// admin szerkesztő→közzététel útvonalon megy tovább -- a vendég NEM kap
+// azonnal linket, Viktória küldi ki, miután átnézte.
+export async function submitTripPlanRequest(params: {
+  templateId: string
+  guestName: string
+  guestEmail: string
+  guestNotes: string
+}): Promise<SaveTripPlanResult> {
+  try {
+    const supabase = createPlannerAdminClient()
+    const { data: template, error: templateError } = await supabase
+      .from('trip_plans')
+      .select('*')
+      .eq('id', params.templateId)
+      .eq('is_template', true)
+      .eq('is_published', true)
+      .single()
+
+    if (templateError || !template) {
+      return { success: false, error: templateError?.message ?? 'A sablon nem található' }
+    }
+
+    const row = template as TripPlanRow
+    const { data, error } = await supabase
+      .from('trip_plans')
+      .insert({
+        destination_id: row.destination_id,
+        guest_name: params.guestName || null,
+        guest_email: params.guestEmail || null,
+        guest_notes: params.guestNotes || null,
+        date_range_label: row.date_range_label,
+        accommodation: row.accommodation,
+        headcount: row.headcount,
+        days: row.days,
+        curator_message: row.curator_message,
+        is_published: false,
+        is_template: false,
+      })
       .select('id, share_token')
       .single()
 

@@ -2,22 +2,23 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ArrowRight, Ban, CalendarDays, CalendarRange, Gem, HelpCircle, Moon, Sparkles, Sun, Tags, Wallet } from 'lucide-react'
+import { Ban, CalendarDays, CalendarRange, Gem, HelpCircle, Mail, Moon, Sparkles, Sun, Tags, Wallet } from 'lucide-react'
 import type { TripPlan } from '@/lib/planner/trip-plan-types'
 import type { GuideContent } from '@/lib/planner/guide-content-types'
 import { ATTRACTION_OPTIONS } from '@/lib/planner/attraction-options'
 import { EMPTY_TEMPLATE_ANSWERS, matchTemplate, type TemplateAnswers } from '@/lib/planner/template-match'
+import { submitTripPlanRequest } from '@/lib/actions/trip-plans'
 import QuestionStep, { type QuestionOption } from './QuestionStep'
 import TextStep from './TextStep'
 import InfoStep from './InfoStep'
 import ChecklistStep from './ChecklistStep'
+import ContactStep from './ContactStep'
 import TemplateCardGrid from './TemplateCardGrid'
 
-type Mode = 'quiz' | 'result' | 'gallery'
+type Mode = 'quiz' | 'submitted' | 'gallery'
 
-const STEPS = ['when', 'nights', 'flight', 'hotel', 'budget', 'highlights', 'disney'] as const
+const STEPS = ['when', 'nights', 'flight', 'hotel', 'budget', 'highlights', 'disney', 'preview', 'contact'] as const
 type Step = (typeof STEPS)[number]
 
 const BUDGET_OPTIONS: QuestionOption<TemplateAnswers['budget']>[] = [
@@ -54,6 +55,10 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
   const [accommodationChoice, setAccommodationChoice] = useState<'hotel' | 'apartment' | null>(null)
   const [locationChoice, setLocationChoice] = useState<'paris' | 'disneyland' | null>(null)
   const [answers, setAnswers] = useState<TemplateAnswers>(EMPTY_TEMPLATE_ANSWERS)
+  const [contactName, setContactName] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const step: Step = STEPS[stepIndex]
   const recommendation = useMemo(() => matchTemplate(templates, answers), [templates, answers])
@@ -61,9 +66,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
   function goNext() {
     if (stepIndex < STEPS.length - 1) {
       setStepIndex(stepIndex + 1)
-      return
     }
-    setMode('result')
   }
 
   function goBack() {
@@ -85,8 +88,56 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
     setTravelWindow('')
     setAccommodationChoice(null)
     setLocationChoice(null)
+    setContactName('')
+    setContactEmail('')
+    setSubmitError(null)
     setStepIndex(0)
     setMode('quiz')
+  }
+
+  function buildGuestNotes(): string {
+    const lines: string[] = []
+    if (travelWindow) lines.push(`Utazási időszak: ${travelWindow}`)
+    if (answers.extraNight !== null) {
+      lines.push(`Éjszakák: ${answers.extraNight ? 'hosszabb (extra éjszaka)' : 'alap időtartam'}`)
+    }
+    if (accommodationChoice) lines.push(`Szállástípus: ${accommodationChoice === 'hotel' ? 'hotel' : 'apartman'}`)
+    if (locationChoice) lines.push(`Szállás helye: ${locationChoice === 'paris' ? 'Párizs belváros' : 'Disneyland közelében'}`)
+    if (answers.budget) {
+      const label = BUDGET_OPTIONS.find((o) => o.value === answers.budget)?.title
+      if (label) lines.push(`Költségkeret: ${label}`)
+    }
+    if (answers.highlights.length > 0) {
+      const labels = ATTRACTION_OPTIONS.filter((o) => answers.highlights.includes(o.tag)).map((o) => o.label)
+      lines.push(`Kiemelt nevezetességek: ${labels.join(', ')}`)
+    }
+    if (answers.disneyIntensity) {
+      const label = DISNEY_OPTIONS.find((o) => o.value === answers.disneyIntensity)?.title
+      if (label) lines.push(`Disneyland: ${label}`)
+    }
+    return lines.join('\n')
+  }
+
+  async function handleSubmit() {
+    if (!recommendation) return
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    const result = await submitTripPlanRequest({
+      templateId: recommendation.id,
+      guestName: contactName,
+      guestEmail: contactEmail,
+      guestNotes: buildGuestNotes(),
+    })
+
+    setIsSubmitting(false)
+
+    if (!result.success) {
+      setSubmitError(result.error ?? 'Ismeretlen hiba')
+      return
+    }
+
+    setMode('submitted')
   }
 
   const hasEnoughTemplates = templates.length > 1
@@ -269,12 +320,13 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                 />
               )}
 
-              {mode === 'result' && recommendation && (
+              {mode === 'quiz' && step === 'preview' && recommendation && (
                 <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -24 }}
+                  key="preview"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.25 }}
                   className="mx-auto max-w-lg py-6 text-center"
                 >
                   <p className="mb-2 font-montserrat text-sm font-medium text-parisian-beige-600">
@@ -300,36 +352,72 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                         </p>
                       )}
                       {recommendation.dateRangeLabel && (
-                        <span className="mb-4 flex items-center gap-1.5 font-montserrat text-xs font-medium text-parisian-grey-400">
+                        <span className="flex items-center gap-1.5 font-montserrat text-xs font-medium text-parisian-grey-400">
                           <CalendarDays className="h-3.5 w-3.5" />
                           {recommendation.dateRangeLabel}
                         </span>
                       )}
-                      <Link
-                        href={`/programterv/${recommendation.shareToken}`}
-                        className="flex items-center justify-center gap-2 rounded-full bg-parisian-beige-400 px-6 py-3 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500"
-                      >
-                        Megnézem a teljes tervet
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
                     </div>
                   </div>
+                  <p className="mt-4 font-montserrat text-xs text-parisian-grey-400">
+                    Ez egy induló javaslat -- Viktória a válaszaid alapján személyre szabja, mielőtt elküldi.
+                  </p>
                   <div className="mt-6 flex items-center justify-center gap-6">
                     <button
                       type="button"
-                      onClick={resetToQuiz}
+                      onClick={goBack}
                       className="font-montserrat text-sm font-medium text-parisian-grey-500 hover:text-parisian-grey-700"
                     >
-                      Újra a kérdésektől
+                      Vissza
                     </button>
                     <button
                       type="button"
-                      onClick={() => setMode('gallery')}
-                      className="font-montserrat text-sm font-medium text-parisian-grey-500 hover:text-parisian-grey-700"
+                      onClick={goNext}
+                      className="rounded-full bg-parisian-beige-400 px-8 py-3 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500"
                     >
-                      Az összes lehetőség megtekintése
+                      Igénylem ezt a tervet
                     </button>
                   </div>
+                </motion.div>
+              )}
+
+              {mode === 'quiz' && step === 'contact' && (
+                <ContactStep
+                  key="contact"
+                  name={contactName}
+                  email={contactEmail}
+                  onNameChange={setContactName}
+                  onEmailChange={setContactEmail}
+                  onBack={goBack}
+                  onSubmit={handleSubmit}
+                  isSubmitting={isSubmitting}
+                  error={submitError}
+                />
+              )}
+
+              {mode === 'submitted' && (
+                <motion.div
+                  key="submitted"
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -24 }}
+                  className="mx-auto max-w-md py-16 text-center"
+                >
+                  <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-parisian-beige-100 text-parisian-beige-600">
+                    <Mail className="h-6 w-6" />
+                  </span>
+                  <h1 className="mb-3 font-playfair text-3xl font-bold text-parisian-grey-800">Köszönjük!</h1>
+                  <p className="mb-8 font-montserrat text-parisian-grey-500">
+                    Viktória hamarosan átnézi az igényedet, és emailben elküldi a nektek személyre szabott
+                    programtervet.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={resetToQuiz}
+                    className="font-montserrat text-sm font-medium text-parisian-grey-500 hover:text-parisian-grey-700"
+                  >
+                    Új igény indítása
+                  </button>
                 </motion.div>
               )}
 

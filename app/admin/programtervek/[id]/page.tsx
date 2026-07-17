@@ -289,27 +289,46 @@ export default function TripPlanEditorPage() {
 
       <div className="space-y-6 rounded-2xl border-2 border-parisian-beige-200 bg-white p-6">
         {!draft.isTemplate && (
-          <div className="grid grid-cols-2 gap-4">
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-sm font-medium text-parisian-grey-700">Vendég neve</span>
+                <input
+                  type="text"
+                  value={draft.guestName}
+                  onChange={(e) => updateDraft({ guestName: e.target.value })}
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block font-montserrat text-sm font-medium text-parisian-grey-700">Létszám</span>
+                <input
+                  type="number"
+                  min={1}
+                  value={draft.headcount ?? ''}
+                  onChange={(e) => updateDraft({ headcount: e.target.value ? Number(e.target.value) : null })}
+                  className="w-full rounded-xl border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                />
+              </label>
+            </div>
             <label className="block">
-              <span className="mb-1.5 block font-montserrat text-sm font-medium text-parisian-grey-700">Vendég neve</span>
+              <span className="mb-1.5 block font-montserrat text-sm font-medium text-parisian-grey-700">Vendég email</span>
               <input
-                type="text"
-                value={draft.guestName}
-                onChange={(e) => updateDraft({ guestName: e.target.value })}
+                type="email"
+                value={draft.guestEmail}
+                onChange={(e) => updateDraft({ guestEmail: e.target.value })}
                 className="w-full rounded-xl border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
               />
             </label>
-            <label className="block">
-              <span className="mb-1.5 block font-montserrat text-sm font-medium text-parisian-grey-700">Létszám</span>
-              <input
-                type="number"
-                min={1}
-                value={draft.headcount ?? ''}
-                onChange={(e) => updateDraft({ headcount: e.target.value ? Number(e.target.value) : null })}
-                className="w-full rounded-xl border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
-              />
-            </label>
-          </div>
+            {draft.guestNotes && (
+              <div className="rounded-xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4">
+                <p className="mb-1.5 font-montserrat text-xs font-semibold uppercase tracking-wider text-parisian-beige-600">
+                  Vendég válaszai a kérdőívből
+                </p>
+                <p className="whitespace-pre-line font-montserrat text-sm text-parisian-grey-700">{draft.guestNotes}</p>
+              </div>
+            )}
+          </>
         )}
 
         <div className="grid grid-cols-2 gap-4">

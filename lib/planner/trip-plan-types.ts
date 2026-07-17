@@ -25,6 +25,8 @@ export interface TripPlan {
   id: string
   destinationId: string
   guestName: string
+  guestEmail: string
+  guestNotes: string
   dateRangeLabel: string
   accommodation: string
   headcount: number | null
@@ -78,6 +80,8 @@ export const DEFAULT_CURATOR_MESSAGE =
 export function emptyTripPlanDraft(): TripPlanDraft {
   return {
     guestName: '',
+    guestEmail: '',
+    guestNotes: '',
     dateRangeLabel: '',
     accommodation: '',
     headcount: null,

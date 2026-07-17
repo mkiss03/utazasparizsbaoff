@@ -80,6 +80,7 @@ export default function TripPlansListPage() {
                 <p className="mt-0.5 font-montserrat text-sm text-parisian-grey-500">
                   {plan.dateRangeLabel} · {plan.days.length} nap
                   {plan.accommodation ? ` · ${plan.accommodation}` : ''}
+                  {plan.guestEmail ? ` · ${plan.guestEmail}` : ''}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -87,6 +88,11 @@ export default function TripPlansListPage() {
                   <span className="flex items-center gap-1 font-montserrat text-xs text-parisian-grey-400">
                     <Users className="h-3.5 w-3.5" />
                     {plan.headcount}
+                  </span>
+                )}
+                {!plan.isTemplate && !plan.isPublished && plan.guestEmail && (
+                  <span className="rounded-full bg-french-red-50 px-3 py-1 font-montserrat text-xs font-semibold text-french-red-600">
+                    Új igénylés
                   </span>
                 )}
                 <span
