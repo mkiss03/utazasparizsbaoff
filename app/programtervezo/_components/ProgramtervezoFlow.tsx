@@ -266,7 +266,6 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                   onSelect={(value) => setAnswers((current) => ({ ...current, disneyIntensity: value }))}
                   onBack={goBack}
                   onNext={goNext}
-                  isLast
                 />
               )}
 

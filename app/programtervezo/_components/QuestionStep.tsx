@@ -18,19 +18,14 @@ interface QuestionStepProps<T> {
   onSelect: (value: T) => void
   onBack?: () => void
   onNext: () => void
-  isLast?: boolean
 }
 
-export default function QuestionStep<T>({
-  title,
-  subtitle,
-  options,
-  selected,
-  onSelect,
-  onBack,
-  onNext,
-  isLast,
-}: QuestionStepProps<T>) {
+export default function QuestionStep<T>({ title, subtitle, options, selected, onSelect, onBack, onNext }: QuestionStepProps<T>) {
+  function handlePick(value: T) {
+    onSelect(value)
+    onNext()
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 24 }}
@@ -50,7 +45,7 @@ export default function QuestionStep<T>({
             <button
               key={index}
               type="button"
-              onClick={() => onSelect(option.value)}
+              onClick={() => handlePick(option.value)}
               className={`flex w-full items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all ${
                 isSelected
                   ? 'border-parisian-beige-400 bg-parisian-cream-50'
@@ -71,20 +66,13 @@ export default function QuestionStep<T>({
         })}
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-6">
-        {onBack && (
+      {onBack && (
+        <div className="mt-8">
           <button type="button" onClick={onBack} className="font-montserrat text-sm font-medium text-parisian-grey-500 hover:text-parisian-grey-700">
             Vissza
           </button>
-        )}
-        <button
-          type="button"
-          onClick={onNext}
-          className="rounded-full bg-parisian-beige-400 px-8 py-3 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500"
-        >
-          {isLast ? 'Mutasd az ajánlott tervet' : 'Tovább'}
-        </button>
-      </div>
+        </div>
+      )}
     </motion.div>
   )
 }
