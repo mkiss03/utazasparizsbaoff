@@ -2,16 +2,16 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
-import { Ban, CalendarDays, CalendarRange, Gem, HelpCircle, Mail, Moon, Sparkles, Sun, Tags, Wallet } from 'lucide-react'
+import { Ban, CalendarDays, CalendarRange, Gem, HelpCircle, Mail, Sparkles, Tags, Wallet } from 'lucide-react'
 import type { TripPlan } from '@/lib/planner/trip-plan-types'
 import type { GuideContent } from '@/lib/planner/guide-content-types'
 import { ATTRACTION_OPTIONS } from '@/lib/planner/attraction-options'
 import { EMPTY_TEMPLATE_ANSWERS, matchTemplate, type TemplateAnswers } from '@/lib/planner/template-match'
 import { submitTripPlanRequest } from '@/lib/actions/trip-plans'
 import QuestionStep, { type QuestionOption } from './QuestionStep'
-import DateRangeStep, { formatDateRangeLabel } from './DateRangeStep'
+import DateRangeStep, { countNights, formatDateRangeLabel } from './DateRangeStep'
 import InfoStep from './InfoStep'
 import ChecklistStep from './ChecklistStep'
 import ContactStep from './ContactStep'
@@ -19,7 +19,10 @@ import TemplateCardGrid from './TemplateCardGrid'
 
 type Mode = 'quiz' | 'submitted' | 'gallery'
 
-const STEPS = ['when', 'nights', 'flight', 'hotel', 'budget', 'highlights', 'disney', 'preview', 'contact'] as const
+// A "hány éjszakát töltenétek" külön kérdés felesleges, ha a naptárban már
+// kijelölték az érkezés/hazautazás napját -- az éjszakák számát onnan
+// vezetjük le (lásd a dateRange-re figyelő useEffectet lent).
+const STEPS = ['when', 'flight', 'hotel', 'budget', 'highlights', 'disney', 'preview', 'contact'] as const
 type Step = (typeof STEPS)[number]
 
 const BUDGET_OPTIONS: QuestionOption<TemplateAnswers['budget']>[] = [
@@ -27,12 +30,6 @@ const BUDGET_OPTIONS: QuestionOption<TemplateAnswers['budget']>[] = [
   { value: 'mid', icon: Tags, title: 'Középkategória', description: 'Kényelmes egyensúly élmény és ár között' },
   { value: 'premium', icon: Gem, title: 'Prémium', description: 'A legjobb helyek, exkluzív élmények' },
   { value: null, icon: HelpCircle, title: 'Még nem tudom', description: 'Mutasd a legjobb ajánlatunkat' },
-]
-
-const NIGHTS_OPTIONS: QuestionOption<TemplateAnswers['extraNight']>[] = [
-  { value: false, icon: Sun, title: 'Alap időtartam elég', description: '3 éjszaka / 4 nap -- a klasszikus kőrúthoz pont elég' },
-  { value: true, icon: Moon, title: 'Szívesen maradnánk tovább', description: 'Egy plusz éjszaka, kényelmesebb tempó' },
-  { value: null, icon: HelpCircle, title: 'Még nem biztos', description: 'Nézzük meg, mit ajánlotok' },
 ]
 
 const DISNEY_OPTIONS: QuestionOption<TemplateAnswers['disneyIntensity']>[] = [
@@ -63,6 +60,11 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
 
   const step: Step = STEPS[stepIndex]
   const recommendation = useMemo(() => matchTemplate(templates, answers), [templates, answers])
+  const nights = useMemo(() => countNights(dateRange), [dateRange])
+
+  useEffect(() => {
+    setAnswers((current) => ({ ...current, extraNight: nights === null ? null : nights > 3 }))
+  }, [nights])
 
   function goNext() {
     if (stepIndex < STEPS.length - 1) {
@@ -100,10 +102,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
 
   function buildGuestNotes(): string {
     const lines: string[] = []
-    if (travelWindow) lines.push(`Utazási időszak: ${travelWindow}`)
-    if (answers.extraNight !== null) {
-      lines.push(`Éjszakák: ${answers.extraNight ? 'hosszabb (extra éjszaka)' : 'alap időtartam'}`)
-    }
+    if (travelWindow) lines.push(`Utazási időszak: ${travelWindow}${nights !== null ? ` (${nights} éjszaka)` : ''}`)
     if (accommodationChoice) lines.push(`Szállástípus: ${accommodationChoice === 'hotel' ? 'hotel' : 'apartman'}`)
     if (locationChoice) lines.push(`Szállás helye: ${locationChoice === 'paris' ? 'Párizs belváros' : 'Disneyland közelében'}`)
     if (answers.budget) {
@@ -215,18 +214,6 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
             <AnimatePresence mode="wait">
               {mode === 'quiz' && step === 'when' && (
                 <DateRangeStep key="when" range={dateRange} onChange={setDateRange} onNext={goNext} />
-              )}
-
-              {mode === 'quiz' && step === 'nights' && (
-                <QuestionStep
-                  key="nights"
-                  title="Hány éjszakát töltenétek Párizsban?"
-                  options={NIGHTS_OPTIONS}
-                  selected={answers.extraNight}
-                  onSelect={(value) => setAnswers((current) => ({ ...current, extraNight: value }))}
-                  onBack={goBack}
-                  onNext={goNext}
-                />
               )}
 
               {mode === 'quiz' && step === 'flight' && (

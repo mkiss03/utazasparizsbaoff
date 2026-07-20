@@ -26,8 +26,18 @@ export function formatDateRangeLabel(range: DateRange | undefined): string {
   return `${formatter.format(range.from)} – ${formatter.format(range.to)}`
 }
 
+// Az érkezés/hazautazás napja közti éjszakák száma -- ebből derül ki
+// automatikusan, hogy alap (3 éj) vagy hosszabb időtartamú sablon illik
+// jobban, külön "hány éjszakát töltenétek" kérdés nélkül.
+export function countNights(range: DateRange | undefined): number | null {
+  if (!range?.from || !range?.to) return null
+  const msPerDay = 24 * 60 * 60 * 1000
+  return Math.round((range.to.getTime() - range.from.getTime()) / msPerDay)
+}
+
 export default function DateRangeStep({ range, onChange, onBack, onNext }: DateRangeStepProps) {
   const label = formatDateRangeLabel(range)
+  const nights = countNights(range)
 
   return (
     <motion.div
@@ -54,7 +64,10 @@ export default function DateRangeStep({ range, onChange, onBack, onNext }: DateR
         />
       </div>
 
-      <p className="mt-4 min-h-[1.25rem] font-montserrat text-sm font-medium text-parisian-beige-600">{label}</p>
+      <p className="mt-4 min-h-[1.25rem] font-montserrat text-sm font-medium text-parisian-beige-600">
+        {label}
+        {nights !== null && nights > 0 && ` -- ${nights} éjszaka`}
+      </p>
 
       <div className="mt-6 flex items-center justify-center gap-6">
         {onBack && (
