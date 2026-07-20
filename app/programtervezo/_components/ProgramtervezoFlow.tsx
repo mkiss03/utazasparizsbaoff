@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
+import type { DateRange } from 'react-day-picker'
 import { Ban, CalendarDays, CalendarRange, Gem, HelpCircle, Mail, Moon, Sparkles, Sun, Tags, Wallet } from 'lucide-react'
 import type { TripPlan } from '@/lib/planner/trip-plan-types'
 import type { GuideContent } from '@/lib/planner/guide-content-types'
@@ -10,7 +11,7 @@ import { ATTRACTION_OPTIONS } from '@/lib/planner/attraction-options'
 import { EMPTY_TEMPLATE_ANSWERS, matchTemplate, type TemplateAnswers } from '@/lib/planner/template-match'
 import { submitTripPlanRequest } from '@/lib/actions/trip-plans'
 import QuestionStep, { type QuestionOption } from './QuestionStep'
-import TextStep from './TextStep'
+import DateRangeStep, { formatDateRangeLabel } from './DateRangeStep'
 import InfoStep from './InfoStep'
 import ChecklistStep from './ChecklistStep'
 import ContactStep from './ContactStep'
@@ -51,7 +52,7 @@ interface ProgramtervezoFlowProps {
 export default function ProgramtervezoFlow({ templates, error, guideContent }: ProgramtervezoFlowProps) {
   const [mode, setMode] = useState<Mode>('quiz')
   const [stepIndex, setStepIndex] = useState(0)
-  const [travelWindow, setTravelWindow] = useState('')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [accommodationChoice, setAccommodationChoice] = useState<'hotel' | 'apartment' | null>(null)
   const [locationChoice, setLocationChoice] = useState<'paris' | 'disneyland' | null>(null)
   const [answers, setAnswers] = useState<TemplateAnswers>(EMPTY_TEMPLATE_ANSWERS)
@@ -85,7 +86,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
 
   function resetToQuiz() {
     setAnswers(EMPTY_TEMPLATE_ANSWERS)
-    setTravelWindow('')
+    setDateRange(undefined)
     setAccommodationChoice(null)
     setLocationChoice(null)
     setContactName('')
@@ -94,6 +95,8 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
     setStepIndex(0)
     setMode('quiz')
   }
+
+  const travelWindow = formatDateRangeLabel(dateRange)
 
   function buildGuestNotes(): string {
     const lines: string[] = []
@@ -211,15 +214,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
 
             <AnimatePresence mode="wait">
               {mode === 'quiz' && step === 'when' && (
-                <TextStep
-                  key="when"
-                  title="Mikor terveznétek utazni?"
-                  subtitle={'Elég egy hozzávetőleges időszak -- pl. "2026 nyara" vagy egy pontos dátum'}
-                  value={travelWindow}
-                  placeholder="pl. 2026. július eleje"
-                  onChange={setTravelWindow}
-                  onNext={goNext}
-                />
+                <DateRangeStep key="when" range={dateRange} onChange={setDateRange} onNext={goNext} />
               )}
 
               {mode === 'quiz' && step === 'nights' && (

@@ -109,6 +109,30 @@ body {
   .planner-range::-moz-range-track {
     background: transparent;
   }
+
+  /* Programtervező -- react-day-picker márkaszínezése, a --rdp-* CSS
+     változóin keresztül (lásd react-day-picker/style.css). */
+  .programtervezo-calendar {
+    --rdp-accent-color: #ebe0bb;
+    --rdp-accent-background-color: #faf4e8;
+    --rdp-today-color: #c2af90;
+    --rdp-range_start-date-background-color: #ebe0bb;
+    --rdp-range_end-date-background-color: #ebe0bb;
+    --rdp-range_start-color: #333333;
+    --rdp-range_end-color: #333333;
+    --rdp-day_button-border-radius: 9999px;
+    font-family: var(--font-montserrat), sans-serif;
+  }
+
+  .programtervezo-calendar .rdp-month_caption {
+    font-family: var(--font-playfair), serif;
+    font-weight: 700;
+    color: #333333;
+  }
+
+  .programtervezo-calendar .rdp-day_button:hover:not([disabled]) {
+    background-color: #f5edd9;
+  }
 }
 
 /* Prose Content - Fix text overflow and word wrapping */

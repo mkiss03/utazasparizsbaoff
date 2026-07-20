@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 
 export interface QuestionOption<T> {
@@ -21,9 +22,14 @@ interface QuestionStepProps<T> {
 }
 
 export default function QuestionStep<T>({ title, subtitle, options, selected, onSelect, onBack, onNext }: QuestionStepProps<T>) {
+  const [pending, setPending] = useState<T | null>(null)
+
   function handlePick(value: T) {
+    setPending(value)
     onSelect(value)
-    onNext()
+    // Rövid szünet, hogy a kiválasztás vizuálisan látszódjon, mielőtt a
+    // lépés automatikusan továbblép -- egyetlen kattintás legyen elég.
+    window.setTimeout(onNext, 220)
   }
 
   return (
@@ -39,14 +45,18 @@ export default function QuestionStep<T>({ title, subtitle, options, selected, on
 
       <div className="space-y-3 text-left">
         {options.map((option, index) => {
-          const isSelected = option.value === selected
+          const isSelected = option.value === selected || option.value === pending
           const Icon = option.icon
           return (
-            <button
+            <motion.button
               key={index}
               type="button"
               onClick={() => handlePick(option.value)}
-              className={`flex w-full items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all ${
+              whileHover={{ scale: pending === null ? 1.015 : 1 }}
+              whileTap={{ scale: 0.985 }}
+              animate={isSelected ? { scale: [1, 1.02, 1] } : {}}
+              transition={{ duration: 0.2 }}
+              className={`flex w-full items-center gap-4 rounded-2xl border-2 p-5 text-left transition-colors ${
                 isSelected
                   ? 'border-parisian-beige-400 bg-parisian-cream-50'
                   : 'border-parisian-beige-200 bg-white hover:border-parisian-beige-300'
@@ -61,7 +71,7 @@ export default function QuestionStep<T>({ title, subtitle, options, selected, on
                 </span>
                 <span className="block font-montserrat text-sm text-parisian-grey-500">{option.description}</span>
               </span>
-            </button>
+            </motion.button>
           )
         })}
       </div>
