@@ -6,13 +6,10 @@ import type { GuideTip } from '@/lib/planner/guide-content-types'
 
 export type FlightStatus = 'have' | 'not_yet' | 'need_help'
 
-const OPTIONS: { value: FlightStatus; label: string }[] = [
-  { value: 'have', label: 'Van már repülőjegyünk' },
-  { value: 'not_yet', label: 'Még nincs' },
-  { value: 'need_help', label: 'Még nincs, segítséget kérünk' },
-]
-
 interface FlightStepProps {
+  title: string
+  subtitle?: string
+  options: { value: FlightStatus; label: string }[]
   status: FlightStatus | null
   onChange: (status: FlightStatus) => void
   tips: GuideTip[]
@@ -20,7 +17,7 @@ interface FlightStepProps {
   onNext: () => void
 }
 
-export default function FlightStep({ status, onChange, tips, onBack, onNext }: FlightStepProps) {
+export default function FlightStep({ title, subtitle, options, status, onChange, tips, onBack, onNext }: FlightStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 24 }}
@@ -29,11 +26,11 @@ export default function FlightStep({ status, onChange, tips, onBack, onNext }: F
       transition={{ duration: 0.25 }}
       className="mx-auto max-w-xl px-4 py-14 text-center"
     >
-      <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">Van már repülőjegyetek?</h1>
-      <p className="mb-8 font-montserrat text-parisian-grey-500">Ha kell, szívesen segítünk a foglalásban</p>
+      <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
+      {subtitle && <p className="mb-8 font-montserrat text-parisian-grey-500">{subtitle}</p>}
 
       <div className="flex flex-wrap justify-center gap-2.5">
-        {OPTIONS.map((option) => (
+        {options.map((option) => (
           <button
             key={option.value}
             type="button"

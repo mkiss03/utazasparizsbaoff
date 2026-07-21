@@ -263,6 +263,9 @@ export async function submitTripPlanRequest(params: {
   guestEmail: string
   guestNotes: string
   guestHighlights: string[]
+  // A vendég ÁLTAL a naptárban ténylegesen kiválasztott dátumtartomány --
+  // ha üres, a sablon saját (általános) időtartam-felirata marad meg.
+  dateRangeLabel?: string
 }): Promise<SaveTripPlanResult> {
   try {
     const supabase = createPlannerAdminClient()
@@ -287,7 +290,7 @@ export async function submitTripPlanRequest(params: {
         guest_email: params.guestEmail || null,
         guest_notes: params.guestNotes || null,
         guest_highlights: params.guestHighlights,
-        date_range_label: row.date_range_label,
+        date_range_label: params.dateRangeLabel || row.date_range_label,
         accommodation: row.accommodation,
         headcount: row.headcount,
         days: row.days,

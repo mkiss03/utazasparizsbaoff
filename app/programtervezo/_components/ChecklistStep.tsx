@@ -2,12 +2,12 @@
 
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import { ATTRACTION_CATEGORY_LABELS, type AttractionCategory, type AttractionOption } from '@/lib/planner/attraction-options'
+import type { AttractionCategory, AttractionConfigItem } from '@/lib/planner/quiz-config-types'
 
 interface ChecklistStepProps {
   title: string
   subtitle?: string
-  options: AttractionOption[]
+  options: AttractionConfigItem[]
   selected: string[]
   onToggle: (tag: string) => void
   onBack?: () => void
@@ -15,6 +15,11 @@ interface ChecklistStepProps {
 }
 
 const CATEGORY_ORDER: AttractionCategory[] = ['ticketed', 'free', 'disneyland']
+const CATEGORY_LABELS: Record<AttractionCategory, string> = {
+  ticketed: 'Belépőjegyes nevezetességek',
+  free: 'Ingyenesen látogatható nevezetességek',
+  disneyland: 'Disneyland',
+}
 
 export default function ChecklistStep({ title, subtitle, options, selected, onToggle, onBack, onNext }: ChecklistStepProps) {
   return (
@@ -35,7 +40,7 @@ export default function ChecklistStep({ title, subtitle, options, selected, onTo
           return (
             <div key={category}>
               <p className="mb-3 text-left font-montserrat text-xs font-semibold uppercase tracking-wider text-parisian-beige-600">
-                {ATTRACTION_CATEGORY_LABELS[category]}
+                {CATEGORY_LABELS[category]}
               </p>
               <div className="flex flex-wrap justify-start gap-2.5">
                 {categoryOptions.map((option) => {

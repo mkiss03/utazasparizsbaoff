@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Copy, Plus } from 'lucide-react'
 import { createTripPlan, getTripPlan, updateTripPlan } from '@/lib/actions/trip-plans'
+import { getQuizConfig } from '@/lib/actions/quiz-config'
 import { mockDestinationId } from '@/lib/planner/mock-catalog'
 import {
   createEmptyTripPlanDay,
@@ -12,7 +13,7 @@ import {
   type TemplateDisneyIntensity,
   type TripPlanDraft,
 } from '@/lib/planner/trip-plan-types'
-import { ATTRACTION_OPTIONS } from '@/lib/planner/attraction-options'
+import { defaultQuizConfig, type AttractionConfigItem } from '@/lib/planner/quiz-config-types'
 import DayEditor from '../_components/DayEditor'
 
 export default function TripPlanEditorPage() {
@@ -27,6 +28,7 @@ export default function TripPlanEditorPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [targetDayIndex, setTargetDayIndex] = useState(0)
+  const [attractionOptions, setAttractionOptions] = useState<AttractionConfigItem[]>(defaultQuizConfig().attractions)
 
   useEffect(() => {
     if (isNew) return
@@ -42,6 +44,12 @@ export default function TripPlanEditorPage() {
       setIsLoading(false)
     })
   }, [isNew, params.id])
+
+  useEffect(() => {
+    getQuizConfig(mockDestinationId)
+      .then((result) => setAttractionOptions(result.config.attractions))
+      .catch(() => {})
+  }, [])
 
   function updateDraft(patch: Partial<TripPlanDraft>) {
     setDraft((current) => (current ? { ...current, ...patch } : current))
@@ -278,7 +286,7 @@ export default function TripPlanEditorPage() {
                 Kiemelt helyszínek (a nevezetesség-kipipálós kérdésnél számít)
               </span>
               <div className="flex flex-wrap gap-2">
-                {ATTRACTION_OPTIONS.map((option) => {
+                {attractionOptions.map((option) => {
                   const isSelected = draft.templateHighlights.includes(option.tag)
                   return (
                     <button
@@ -365,7 +373,7 @@ export default function TripPlanEditorPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {draft.guestHighlights.map((tag) => {
-                    const label = ATTRACTION_OPTIONS.find((o) => o.tag === tag)?.label ?? tag
+                    const label = attractionOptions.find((o) => o.tag === tag)?.label ?? tag
                     return (
                       <button
                         key={tag}

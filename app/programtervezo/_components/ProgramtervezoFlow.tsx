@@ -5,9 +5,15 @@ import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { CalendarDays, CalendarRange, Gem, HelpCircle, Mail, Sparkles, Tags, Wallet } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { TripPlan } from '@/lib/planner/trip-plan-types'
 import type { GuideContent } from '@/lib/planner/guide-content-types'
-import { ATTRACTION_OPTIONS, DISNEYLAND_ATTRACTION_TAG } from '@/lib/planner/attraction-options'
+import {
+  DISNEYLAND_ATTRACTION_TAG,
+  type AccommodationLocation,
+  type AccommodationType,
+  type QuizConfig,
+} from '@/lib/planner/quiz-config-types'
 import { EMPTY_TEMPLATE_ANSWERS, matchTemplate, type TemplateAnswers } from '@/lib/planner/template-match'
 import { submitTripPlanRequest } from '@/lib/actions/trip-plans'
 import QuestionStep, { type QuestionOption } from './QuestionStep'
@@ -21,44 +27,56 @@ import TemplateCardGrid from './TemplateCardGrid'
 type Mode = 'quiz' | 'submitted' | 'gallery'
 type Step = 'when' | 'flight' | 'hotel' | 'budget' | 'highlights' | 'disney' | 'preview' | 'contact'
 
-const FLIGHT_STATUS_LABELS: Record<FlightStatus, string> = {
-  have: 'Van már repülőjegyünk',
-  not_yet: 'Még nincs',
-  need_help: 'Még nincs, segítséget kérünk',
+// Az ikonok kódban maradnak (JSON-ban nem tárolhatók) -- csak a
+// cím/leírás szövegek jönnek az admin-szerkeszthető configból.
+const BUDGET_ICONS: Record<string, LucideIcon> = { economy: Wallet, mid: Tags, premium: Gem }
+const DISNEY_ICONS: Record<string, LucideIcon> = {
+  one_day_one_park: Sparkles,
+  one_day_two_parks: CalendarDays,
+  two_days_two_parks: CalendarRange,
 }
-
-const BUDGET_OPTIONS: QuestionOption<TemplateAnswers['budget']>[] = [
-  { value: 'economy', icon: Wallet, title: 'Gazdaságos', description: 'Ingyenes és olcsó programok, helyi bisztrók' },
-  { value: 'mid', icon: Tags, title: 'Középkategória', description: 'Kényelmes egyensúly élmény és ár között' },
-  { value: 'premium', icon: Gem, title: 'Prémium', description: 'A legjobb helyek, exkluzív élmények' },
-  { value: null, icon: HelpCircle, title: 'Még nem tudom', description: 'Mutasd a legjobb ajánlatunkat' },
-]
-
-const DISNEY_OPTIONS: QuestionOption<TemplateAnswers['disneyIntensity']>[] = [
-  { value: 'one_day_one_park', icon: Sparkles, title: '1 nap, 1 park', description: 'Egy egész nap az egyik Disneyland parkban' },
-  { value: 'one_day_two_parks', icon: CalendarDays, title: '1 nap, 2 park', description: 'Egy nap alatt mindkét parkba benézünk' },
-  { value: 'two_days_two_parks', icon: CalendarRange, title: '2 nap, 2 park', description: 'Két teljes nap, mindkét park alaposan' },
-  { value: null, icon: HelpCircle, title: 'Még nem tudjuk', description: 'Bármelyik jó, Viktória döntse el' },
-]
 
 interface ProgramtervezoFlowProps {
   templates: TripPlan[]
   error?: string
   guideContent: GuideContent
+  quizConfig: QuizConfig
 }
 
-export default function ProgramtervezoFlow({ templates, error, guideContent }: ProgramtervezoFlowProps) {
+export default function ProgramtervezoFlow({ templates, error, guideContent, quizConfig }: ProgramtervezoFlowProps) {
   const [mode, setMode] = useState<Mode>('quiz')
   const [stepIndex, setStepIndex] = useState(0)
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [flightStatus, setFlightStatus] = useState<FlightStatus | null>(null)
-  const [accommodationChoice, setAccommodationChoice] = useState<'hotel' | 'apartment' | null>(null)
-  const [locationChoice, setLocationChoice] = useState<'paris' | 'disneyland' | null>(null)
+  const [accommodationChoice, setAccommodationChoice] = useState<AccommodationType | null>(null)
+  const [locationChoice, setLocationChoice] = useState<AccommodationLocation | null>(null)
   const [answers, setAnswers] = useState<TemplateAnswers>(EMPTY_TEMPLATE_ANSWERS)
   const [contactName, setContactName] = useState('')
   const [contactEmail, setContactEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const budgetOptions: QuestionOption<TemplateAnswers['budget']>[] = useMemo(
+    () =>
+      quizConfig.budget.options.map((o) => ({
+        value: o.value,
+        title: o.title,
+        description: o.description,
+        icon: (o.value && BUDGET_ICONS[o.value]) || HelpCircle,
+      })),
+    [quizConfig.budget.options]
+  )
+
+  const disneyOptions: QuestionOption<TemplateAnswers['disneyIntensity']>[] = useMemo(
+    () =>
+      quizConfig.disney.options.map((o) => ({
+        value: o.value,
+        title: o.title,
+        description: o.description,
+        icon: (o.value && DISNEY_ICONS[o.value]) || HelpCircle,
+      })),
+    [quizConfig.disney.options]
+  )
 
   // A "hány éjszakát töltenétek" külön kérdés felesleges, ha a naptárban
   // már kijelölték az érkezés/hazautazás napját -- azt a dateRange-ből
@@ -114,23 +132,33 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
   }
 
   const travelWindow = formatDateRangeLabel(dateRange)
+  const dateRangeLabel = travelWindow ? `${travelWindow}${nights !== null ? ` (${nights} éjszaka)` : ''}` : ''
 
   function buildGuestNotes(): string {
     const lines: string[] = []
-    if (travelWindow) lines.push(`Utazási időszak: ${travelWindow}${nights !== null ? ` (${nights} éjszaka)` : ''}`)
-    if (flightStatus) lines.push(`Repülőjegy: ${FLIGHT_STATUS_LABELS[flightStatus]}`)
-    if (accommodationChoice) lines.push(`Szállástípus: ${accommodationChoice === 'hotel' ? 'hotel' : 'apartman'}`)
-    if (locationChoice) lines.push(`Szállás helye: ${locationChoice === 'paris' ? 'Párizs' : 'Disneyland'}`)
+    if (dateRangeLabel) lines.push(`Utazási időszak: ${dateRangeLabel}`)
+    if (flightStatus) {
+      const label = quizConfig.flight.options.find((o) => o.value === flightStatus)?.label
+      if (label) lines.push(`Repülőjegy: ${label}`)
+    }
+    if (accommodationChoice) {
+      const label = quizConfig.hotel.typeOptions.find((o) => o.value === accommodationChoice)?.label
+      if (label) lines.push(`Szállástípus: ${label}`)
+    }
+    if (locationChoice) {
+      const label = quizConfig.hotel.locationOptions.find((o) => o.value === locationChoice)?.label
+      if (label) lines.push(`Szállás helye: ${label}`)
+    }
     if (answers.budget) {
-      const label = BUDGET_OPTIONS.find((o) => o.value === answers.budget)?.title
+      const label = quizConfig.budget.options.find((o) => o.value === answers.budget)?.title
       if (label) lines.push(`Költségkeret: ${label}`)
     }
     if (answers.highlights.length > 0) {
-      const labels = ATTRACTION_OPTIONS.filter((o) => answers.highlights.includes(o.tag)).map((o) => o.label)
+      const labels = quizConfig.attractions.filter((o) => answers.highlights.includes(o.tag)).map((o) => o.label)
       lines.push(`Kiemelt nevezetességek: ${labels.join(', ')}`)
     }
     if (answers.disneyIntensity) {
-      const label = DISNEY_OPTIONS.find((o) => o.value === answers.disneyIntensity)?.title
+      const label = quizConfig.disney.options.find((o) => o.value === answers.disneyIntensity)?.title
       if (label) lines.push(`Disneyland: ${label}`)
     }
     return lines.join('\n')
@@ -147,6 +175,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
       guestEmail: contactEmail,
       guestNotes: buildGuestNotes(),
       guestHighlights: answers.highlights,
+      dateRangeLabel,
     })
 
     setIsSubmitting(false)
@@ -230,12 +259,22 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
 
             <AnimatePresence mode="wait">
               {mode === 'quiz' && step === 'when' && (
-                <DateRangeStep key="when" range={dateRange} onChange={setDateRange} onNext={goNext} />
+                <DateRangeStep
+                  key="when"
+                  title={quizConfig.when.title}
+                  subtitle={quizConfig.when.subtitle}
+                  range={dateRange}
+                  onChange={setDateRange}
+                  onNext={goNext}
+                />
               )}
 
               {mode === 'quiz' && step === 'flight' && (
                 <FlightStep
                   key="flight"
+                  title={quizConfig.flight.title}
+                  subtitle={quizConfig.flight.subtitle}
+                  options={quizConfig.flight.options}
                   status={flightStatus}
                   onChange={setFlightStatus}
                   tips={guideContent.flightTips}
@@ -247,8 +286,8 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
               {mode === 'quiz' && step === 'hotel' && (
                 <InfoStep
                   key="hotel"
-                  title="És a szállás?"
-                  subtitle="A megfelelő szállás mindig a legnagyobb kérdés -- segítünk dönteni"
+                  title={quizConfig.hotel.title}
+                  subtitle={quizConfig.hotel.subtitle}
                   tips={guideContent.hotelTips}
                   skipLabel="Már van szállásunk, ez nem kell"
                   onSkip={goNext}
@@ -257,22 +296,16 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                   extra={
                     <div className="mb-6 space-y-3">
                       <ChoiceRow
-                        label="Hotel vagy apartman?"
-                        options={[
-                          { value: 'hotel', label: 'Hotel' },
-                          { value: 'apartment', label: 'Apartman' },
-                        ]}
+                        label={quizConfig.hotel.typeQuestionLabel}
+                        options={quizConfig.hotel.typeOptions}
                         selected={accommodationChoice}
-                        onSelect={(value) => setAccommodationChoice(value as 'hotel' | 'apartment')}
+                        onSelect={(value) => setAccommodationChoice(value as AccommodationType)}
                       />
                       <ChoiceRow
-                        label="Párizs vagy Disneyland?"
-                        options={[
-                          { value: 'paris', label: 'Párizs' },
-                          { value: 'disneyland', label: 'Disneyland' },
-                        ]}
+                        label={quizConfig.hotel.locationQuestionLabel}
+                        options={quizConfig.hotel.locationOptions}
                         selected={locationChoice}
-                        onSelect={(value) => setLocationChoice(value as 'paris' | 'disneyland')}
+                        onSelect={(value) => setLocationChoice(value as AccommodationLocation)}
                       />
                     </div>
                   }
@@ -282,9 +315,9 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
               {mode === 'quiz' && step === 'budget' && (
                 <QuestionStep
                   key="budget"
-                  title="Milyen költségkeretben gondolkodsz?"
-                  subtitle="A repjegyen és szálláson felüli napi programokra értve -- ez irányár"
-                  options={BUDGET_OPTIONS}
+                  title={quizConfig.budget.title}
+                  subtitle={quizConfig.budget.subtitle}
+                  options={budgetOptions}
                   selected={answers.budget}
                   onSelect={(value) => setAnswers((current) => ({ ...current, budget: value }))}
                   onBack={goBack}
@@ -295,9 +328,9 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
               {mode === 'quiz' && step === 'highlights' && (
                 <ChecklistStep
                   key="highlights"
-                  title="Melyik nevezetességeket szeretnétek biztosan látni?"
-                  subtitle="Bármennyit kiválaszthattok -- ez alapján ajánljuk a legjobban illő tervet"
-                  options={ATTRACTION_OPTIONS}
+                  title={quizConfig.highlights.title}
+                  subtitle={quizConfig.highlights.subtitle}
+                  options={quizConfig.attractions}
                   selected={answers.highlights}
                   onToggle={toggleHighlight}
                   onBack={goBack}
@@ -308,8 +341,8 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
               {mode === 'quiz' && step === 'disney' && (
                 <QuestionStep
                   key="disney"
-                  title="Mennyi időt töltenétek a Disneylandben?"
-                  options={DISNEY_OPTIONS}
+                  title={quizConfig.disney.title}
+                  options={disneyOptions}
                   selected={answers.disneyIntensity}
                   onSelect={(value) => setAnswers((current) => ({ ...current, disneyIntensity: value }))}
                   onBack={goBack}
@@ -327,7 +360,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                   className="mx-auto max-w-lg py-6 text-center"
                 >
                   <p className="mb-2 font-montserrat text-sm font-medium text-parisian-beige-600">
-                    Ez illik hozzátok{travelWindow ? ` -- ${travelWindow}` : ''}
+                    Ez illik hozzátok{dateRangeLabel ? ` -- ${dateRangeLabel}` : ''}
                   </p>
                   <div className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-lg">
                     <div className="relative h-52 w-full overflow-hidden bg-parisian-beige-100">
@@ -348,10 +381,10 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
                           {recommendation.templateTeaser}
                         </p>
                       )}
-                      {recommendation.dateRangeLabel && (
+                      {dateRangeLabel && (
                         <span className="flex items-center gap-1.5 font-montserrat text-xs font-medium text-parisian-grey-400">
                           <CalendarDays className="h-3.5 w-3.5" />
-                          {recommendation.dateRangeLabel}
+                          {dateRangeLabel}
                         </span>
                       )}
                     </div>
@@ -437,16 +470,16 @@ export default function ProgramtervezoFlow({ templates, error, guideContent }: P
   )
 }
 
-function ChoiceRow({
+function ChoiceRow<T extends string>({
   label,
   options,
   selected,
   onSelect,
 }: {
   label: string
-  options: { value: string; label: string }[]
-  selected: string | null
-  onSelect: (value: string) => void
+  options: { value: T; label: string }[]
+  selected: T | null
+  onSelect: (value: T) => void
 }) {
   return (
     <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4 text-left">

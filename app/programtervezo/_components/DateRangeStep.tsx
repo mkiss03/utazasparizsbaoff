@@ -6,6 +6,8 @@ import { DayPicker, type DateRange } from 'react-day-picker'
 import { hu } from 'react-day-picker/locale'
 
 interface DateRangeStepProps {
+  title: string
+  subtitle?: string
   range: DateRange | undefined
   onChange: (range: DateRange | undefined) => void
   onBack?: () => void
@@ -35,7 +37,7 @@ export function countNights(range: DateRange | undefined): number | null {
   return Math.round((range.to.getTime() - range.from.getTime()) / msPerDay)
 }
 
-export default function DateRangeStep({ range, onChange, onBack, onNext }: DateRangeStepProps) {
+export default function DateRangeStep({ title, subtitle, range, onChange, onBack, onNext }: DateRangeStepProps) {
   const label = formatDateRangeLabel(range)
   const nights = countNights(range)
 
@@ -47,10 +49,8 @@ export default function DateRangeStep({ range, onChange, onBack, onNext }: DateR
       transition={{ duration: 0.25 }}
       className="mx-auto max-w-md px-4 py-14 text-center"
     >
-      <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">
-        Mikor terveznétek utazni?
-      </h1>
-      <p className="mb-6 font-montserrat text-parisian-grey-500">Jelöld ki a naptárban az érkezés és a hazautazás napját</p>
+      <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
+      {subtitle && <p className="mb-6 font-montserrat text-parisian-grey-500">{subtitle}</p>}
 
       <div className="programtervezo-calendar mx-auto inline-block rounded-3xl border-2 border-parisian-beige-200 bg-white p-4 shadow-sm">
         <DayPicker

@@ -34,6 +34,12 @@ export default function TripPlansListPage() {
         </div>
         <div className="flex items-center gap-3">
           <Link
+            href="/admin/programtervek/kerdesek"
+            className="rounded-full border-2 border-parisian-beige-300 px-5 py-2.5 font-montserrat text-sm font-semibold text-parisian-grey-700 hover:border-parisian-beige-400"
+          >
+            Kérdéssor szerkesztése
+          </Link>
+          <Link
             href="/admin/programtervek/utmutato"
             className="rounded-full border-2 border-parisian-beige-300 px-5 py-2.5 font-montserrat text-sm font-semibold text-parisian-grey-700 hover:border-parisian-beige-400"
           >
