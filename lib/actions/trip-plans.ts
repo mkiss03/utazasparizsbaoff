@@ -266,6 +266,10 @@ export async function submitTripPlanRequest(params: {
   // A vendég ÁLTAL a naptárban ténylegesen kiválasztott dátumtartomány --
   // ha üres, a sablon saját (általános) időtartam-felirata marad meg.
   dateRangeLabel?: string
+  // A sablon napjai a vendég valós dátumaira igazítva (lásd
+  // lib/planner/day-label.ts) -- ha üres, a sablon eredeti napcímkéi
+  // (a sablon saját példa-dátumai) maradnak meg.
+  days?: TripPlan['days']
 }): Promise<SaveTripPlanResult> {
   try {
     const supabase = createPlannerAdminClient()
@@ -293,7 +297,7 @@ export async function submitTripPlanRequest(params: {
         date_range_label: params.dateRangeLabel || row.date_range_label,
         accommodation: row.accommodation,
         headcount: row.headcount,
-        days: row.days,
+        days: params.days && params.days.length > 0 ? params.days : row.days,
         curator_message: row.curator_message,
         is_published: false,
         is_template: false,

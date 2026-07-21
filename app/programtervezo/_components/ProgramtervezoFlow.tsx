@@ -18,6 +18,7 @@ import { EMPTY_TEMPLATE_ANSWERS, matchTemplate, type TemplateAnswers } from '@/l
 import { submitTripPlanRequest } from '@/lib/actions/trip-plans'
 import QuestionStep, { type QuestionOption } from './QuestionStep'
 import DateRangeStep, { countNights, formatDateRangeLabel } from './DateRangeStep'
+import { adjustDaysToDateRange } from '@/lib/planner/day-label'
 import FlightStep, { type FlightStatus } from './FlightStep'
 import InfoStep from './InfoStep'
 import ChecklistStep from './ChecklistStep'
@@ -176,6 +177,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
       guestNotes: buildGuestNotes(),
       guestHighlights: answers.highlights,
       dateRangeLabel,
+      days: adjustDaysToDateRange(recommendation.days, dateRange?.from),
     })
 
     setIsSubmitting(false)

@@ -154,30 +154,32 @@ export default function TripPlanEditorPage() {
         </div>
       )}
 
-      <div className="mb-6 flex items-center justify-between rounded-2xl border-2 border-parisian-beige-200 bg-parisian-cream-50 p-5">
-        <div>
-          <p className="font-montserrat text-sm font-semibold text-parisian-grey-800">Ez egy újrafelhasználható sablon</p>
-          <p className="mt-0.5 font-montserrat text-xs text-parisian-grey-500">
-            Sablon esetén a /programtervezo oldalon kártyaként jelenik meg, bárki kiválaszthatja. Ha kikapcsolod, ez egy
-            adott foglaláshoz tartozó egyedi terv lesz, amit privát linken küldesz ki.
-          </p>
-        </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={draft.isTemplate}
-          onClick={() => updateDraft({ isTemplate: !draft.isTemplate })}
-          className={`relative h-7 w-12 flex-shrink-0 rounded-full transition-colors ${
-            draft.isTemplate ? 'bg-parisian-beige-400' : 'bg-parisian-grey-200'
-          }`}
-        >
-          <span
-            className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-              draft.isTemplate ? 'translate-x-6' : 'translate-x-1'
+      {!draft.guestEmail && (
+        <div className="mb-6 flex items-center justify-between rounded-2xl border-2 border-parisian-beige-200 bg-parisian-cream-50 p-5">
+          <div>
+            <p className="font-montserrat text-sm font-semibold text-parisian-grey-800">Ez egy újrafelhasználható sablon</p>
+            <p className="mt-0.5 font-montserrat text-xs text-parisian-grey-500">
+              Sablon esetén a /programtervezo oldalon kártyaként jelenik meg, bárki kiválaszthatja. Ha kikapcsolod, ez
+              egy adott foglaláshoz tartozó egyedi terv lesz, amit privát linken küldesz ki.
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={draft.isTemplate}
+            onClick={() => updateDraft({ isTemplate: !draft.isTemplate })}
+            className={`relative h-7 w-12 flex-shrink-0 rounded-full transition-colors ${
+              draft.isTemplate ? 'bg-parisian-beige-400' : 'bg-parisian-grey-200'
             }`}
-          />
-        </button>
-      </div>
+          >
+            <span
+              className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                draft.isTemplate ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+      )}
 
       {draft.isTemplate && (
         <div className="mb-6 space-y-4 rounded-2xl border-2 border-parisian-beige-200 bg-white p-6">
