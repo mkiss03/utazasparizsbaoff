@@ -31,7 +31,7 @@ export default function ContactStep({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={{ duration: 0.25 }}
-      className="mx-auto max-w-md px-4 py-14 text-center"
+      className="mx-auto max-w-sm text-center"
     >
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">
         Már csak egy lépés
@@ -68,14 +68,16 @@ export default function ContactStep({
             Vissza
           </button>
         )}
-        <button
+        <motion.button
           type="button"
           onClick={onSubmit}
           disabled={!canSubmit || isSubmitting}
+          whileHover={canSubmit ? { scale: 1.03 } : {}}
+          whileTap={canSubmit ? { scale: 0.97 } : {}}
           className="rounded-full bg-parisian-beige-400 px-8 py-3 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500 disabled:opacity-50"
         >
           {isSubmitting ? 'Küldés...' : 'Igény elküldése'}
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   )

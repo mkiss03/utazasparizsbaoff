@@ -24,8 +24,9 @@ import InfoStep from './InfoStep'
 import ChecklistStep from './ChecklistStep'
 import ContactStep from './ContactStep'
 import TemplateCardGrid from './TemplateCardGrid'
+import ProgressDots from './ProgressDots'
 
-type Mode = 'quiz' | 'submitted' | 'gallery'
+type Mode = 'quiz' | 'submitted'
 type Step = 'when' | 'flight' | 'hotel' | 'budget' | 'highlights' | 'disney' | 'preview' | 'contact'
 
 // Az ikonok kódban maradnak (JSON-ban nem tárolhatók) -- csak a
@@ -191,9 +192,25 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
   }
 
   const hasEnoughTemplates = templates.length > 1
+  const isFinalScreen = mode === 'submitted' || (mode === 'quiz' && (step === 'preview' || step === 'contact'))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-parisian-cream-50 to-parisian-beige-50">
+      {/* Halvány, lassan lebegő háttér-akcentek -- ez adja a "kitöltött tér"
+          érzetét a hosszú kérdőív alatt, animáció nélkül üresnek hatna. */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-parisian-beige-200/40 blur-3xl"
+        animate={{ y: [0, 30, 0], x: [0, 20, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 top-2/3 h-80 w-80 rounded-full bg-parisian-cream-300/40 blur-3xl"
+        animate={{ y: [0, -24, 0], x: [0, -16, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
       <div className="relative overflow-hidden bg-parisian-grey-900 py-20 text-center text-white">
         <motion.div
           initial={{ scale: 1.1, opacity: 0.5 }}
@@ -232,7 +249,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="relative mx-auto max-w-3xl px-4 py-12 sm:py-16">
         {error && (
           <div className="mb-8 rounded-xl border-2 border-french-red-200 bg-french-red-50 px-4 py-3 text-center font-montserrat text-sm text-french-red-600">
             {error}
@@ -248,18 +265,15 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
         )}
 
         {!error && hasEnoughTemplates && (
-          <>
-            <div className="mb-2 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setMode(mode === 'gallery' ? 'quiz' : 'gallery')}
-                className="font-montserrat text-sm font-medium text-parisian-grey-500 underline-offset-2 hover:text-parisian-grey-700 hover:underline"
-              >
-                {mode === 'gallery' ? 'Vissza a kérdésekhez' : 'Az összes lehetőség megtekintése'}
-              </button>
-            </div>
+          <div className="overflow-hidden rounded-[2rem] border-2 border-parisian-beige-200 bg-white/90 shadow-xl backdrop-blur-sm">
+            {mode === 'quiz' && !isFinalScreen && (
+              <div className="border-b-2 border-parisian-beige-100 px-8 pb-5 pt-8 sm:px-12">
+                <ProgressDots current={stepIndex} total={steps.length - 2} />
+              </div>
+            )}
 
-            <AnimatePresence mode="wait">
+            <div className="px-8 py-12 sm:px-12 sm:py-14">
+              <AnimatePresence mode="wait">
               {mode === 'quiz' && step === 'when' && (
                 <DateRangeStep
                   key="when"
@@ -359,12 +373,17 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -24 }}
                   transition={{ duration: 0.25 }}
-                  className="mx-auto max-w-lg py-6 text-center"
+                  className="mx-auto max-w-lg text-center"
                 >
                   <p className="mb-2 font-montserrat text-sm font-medium text-parisian-beige-600">
                     Ez illik hozzátok{dateRangeLabel ? ` -- ${dateRangeLabel}` : ''}
                   </p>
-                  <div className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-lg">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                    className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-lg"
+                  >
                     <div className="relative h-52 w-full overflow-hidden bg-parisian-beige-100">
                       <Image
                         src={recommendation.templateImage || '/images/stock1.jpeg'}
@@ -390,7 +409,7 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
                         </span>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                   <p className="mt-4 font-montserrat text-xs text-parisian-grey-400">
                     Ez egy induló javaslat -- Viktória a válaszaid alapján személyre szabja, mielőtt elküldi.
                   </p>
@@ -402,13 +421,15 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
                     >
                       Vissza
                     </button>
-                    <button
+                    <motion.button
                       type="button"
                       onClick={goNext}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       className="rounded-full bg-parisian-beige-400 px-8 py-3 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500"
                     >
                       Igénylem ezt a tervet
-                    </button>
+                    </motion.button>
                   </div>
                 </motion.div>
               )}
@@ -433,11 +454,16 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -24 }}
-                  className="mx-auto max-w-md py-16 text-center"
+                  className="mx-auto max-w-md py-8 text-center"
                 >
-                  <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-parisian-beige-100 text-parisian-beige-600">
-                    <Mail className="h-6 w-6" />
-                  </span>
+                  <motion.span
+                    initial={{ scale: 0, rotate: -20 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.1 }}
+                    className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-parisian-beige-100 text-parisian-beige-600"
+                  >
+                    <Mail className="h-7 w-7" />
+                  </motion.span>
                   <h1 className="mb-3 font-playfair text-3xl font-bold text-parisian-grey-800">Köszönjük!</h1>
                   <p className="mb-8 font-montserrat text-parisian-grey-500">
                     Viktória hamarosan átnézi az igényedet, és emailben elküldi a nektek személyre szabott
@@ -453,13 +479,9 @@ export default function ProgramtervezoFlow({ templates, error, guideContent, qui
                 </motion.div>
               )}
 
-              {mode === 'gallery' && (
-                <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <TemplateCardGrid templates={templates} />
-                </motion.div>
-              )}
             </AnimatePresence>
-          </>
+            </div>
+          </div>
         )}
 
         {!error && templates.length === 1 && (
@@ -484,22 +506,24 @@ function ChoiceRow<T extends string>({
   onSelect: (value: T) => void
 }) {
   return (
-    <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4 text-left">
+    <div className="rounded-2xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4 text-left">
       <p className="mb-2 font-montserrat text-sm font-medium text-parisian-grey-700">{label}</p>
       <div className="flex gap-2">
         {options.map((option) => (
-          <button
+          <motion.button
             key={option.value}
             type="button"
             onClick={() => onSelect(option.value)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             className={`rounded-full border-2 px-4 py-1.5 font-montserrat text-sm font-medium transition-colors ${
               selected === option.value
-                ? 'border-parisian-beige-400 bg-parisian-cream-50 text-parisian-grey-800'
+                ? 'border-parisian-beige-400 bg-white text-parisian-grey-800'
                 : 'border-parisian-beige-200 bg-white text-parisian-grey-500 hover:border-parisian-beige-300'
             }`}
           >
             {option.label}
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>

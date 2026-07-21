@@ -47,12 +47,12 @@ export default function DateRangeStep({ title, subtitle, range, onChange, onBack
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={{ duration: 0.25 }}
-      className="mx-auto max-w-md px-4 py-14 text-center"
+      className="mx-auto max-w-md text-center"
     >
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
       {subtitle && <p className="mb-6 font-montserrat text-parisian-grey-500">{subtitle}</p>}
 
-      <div className="programtervezo-calendar mx-auto inline-block rounded-3xl border-2 border-parisian-beige-200 bg-white p-4 shadow-sm">
+      <div className="programtervezo-calendar mx-auto inline-block rounded-3xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4">
         <DayPicker
           mode="range"
           locale={hu}

@@ -23,7 +23,7 @@ export default function InfoStep({ title, subtitle, tips, extra, skipLabel, onSk
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={{ duration: 0.25 }}
-      className="mx-auto max-w-xl px-4 py-14 text-center"
+      className="mx-auto max-w-xl text-center"
     >
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
       {subtitle && <p className="mb-8 font-montserrat text-parisian-grey-500">{subtitle}</p>}
@@ -31,7 +31,7 @@ export default function InfoStep({ title, subtitle, tips, extra, skipLabel, onSk
       {tips.length > 0 && (
         <div className="mb-6 space-y-3 text-left">
           {tips.map((tip, index) => (
-            <div key={index} className="flex gap-3 rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
+            <div key={index} className="flex gap-3 rounded-2xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4">
               <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100 text-parisian-beige-600">
                 <Lightbulb className="h-4 w-4" />
               </span>

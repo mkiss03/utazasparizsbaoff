@@ -38,7 +38,7 @@ export default function QuestionStep<T>({ title, subtitle, options, selected, on
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={{ duration: 0.25 }}
-      className="mx-auto max-w-2xl px-4 py-14 text-center"
+      className="mx-auto max-w-xl text-center"
     >
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
       {subtitle && <p className="mb-8 font-montserrat text-parisian-grey-500">{subtitle}</p>}

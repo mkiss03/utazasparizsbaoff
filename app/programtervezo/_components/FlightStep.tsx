@@ -24,17 +24,19 @@ export default function FlightStep({ title, subtitle, options, status, onChange,
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -24 }}
       transition={{ duration: 0.25 }}
-      className="mx-auto max-w-xl px-4 py-14 text-center"
+      className="mx-auto max-w-xl text-center"
     >
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
       {subtitle && <p className="mb-8 font-montserrat text-parisian-grey-500">{subtitle}</p>}
 
       <div className="flex flex-wrap justify-center gap-2.5">
         {options.map((option) => (
-          <button
+          <motion.button
             key={option.value}
             type="button"
             onClick={() => onChange(option.value)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
             className={`rounded-full border-2 px-5 py-2.5 font-montserrat text-sm font-medium transition-colors ${
               status === option.value
                 ? 'border-parisian-beige-400 bg-parisian-cream-50 text-parisian-grey-800'
@@ -42,7 +44,7 @@ export default function FlightStep({ title, subtitle, options, status, onChange,
             }`}
           >
             {option.label}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -55,7 +57,7 @@ export default function FlightStep({ title, subtitle, options, status, onChange,
             className="mt-6 space-y-3 overflow-hidden text-left"
           >
             {tips.map((tip, index) => (
-              <div key={index} className="flex gap-3 rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
+              <div key={index} className="flex gap-3 rounded-2xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4">
                 <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-parisian-beige-100 text-parisian-beige-600">
                   <Lightbulb className="h-4 w-4" />
                 </span>
