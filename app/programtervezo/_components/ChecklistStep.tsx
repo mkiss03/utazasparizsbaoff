@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import type { AttractionOption } from '@/lib/planner/attraction-options'
+import { ATTRACTION_CATEGORY_LABELS, type AttractionCategory, type AttractionOption } from '@/lib/planner/attraction-options'
 
 interface ChecklistStepProps {
   title: string
@@ -13,6 +13,8 @@ interface ChecklistStepProps {
   onBack?: () => void
   onNext: () => void
 }
+
+const CATEGORY_ORDER: AttractionCategory[] = ['ticketed', 'free', 'disneyland']
 
 export default function ChecklistStep({ title, subtitle, options, selected, onToggle, onBack, onNext }: ChecklistStepProps) {
   return (
@@ -26,33 +28,46 @@ export default function ChecklistStep({ title, subtitle, options, selected, onTo
       <h1 className="mb-2 font-playfair text-3xl font-bold text-parisian-grey-800 sm:text-4xl">{title}</h1>
       {subtitle && <p className="mb-8 font-montserrat text-parisian-grey-500">{subtitle}</p>}
 
-      <div className="flex flex-wrap justify-center gap-2.5">
-        {options.map((option) => {
-          const isSelected = selected.includes(option.tag)
+      <div className="space-y-6">
+        {CATEGORY_ORDER.map((category) => {
+          const categoryOptions = options.filter((o) => o.category === category)
+          if (categoryOptions.length === 0) return null
           return (
-            <motion.button
-              key={option.tag}
-              type="button"
-              onClick={() => onToggle(option.tag)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.96 }}
-              className={`flex items-center gap-2 rounded-full border-2 px-4 py-2.5 font-montserrat text-sm font-medium transition-colors ${
-                isSelected
-                  ? 'border-parisian-beige-400 bg-parisian-cream-50 text-parisian-grey-800'
-                  : 'border-parisian-beige-200 bg-white text-parisian-grey-600 hover:border-parisian-beige-300'
-              }`}
-            >
-              {isSelected && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex h-4 w-4 items-center justify-center rounded-full bg-parisian-beige-400 text-white"
-                >
-                  <Check className="h-2.5 w-2.5" />
-                </motion.span>
-              )}
-              {option.label}
-            </motion.button>
+            <div key={category}>
+              <p className="mb-3 text-left font-montserrat text-xs font-semibold uppercase tracking-wider text-parisian-beige-600">
+                {ATTRACTION_CATEGORY_LABELS[category]}
+              </p>
+              <div className="flex flex-wrap justify-start gap-2.5">
+                {categoryOptions.map((option) => {
+                  const isSelected = selected.includes(option.tag)
+                  return (
+                    <motion.button
+                      key={option.tag}
+                      type="button"
+                      onClick={() => onToggle(option.tag)}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.96 }}
+                      className={`flex items-center gap-2 rounded-full border-2 px-4 py-2.5 font-montserrat text-sm font-medium transition-colors ${
+                        isSelected
+                          ? 'border-parisian-beige-400 bg-parisian-cream-50 text-parisian-grey-800'
+                          : 'border-parisian-beige-200 bg-white text-parisian-grey-600 hover:border-parisian-beige-300'
+                      }`}
+                    >
+                      {isSelected && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="flex h-4 w-4 items-center justify-center rounded-full bg-parisian-beige-400 text-white"
+                        >
+                          <Check className="h-2.5 w-2.5" />
+                        </motion.span>
+                      )}
+                      {option.label}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
           )
         })}
       </div>

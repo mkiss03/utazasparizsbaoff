@@ -10,6 +10,7 @@ interface TripPlanRow {
   guest_name: string | null
   guest_email: string | null
   guest_notes: string | null
+  guest_highlights: string[]
   date_range_label: string
   accommodation: string | null
   headcount: number | null
@@ -37,6 +38,7 @@ function rowToTripPlan(row: TripPlanRow): TripPlan {
     guestName: row.guest_name ?? '',
     guestEmail: row.guest_email ?? '',
     guestNotes: row.guest_notes ?? '',
+    guestHighlights: row.guest_highlights ?? [],
     dateRangeLabel: row.date_range_label,
     accommodation: row.accommodation ?? '',
     headcount: row.headcount,
@@ -184,6 +186,7 @@ export async function createTripPlan(
         guest_name: draft.guestName || null,
         guest_email: draft.guestEmail || null,
         guest_notes: draft.guestNotes || null,
+        guest_highlights: draft.guestHighlights,
         date_range_label: draft.dateRangeLabel,
         accommodation: draft.accommodation || null,
         headcount: draft.headcount,
@@ -219,6 +222,7 @@ export async function updateTripPlan(id: string, draft: TripPlanDraft): Promise<
         guest_name: draft.guestName || null,
         guest_email: draft.guestEmail || null,
         guest_notes: draft.guestNotes || null,
+        guest_highlights: draft.guestHighlights,
         date_range_label: draft.dateRangeLabel,
         accommodation: draft.accommodation || null,
         headcount: draft.headcount,
@@ -258,6 +262,7 @@ export async function submitTripPlanRequest(params: {
   guestName: string
   guestEmail: string
   guestNotes: string
+  guestHighlights: string[]
 }): Promise<SaveTripPlanResult> {
   try {
     const supabase = createPlannerAdminClient()
@@ -281,6 +286,7 @@ export async function submitTripPlanRequest(params: {
         guest_name: params.guestName || null,
         guest_email: params.guestEmail || null,
         guest_notes: params.guestNotes || null,
+        guest_highlights: params.guestHighlights,
         date_range_label: row.date_range_label,
         accommodation: row.accommodation,
         headcount: row.headcount,

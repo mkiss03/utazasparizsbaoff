@@ -27,6 +27,10 @@ export interface TripPlan {
   guestName: string
   guestEmail: string
   guestNotes: string
+  // A vendég által a checklistán kiválasztott nevezetesség-tag-ek
+  // strukturáltan, hogy az admin szerkesztő ezekből konkrét
+  // "add hozzá a X. naphoz" gombokat tudjon építeni.
+  guestHighlights: string[]
   dateRangeLabel: string
   accommodation: string
   headcount: number | null
@@ -82,6 +86,7 @@ export function emptyTripPlanDraft(): TripPlanDraft {
     guestName: '',
     guestEmail: '',
     guestNotes: '',
+    guestHighlights: [],
     dateRangeLabel: '',
     accommodation: '',
     headcount: null,

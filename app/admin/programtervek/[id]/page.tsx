@@ -26,6 +26,7 @@ export default function TripPlanEditorPage() {
   const [isLoading, setIsLoading] = useState(!isNew)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [targetDayIndex, setTargetDayIndex] = useState(0)
 
   useEffect(() => {
     if (isNew) return
@@ -59,6 +60,19 @@ export default function TripPlanEditorPage() {
   function updateDay(index: number, day: TripPlanDraft['days'][number]) {
     if (!draft) return
     updateDraft({ days: draft.days.map((d, i) => (i === index ? day : d)) })
+  }
+
+  function addHighlightToDay(dayIndex: number, label: string) {
+    if (!draft) return
+    const target = draft.days[dayIndex]
+    if (!target) return
+    updateDay(dayIndex, {
+      ...target,
+      items: [
+        ...target.items,
+        { id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, text: label, confirmed: false },
+      ],
+    })
   }
 
   function addDay() {
@@ -326,6 +340,45 @@ export default function TripPlanEditorPage() {
                   Vendég válaszai a kérdőívből
                 </p>
                 <p className="whitespace-pre-line font-montserrat text-sm text-parisian-grey-700">{draft.guestNotes}</p>
+              </div>
+            )}
+            {draft.guestHighlights.length > 0 && (
+              <div className="rounded-xl border-2 border-parisian-beige-100 bg-parisian-cream-50 p-4">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-montserrat text-xs font-semibold uppercase tracking-wider text-parisian-beige-600">
+                    Kiválasztott nevezetességek -- kattints a napra rakáshoz
+                  </p>
+                  <label className="flex items-center gap-2">
+                    <span className="font-montserrat text-xs text-parisian-grey-500">Cél nap:</span>
+                    <select
+                      value={targetDayIndex}
+                      onChange={(e) => setTargetDayIndex(Number(e.target.value))}
+                      className="rounded-lg border-2 border-parisian-beige-200 px-2 py-1 font-montserrat text-xs outline-none focus:border-parisian-beige-400"
+                    >
+                      {draft.days.map((day, index) => (
+                        <option key={day.id} value={index}>
+                          {day.dateLabel}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {draft.guestHighlights.map((tag) => {
+                    const label = ATTRACTION_OPTIONS.find((o) => o.tag === tag)?.label ?? tag
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => addHighlightToDay(targetDayIndex, label)}
+                        className="flex items-center gap-1.5 rounded-full border-2 border-parisian-beige-300 bg-white px-3 py-1.5 font-montserrat text-xs font-medium text-parisian-grey-700 hover:border-parisian-beige-400 hover:bg-parisian-beige-50"
+                      >
+                        <Plus className="h-3 w-3" />
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             )}
           </>
