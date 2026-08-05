@@ -4,13 +4,23 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Mail, User, Calendar, Check, X } from 'lucide-react'
+import { Mail, User, Calendar, Check, X, Plus, Pencil, Trash2, Save } from 'lucide-react'
 import type { NewsletterSubscriber } from '@/lib/types/database'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function SubscribersPage() {
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
+
+  const [newEmail, setNewEmail] = useState('')
+  const [isAdding, setIsAdding] = useState(false)
+  const [addError, setAddError] = useState<string | null>(null)
+
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editEmail, setEditEmail] = useState('')
+  const [editError, setEditError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchSubscribers()
@@ -40,6 +50,71 @@ export default function SubscribersPage() {
     if (error) {
       console.error('Error updating subscriber:', error)
       alert('Hiba történt a státusz frissítése során')
+    } else {
+      await fetchSubscribers()
+    }
+  }
+
+  const handleAddSubscriber = async () => {
+    const email = newEmail.trim().toLowerCase()
+    setAddError(null)
+
+    if (!EMAIL_REGEX.test(email)) {
+      setAddError('Adj meg egy érvényes email címet.')
+      return
+    }
+
+    setIsAdding(true)
+    const { error } = await supabase.from('newsletter_subscribers').insert({ email, is_active: true })
+    setIsAdding(false)
+
+    if (error) {
+      setAddError(error.code === '23505' ? 'Ez az email cím már szerepel a listában.' : 'Hiba történt a hozzáadás során.')
+      return
+    }
+
+    setNewEmail('')
+    await fetchSubscribers()
+  }
+
+  const startEdit = (subscriber: NewsletterSubscriber) => {
+    setEditingId(subscriber.id)
+    setEditEmail(subscriber.email)
+    setEditError(null)
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditEmail('')
+    setEditError(null)
+  }
+
+  const saveEdit = async (id: string) => {
+    const email = editEmail.trim().toLowerCase()
+    if (!EMAIL_REGEX.test(email)) {
+      setEditError('Adj meg egy érvényes email címet.')
+      return
+    }
+
+    const { error } = await supabase.from('newsletter_subscribers').update({ email }).eq('id', id)
+
+    if (error) {
+      setEditError(error.code === '23505' ? 'Ez az email cím már szerepel a listában.' : 'Hiba történt a mentés során.')
+      return
+    }
+
+    cancelEdit()
+    await fetchSubscribers()
+  }
+
+  const handleDelete = async (id: string, email: string) => {
+    if (!confirm(`Biztosan törlöd ezt a feliratkozót?\n\n${email}`)) return
+
+    const { error } = await supabase.from('newsletter_subscribers').delete().eq('id', id)
+
+    if (error) {
+      console.error('Error deleting subscriber:', error)
+      alert('Hiba történt a törlés során')
     } else {
       await fetchSubscribers()
     }
@@ -114,6 +189,41 @@ export default function SubscribersPage() {
         </Card>
       </div>
 
+      {/* Manual add */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Feliratkozó manuális hozzáadása
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="flex-1 min-w-[240px]">
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => {
+                  setNewEmail(e.target.value)
+                  setAddError(null)
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddSubscriber()}
+                placeholder="pelda@email.hu"
+                className="w-full rounded-lg border-2 border-parisian-beige-200 px-4 py-2.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+              />
+              {addError && <p className="mt-1.5 font-montserrat text-xs text-red-600">{addError}</p>}
+            </div>
+            <button
+              onClick={handleAddSubscriber}
+              disabled={isAdding || !newEmail.trim()}
+              className="rounded-lg bg-parisian-beige-400 px-5 py-2.5 font-montserrat text-sm font-semibold text-white transition-colors hover:bg-parisian-beige-500 disabled:opacity-50"
+            >
+              {isAdding ? 'Hozzáadás...' : 'Hozzáadás'}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Subscribers Table */}
       <Card>
         <CardHeader>
@@ -157,12 +267,29 @@ export default function SubscribersPage() {
                       className="border-b border-parisian-beige-100 transition-colors hover:bg-parisian-cream-50/50"
                     >
                       <td className="px-4 py-4">
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-parisian-grey-400" />
-                          <span className="font-medium text-parisian-grey-800">
-                            {subscriber.email}
-                          </span>
-                        </div>
+                        {editingId === subscriber.id ? (
+                          <div>
+                            <input
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => {
+                                setEditEmail(e.target.value)
+                                setEditError(null)
+                              }}
+                              onKeyDown={(e) => e.key === 'Enter' && saveEdit(subscriber.id)}
+                              autoFocus
+                              className="w-full rounded-lg border-2 border-parisian-beige-300 px-3 py-1.5 font-montserrat text-sm outline-none focus:border-parisian-beige-400"
+                            />
+                            {editError && <p className="mt-1 font-montserrat text-xs text-red-600">{editError}</p>}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-parisian-grey-400" />
+                            <span className="font-medium text-parisian-grey-800">
+                              {subscriber.email}
+                            </span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-4 text-sm text-parisian-grey-600">
                         {formatDate(subscriber.created_at)}
@@ -180,17 +307,53 @@ export default function SubscribersPage() {
                           </Badge>
                         )}
                       </td>
-                      <td className="px-4 py-4 text-center">
-                        <button
-                          onClick={() => toggleSubscriberStatus(subscriber.id, subscriber.is_active)}
-                          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                            subscriber.is_active
-                              ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                              : 'bg-green-100 text-green-700 hover:bg-green-200'
-                          }`}
-                        >
-                          {subscriber.is_active ? 'Deaktiválás' : 'Aktiválás'}
-                        </button>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          {editingId === subscriber.id ? (
+                            <>
+                              <button
+                                onClick={() => saveEdit(subscriber.id)}
+                                className="flex items-center gap-1 rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-700 transition-colors hover:bg-green-200"
+                              >
+                                <Save className="h-3.5 w-3.5" />
+                                Mentés
+                              </button>
+                              <button
+                                onClick={cancelEdit}
+                                className="rounded-lg px-3 py-2 text-sm font-medium text-parisian-grey-500 transition-colors hover:bg-parisian-grey-100"
+                              >
+                                Mégse
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => toggleSubscriberStatus(subscriber.id, subscriber.is_active)}
+                                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                                  subscriber.is_active
+                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                }`}
+                              >
+                                {subscriber.is_active ? 'Deaktiválás' : 'Aktiválás'}
+                              </button>
+                              <button
+                                onClick={() => startEdit(subscriber)}
+                                aria-label="Email cím szerkesztése"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg text-parisian-grey-500 transition-colors hover:bg-parisian-beige-100"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(subscriber.id, subscriber.email)}
+                                aria-label="Feliratkozó törlése"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg text-parisian-grey-500 transition-colors hover:bg-red-100 hover:text-red-600"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
