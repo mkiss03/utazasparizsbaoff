@@ -13,7 +13,9 @@ import {
   DollarSign,
   Tag,
   MessageSquare,
-  Map
+  Map,
+  Workflow,
+  ClipboardList
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -26,6 +28,8 @@ type NavItem = {
 }
 
 const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
+const enablePlanner = process.env.NEXT_PUBLIC_FEATURE_PLANNER === 'true'
+const enableTripPlans = process.env.NEXT_PUBLIC_FEATURE_TRIP_PLANS === 'true'
 
 const allNavItems: NavItem[] = [
   {
@@ -106,19 +110,47 @@ const allNavItems: NavItem[] = [
     icon: Mail,
     type: 'item',
   },
+  {
+    title: 'PROGRAMTERVEK',
+    type: 'section',
+  },
+  {
+    title: 'Programtervek',
+    href: '/admin/programtervek',
+    icon: ClipboardList,
+    type: 'item',
+  },
+  {
+    title: 'PROGRAMSZERVEZŐ (kísérleti)',
+    type: 'section',
+  },
+  {
+    title: 'Flow-szerkesztő',
+    href: '/admin/programtervezo-editor',
+    icon: Workflow,
+    type: 'item',
+  },
 ]
 
-// Filter out flashcard-related items if feature is disabled
-const navItems: NavItem[] = enableFlashcards
-  ? allNavItems
-  : allNavItems.filter(item => {
-      // Remove FLASHCARDS section and all its items
-      if (item.title === 'FLASHCARDS') return false
-      if (item.title === 'Csomagok') return false
-      if (item.title === 'Városi Árazás') return false
-      if (item.title === 'Rendelések') return false
-      return true
-    })
+// Flashcard-, Programtervek- és Programszervező-elemek kiszűrése, ha a
+// hozzájuk tartozó feature flag ki van kapcsolva
+const navItems: NavItem[] = allNavItems.filter((item) => {
+  if (!enableFlashcards) {
+    if (item.title === 'FLASHCARDS') return false
+    if (item.title === 'Csomagok') return false
+    if (item.title === 'Városi Árazás') return false
+    if (item.title === 'Rendelések') return false
+  }
+  if (!enableTripPlans) {
+    if (item.title === 'PROGRAMTERVEK') return false
+    if (item.title === 'Programtervek') return false
+  }
+  if (!enablePlanner) {
+    if (item.title === 'PROGRAMSZERVEZŐ (kísérleti)') return false
+    if (item.title === 'Flow-szerkesztő') return false
+  }
+  return true
+})
 
 export function AdminNav() {
   const pathname = usePathname()

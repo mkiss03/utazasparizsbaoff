@@ -4,13 +4,26 @@ import { updateSession } from '@/lib/supabase/middleware'
 // A Programszervező modul (lásd a tervdokumentumot) minden route-ja csak a
 // NEXT_PUBLIC_FEATURE_PLANNER flag mögött él. Flag nélkül 404-et adunk,
 // mielőtt bármi más (session-frissítés, renderelés) lefutna.
-function isPlannerRouteBlocked(pathname: string): boolean {
-  const isPlannerRoute = pathname.startsWith('/labs/planner')
-  return isPlannerRoute && process.env.NEXT_PUBLIC_FEATURE_PLANNER !== 'true'
+//
+// Az egyszerű, kézzel összeállított programterv (planner.trip_plans) egy
+// KÜLÖN, önálló flaggel (NEXT_PUBLIC_FEATURE_TRIP_PLANS) fut -- ez a valós
+// ügyfélfolyamat, a fenti wizard/flow-szerkesztő pedig önálló, később
+// külön értékesíthető modulként marad meg, változatlanul.
+const PLANNER_ROUTE_PREFIXES = ['/labs/planner', '/programtervezo-legacy', '/admin/programtervezo-editor']
+const TRIP_PLAN_ROUTE_PREFIXES = ['/programterv/', '/admin/programtervek', '/programtervezo']
+
+function isBlocked(pathname: string): boolean {
+  if (PLANNER_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+    return process.env.NEXT_PUBLIC_FEATURE_PLANNER !== 'true'
+  }
+  if (TRIP_PLAN_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+    return process.env.NEXT_PUBLIC_FEATURE_TRIP_PLANS !== 'true'
+  }
+  return false
 }
 
 export async function middleware(request: NextRequest) {
-  if (isPlannerRouteBlocked(request.nextUrl.pathname)) {
+  if (isBlocked(request.nextUrl.pathname)) {
     return new NextResponse(null, { status: 404 })
   }
 

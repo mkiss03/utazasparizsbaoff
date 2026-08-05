@@ -24,20 +24,25 @@ export default function Navigation() {
   }, [])
 
   const enableFlashcards = process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS === 'true'
+  const enableTripPlans = process.env.NEXT_PUBLIC_FEATURE_TRIP_PLANS === 'true'
 
   const allNavItems = [
     { name: 'Kezdőlap', href: '/' },
     { name: 'Rólam', href: '/#about' },
     { name: 'Szolgáltatások', href: '/#services' },
     { name: 'Városbérletek', href: '/pricing' },
+    { name: 'Programtervező', href: '/programtervezo' },
     { name: 'Párizsi naplóm', href: '/blog' },
     { name: 'Kapcsolat', href: '/#contact' },
   ]
 
-  // Filter out Városbérletek if flashcards feature is disabled
-  const navItems = enableFlashcards
-    ? allNavItems
-    : allNavItems.filter(item => item.name !== 'Városbérletek')
+  // Flashcards- és Programtervező-elemek kiszűrése, ha a hozzájuk tartozó
+  // feature flag ki van kapcsolva
+  const navItems = allNavItems.filter((item) => {
+    if (!enableFlashcards && item.name === 'Városbérletek') return false
+    if (!enableTripPlans && item.name === 'Programtervező') return false
+    return true
+  })
 
   return (
     <>
