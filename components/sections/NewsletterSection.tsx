@@ -56,10 +56,10 @@ export default function NewsletterSection() {
             <Mail className="h-10 w-10 text-parisian-beige-600" />
           </motion.div>
 
-          <h2 className="mb-4 font-playfair text-4xl font-bold text-slate-900 md:text-5xl lg:text-6xl">
+          <h2 className="mb-4 font-playfair text-4xl font-bold text-white md:text-5xl lg:text-6xl">
             {content.title}
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-slate-700">
+          <p className="mx-auto max-w-2xl text-lg text-slate-300">
             {content.description}
           </p>
 
@@ -69,7 +69,7 @@ export default function NewsletterSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-600"
+            className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-300"
           >
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-parisian-beige-500" />
