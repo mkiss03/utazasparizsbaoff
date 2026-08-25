@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Headphones, CheckCircle2, Sparkles, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { Mail, Headphones, CheckCircle2, Sparkles, Calendar, PenTool, ArrowRight } from 'lucide-react'
 
 interface Lead {
   id: string
@@ -56,12 +57,23 @@ export default function LouvreAdminPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="font-playfair text-3xl font-bold text-french-blue-500">Louvre Audio Túra</h1>
-        <p className="mt-2 text-slate-600">
-          Fázis 1 -- ingyenes 3 állomásos mini túra piacmérés. A voucher/Stripe alapú fizetős
-          verzió és a manifest-szerkesztő Fázis 2-ben készül.
-        </p>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="font-playfair text-3xl font-bold text-french-blue-500">Louvre Audio Túra</h1>
+          <p className="mt-2 text-slate-600">
+            Fázis 1 -- ingyenes 3 állomásos mini túra piacmérés. A voucher/Stripe alapú fizetős
+            verzió még hátravan, de a tartalom mostantól a Túra szerkesztőben kódolás nélkül
+            karbantartható.
+          </p>
+        </div>
+        <Link
+          href="/admin/louvre/editor"
+          className="flex items-center gap-2 rounded-full bg-louvre-navy-700 px-5 py-3 text-sm font-semibold text-white hover:bg-louvre-navy-500"
+        >
+          <PenTool className="h-4 w-4" />
+          Túra szerkesztő megnyitása
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
 
       <div className="mb-8 grid gap-6 md:grid-cols-4">

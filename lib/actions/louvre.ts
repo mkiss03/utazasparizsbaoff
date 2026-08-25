@@ -35,6 +35,8 @@ async function sendWelcomeEmail(email: string) {
     return
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://utazasparizsba.com'
+
   try {
     await resend.emails.send({
       from: 'Utazás Párizsba <info@utazasparizsba.com>',
@@ -53,7 +55,7 @@ async function sendWelcomeEmail(email: string) {
               <p>Szia!</p>
               <p>Készen áll a mini túrád. Mielőtt bemész a Louvre-ba, <strong>most, wifin</strong> nyisd meg a linket, hogy minden hangfájl letöltődjön -- odabent a jelerősség foltos, és a lejátszás teljesen internet nélkül működik, ha előre letöltötted.</p>
               <p style="text-align: center; margin: 28px 0;">
-                <a href="https://utazasparizsba.com/louvre/tour" style="background: #D4AF37; color: #002147; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Túra megnyitása</a>
+                <a href="${siteUrl}/louvre/tour" style="background: #D4AF37; color: #002147; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Túra megnyitása</a>
               </p>
               <p><strong>Mentsd a főképernyődre:</strong></p>
               <p>iPhone-on: Safari-ban nyisd meg a linket → Megosztás ikon → „Hozzáadás a kezdőképernyőhöz”.<br />

@@ -102,9 +102,15 @@ const allNavItems: NavItem[] = [
     type: 'section',
   },
   {
-    title: 'Louvre Audio Túra',
+    title: 'Louvre -- Statisztika',
     href: '/admin/louvre',
     icon: Headphones,
+    type: 'item',
+  },
+  {
+    title: 'Louvre -- Túra szerkesztő',
+    href: '/admin/louvre/editor',
+    icon: PenTool,
     type: 'item',
   },
   {
