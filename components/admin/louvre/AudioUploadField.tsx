@@ -39,13 +39,13 @@ export default function AudioUploadField({ src, duration, pathHint, onChange }: 
 
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-louvre-navy-700">
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Music className="h-4 w-4" />}
           {uploading ? 'Konvertálás (WAV -> AAC)...' : src ? 'Hangfájl cseréje' : 'WAV feltöltése'}
           <input
             type="file"
-            accept=".wav,audio/wav,audio/x-wav"
+            accept="audio/*,.wav,.m4a,.mp3,.aac,.caf,.mp4,.ogg,.webm"
             className="hidden"
             disabled={uploading}
             onChange={(e) => {
@@ -73,7 +73,10 @@ export default function AudioUploadField({ src, duration, pathHint, onChange }: 
       )}
 
       {!src && !uploading && (
-        <p className="text-xs text-slate-400">48 kHz, mono WAV ajánlott -- a szerver automatikusan AAC (.m4a) formátumra konvertálja.</p>
+        <p className="text-xs text-slate-400">
+          WAV, M4A (pl. iPhone Hangjegyzet), MP3 vagy más hangformátum is jó -- a szerver automatikusan
+          mono AAC (.m4a) formátumra konvertálja.
+        </p>
       )}
     </div>
   )

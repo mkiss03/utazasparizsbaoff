@@ -137,11 +137,22 @@ const navItems: NavItem[] = enableFlashcards
       return true
     })
 
-export function AdminNav() {
+interface Props {
+  /** Mobilon (md alatt) a nav egy kihúzható sáv -- ez vezérli a láthatóságát. */
+  open?: boolean
+  /** Mobilon egy linkre kattintva ez zárja be a sávot. */
+  onNavigate?: () => void
+}
+
+export function AdminNav({ open = false, onNavigate }: Props) {
   const pathname = usePathname()
 
   return (
-    <nav className="w-64 border-r border-slate-200 bg-white p-4">
+    <nav
+      className={`fixed inset-y-0 left-0 z-40 w-64 transform overflow-y-auto border-r border-slate-200 bg-white p-4 transition-transform duration-200 md:static md:z-auto md:translate-x-0 ${
+        open ? 'translate-x-0 shadow-xl' : '-translate-x-full'
+      }`}
+    >
       <ul className="space-y-2">
         {navItems.map((item, index) => {
           if (item.type === 'section') {
@@ -162,6 +173,7 @@ export function AdminNav() {
               <Link
                 href={item.href!}
                 prefetch={true}
+                onClick={onNavigate}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-all ${
                   isActive
                     ? 'bg-french-blue-500 text-white font-semibold'

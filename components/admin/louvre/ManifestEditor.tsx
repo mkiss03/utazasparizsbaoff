@@ -201,13 +201,13 @@ export default function ManifestEditor() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <label className="mb-1 block text-xs font-semibold text-slate-500">Túra címe</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 font-playfair text-lg font-bold text-louvre-navy-700 outline-none focus:border-louvre-gold-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 font-playfair text-lg font-bold text-louvre-navy-700 outline-none focus:border-louvre-gold-500 sm:max-w-md"
           />
         </div>
 
@@ -216,16 +216,17 @@ export default function ManifestEditor() {
             type="button"
             disabled={saving !== null}
             onClick={() => persist(false)}
-            className="flex items-center gap-2 rounded-full border-2 border-louvre-navy-700 px-5 py-2.5 text-sm font-semibold text-louvre-navy-700 hover:bg-louvre-navy-50 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-louvre-navy-700 px-4 py-2.5 text-sm font-semibold text-louvre-navy-700 hover:bg-louvre-navy-50 disabled:opacity-50 sm:flex-none sm:px-5"
           >
             {saving === 'draft' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            Piszkozat mentése
+            <span className="sm:hidden">Piszkozat</span>
+            <span className="hidden sm:inline">Piszkozat mentése</span>
           </button>
           <button
             type="button"
             disabled={saving !== null}
             onClick={() => persist(true)}
-            className="flex items-center gap-2 rounded-full bg-louvre-gold-500 px-5 py-2.5 text-sm font-semibold text-louvre-navy-700 hover:opacity-90 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-louvre-gold-500 px-4 py-2.5 text-sm font-semibold text-louvre-navy-700 hover:opacity-90 disabled:opacity-50 sm:flex-none sm:px-5"
           >
             {saving === 'publish' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
             Élesítés
@@ -284,16 +285,17 @@ export default function ManifestEditor() {
         </h3>
         <div className="space-y-1">
           {versions.map((v) => (
-            <div key={v.id} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-slate-50">
-              <div className="flex items-center gap-3">
+            <div key={v.id} className="flex flex-col gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <span className="font-mono text-xs text-slate-500">{v.version}</span>
-                <span className="text-slate-700">{v.title}</span>
+                <span className="truncate text-slate-700">{v.title}</span>
                 {v.is_published && (
                   <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">élő</span>
                 )}
+                <span className="text-xs text-slate-400 sm:hidden">{new Date(v.created_at).toLocaleDateString('hu-HU')}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-slate-400">{new Date(v.created_at).toLocaleString('hu-HU')}</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="hidden text-xs text-slate-400 sm:inline">{new Date(v.created_at).toLocaleString('hu-HU')}</span>
                 <button
                   type="button"
                   onClick={() => loadIntoEditor(v)}

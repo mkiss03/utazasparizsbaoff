@@ -136,9 +136,9 @@ export default function SegmentEditor({
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-slate-500">Válaszlehetőségek</label>
             {segment.options.map((opt, i) => (
-              <div key={i} className="flex items-center gap-2">
+              <div key={i} className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
-                  className={inputClass}
+                  className={`${inputClass} sm:flex-1`}
                   placeholder="Gomb felirata"
                   value={opt.label}
                   onChange={(e) => {
@@ -147,31 +147,33 @@ export default function SegmentEditor({
                     onChange({ ...segment, options })
                   }}
                 />
-                <select
-                  className={inputClass}
-                  value={opt.goto}
-                  onChange={(e) => {
-                    const options = [...segment.options]
-                    options[i] = { ...opt, goto: e.target.value }
-                    onChange({ ...segment, options })
-                  }}
-                >
-                  <option value="">-- ugrás célja --</option>
-                  {availableAudioIds.map((id) => (
-                    <option key={id} value={id}>
-                      {id}
-                    </option>
-                  ))}
-                </select>
-                {segment.options.length > 2 && (
-                  <button
-                    type="button"
-                    onClick={() => onChange({ ...segment, options: segment.options.filter((_, oi) => oi !== i) })}
-                    className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                <div className="flex items-center gap-2">
+                  <select
+                    className={`${inputClass} flex-1 sm:flex-none`}
+                    value={opt.goto}
+                    onChange={(e) => {
+                      const options = [...segment.options]
+                      options[i] = { ...opt, goto: e.target.value }
+                      onChange({ ...segment, options })
+                    }}
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
+                    <option value="">-- ugrás célja --</option>
+                    {availableAudioIds.map((id) => (
+                      <option key={id} value={id}>
+                        {id}
+                      </option>
+                    ))}
+                  </select>
+                  {segment.options.length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => onChange({ ...segment, options: segment.options.filter((_, oi) => oi !== i) })}
+                      className="flex-shrink-0 rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
             <button

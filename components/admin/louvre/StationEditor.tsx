@@ -58,10 +58,10 @@ export default function StationEditor({ station, onChange, onRemove, dragHandleP
         <button
           type="button"
           onClick={onRemove}
-          className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-red-500 hover:bg-red-50"
+          className="flex flex-shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-red-500 hover:bg-red-50"
         >
           <Trash2 className="h-3.5 w-3.5" />
-          Állomás törlése
+          <span className="hidden sm:inline">Állomás törlése</span>
         </button>
       </div>
 

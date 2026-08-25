@@ -49,14 +49,14 @@ export default function LouvreAdminPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         <div className="h-8 w-64 animate-pulse rounded bg-slate-200" />
       </div>
     )
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-playfair text-3xl font-bold text-french-blue-500">Louvre Audio Túra</h1>
