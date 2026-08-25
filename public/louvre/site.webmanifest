@@ -1,0 +1,17 @@
+{
+  "name": "Louvre hangos túra – Utazás Párizsba",
+  "short_name": "Louvre túra",
+  "description": "Interaktív, offline hangos túra a Louvre kiemelt műtárgyaihoz.",
+  "start_url": "/louvre/tour",
+  "scope": "/louvre/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#002147",
+  "theme_color": "#002147",
+  "lang": "hu",
+  "icons": [
+    { "src": "/louvre/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/louvre/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/louvre/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

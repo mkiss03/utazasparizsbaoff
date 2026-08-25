@@ -69,6 +69,23 @@ const config: Config = {
             900: '#2F080B',
           },
         },
+        // Louvre Audio Guide -- navy/gold, a Louvre üvegpiramis színei
+        louvre: {
+          navy: {
+            50: '#EEF2F6',
+            100: '#D6DEE8',
+            500: '#003366',
+            700: '#002147',
+            900: '#00152E',
+          },
+          gold: {
+            50: '#FBF6E7',
+            100: '#F5E8BE',
+            300: '#E3C878',
+            500: '#D4AF37',
+            700: '#A9891F',
+          },
+        },
         // Neutral grays
         slate: {
           50: '#F8FAFC',

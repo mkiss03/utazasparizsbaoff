@@ -13,7 +13,8 @@ import {
   DollarSign,
   Tag,
   MessageSquare,
-  Map
+  Map,
+  Headphones
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -94,6 +95,16 @@ const allNavItems: NavItem[] = [
     title: 'Rendelések',
     href: '/admin/orders',
     icon: ShoppingCart,
+    type: 'item',
+  },
+  {
+    title: 'LOUVRE',
+    type: 'section',
+  },
+  {
+    title: 'Louvre Audio Túra',
+    href: '/admin/louvre',
+    icon: Headphones,
     type: 'item',
   },
   {
