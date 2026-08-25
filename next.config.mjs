@@ -18,6 +18,11 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/*': ['./node_modules/ffmpeg-static/**'],
     },
+    // Az ffmpeg-static a __dirname alapján számolja ki a bináris elérési
+    // útját -- ha webpack bundle-özi (mint a többi 'use server' kódot),
+    // ez az útvonal-számítás elromlik ("spawn .../ffmpeg ENOENT"). Ezért
+    // ezt a csomagot valódi, futásidejű require()-ként kell hagyni.
+    serverComponentsExternalPackages: ['ffmpeg-static'],
   },
   // Képek beállítása (ez maradjon):
   images: {

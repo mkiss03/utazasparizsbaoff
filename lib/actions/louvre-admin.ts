@@ -57,10 +57,24 @@ async function resolveFfmpegBinary(): Promise<string> {
         await chmod(cachedPath, 0o755)
         return cachedPath
       } catch (copyErr) {
-        console.warn('Louvre ffmpeg /tmp-be másolása sikertelen, eredeti útvonal használata:', copyErr)
-        return ffmpegStaticPath as string
+        // Nem tudtuk bemásolni -- talán az eredeti útvonal is elérhető
+        // közvetlenül futtatható formában, próbáljuk meg azt, mielőtt
+        // feladnánk.
+        try {
+          await access(ffmpegStaticPath as string, fsConstants.X_OK)
+          return ffmpegStaticPath as string
+        } catch {
+          throw new Error(
+            `Az ffmpeg bináris nem érhető el sem a csomagolt (${ffmpegStaticPath}), sem a /tmp-be másolt helyen: ${describeError(copyErr)}`
+          )
+        }
       }
-    })()
+    })().catch((err) => {
+      // Ne ragadjon be egy sikertelen felismerés a hidegindítás egész
+      // élettartamára -- a következő próbálkozás induljon újra.
+      resolvedFfmpegPromise = null
+      throw err
+    })
   }
   return resolvedFfmpegPromise
 }
