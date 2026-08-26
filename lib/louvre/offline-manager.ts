@@ -2,11 +2,13 @@
 
 import type { AudioSegment, TourManifest } from './types'
 
-export const ASSET_CACHE_NAME = 'louvre-assets-v1'
-// FONTOS: ennek pontosan egyeznie kell a public/louvre-sw.js SHELL_CACHE
-// konstansával -- külön build-lépés nélkül ez a két hardcode-olt string a
-// "megosztott" definíció a főszál és a Service Worker között.
-export const SHELL_CACHE_NAME = 'louvre-shell-v1'
+// FONTOS: mindkét névnek pontosan egyeznie kell a public/louvre-sw.js
+// ASSET_CACHE/SHELL_CACHE konstansaival -- külön build-lépés nélkül ez a két
+// hardcode-olt string a "megosztott" definíció a főszál és a Service Worker
+// között. A "v2" verziójelzés szándékos: korábbi, hibás iterációkból esetleg
+// bennragadt cache-bejegyzéseket zár ki egy tiszta lappal.
+export const ASSET_CACHE_NAME = 'louvre-assets-v2'
+export const SHELL_CACHE_NAME = 'louvre-shell-v2'
 
 export interface TourAsset {
   url: string

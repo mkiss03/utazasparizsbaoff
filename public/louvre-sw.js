@@ -14,8 +14,11 @@
 // a főszál végzi explicit fetch()+cache.put() hívásokkal -- ez a SW csak a
 // kiszolgálásért és egy runtime biztonsági hálóért felel.
 
-const ASSET_CACHE = 'louvre-assets-v1'
-const SHELL_CACHE = 'louvre-shell-v1'
+// v2: a cache-nevek verziójának bumpolása minden felhasználón tiszta lappal
+// indítja újra a cache-t -- a korábbi iterációkból esetleg bennragadt hibás
+// bejegyzések (rossz cache-be mentett manifest, hiányzó app shell) helyett.
+const ASSET_CACHE = 'louvre-assets-v2'
+const SHELL_CACHE = 'louvre-shell-v2'
 
 self.addEventListener('install', (event) => {
   self.skipWaiting()
@@ -38,6 +41,12 @@ self.addEventListener('activate', (event) => {
 function isAssetRequest(url) {
   return (
     url.pathname.startsWith('/louvre/audio/') ||
+    // Az admin szerkesztőben feltöltött hangok/borítóképek a Supabase
+    // Storage-ból ezen a same-origin proxy-n át érkeznek -- lásd
+    // app/louvre/media/[...path]/route.ts. A tényleges Storage domain
+    // (*.supabase.co) sosem jutna el idáig, mert lejjebb csak a saját
+    // origin kéréseit kezeljük.
+    url.pathname.startsWith('/louvre/media/') ||
     url.pathname.startsWith('/louvre/icons/') ||
     url.pathname === '/louvre/site.webmanifest' ||
     url.pathname === '/images/louvre1.jpeg'

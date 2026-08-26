@@ -23,8 +23,10 @@ export default function CoverImageUpload({ value, onChange }: Props) {
       const { error } = await supabase.storage.from('louvre-media').upload(filePath, file)
       if (error) throw error
 
-      const { data } = supabase.storage.from('louvre-media').getPublicUrl(filePath)
-      onChange(data.publicUrl)
+      // Same-origin proxy útvonal a nyers Supabase Storage URL helyett --
+      // lásd app/louvre/media/[...path]/route.ts, ez teszi lehetővé, hogy a
+      // /louvre alá regisztrált Service Worker offline is ki tudja szolgálni.
+      onChange(`/louvre/media/${filePath}`)
     } catch (err) {
       console.error('Cover image upload error:', err)
       alert('Nem sikerült feltölteni a borítóképet.')

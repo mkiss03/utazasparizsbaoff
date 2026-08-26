@@ -139,9 +139,12 @@ export async function convertAndUploadLouvreAudio(formData: FormData): Promise<A
       }
     }
 
-    const { data: publicUrl } = supabase.storage.from(BUCKET).getPublicUrl(objectPath)
-
-    return { success: true, data: { url: publicUrl.publicUrl, duration } }
+    // A Supabase Storage publikus URL-je egy MÁSIK domain (*.supabase.co) --
+    // a /louvre alá regisztrált Service Worker szándékosan csak saját-origin
+    // kéréseket cache-el, ezért a /louvre/media proxy-n keresztüli,
+    // ugyanarról a domainről elérhető útvonalat adjuk vissza, hogy offline
+    // is kiszolgálható legyen.
+    return { success: true, data: { url: `/louvre/media/${objectPath}`, duration } }
   } catch (err) {
     console.error('Louvre audio feldolgozási hiba:', err)
     return { success: false, error: `Váratlan hiba a feldolgozás közben (${describeError(err)}).` }
