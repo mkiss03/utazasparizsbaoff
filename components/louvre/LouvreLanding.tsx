@@ -24,7 +24,7 @@ export default function LouvreLanding() {
 
   return (
     <div className="min-h-screen bg-louvre-navy-700 text-white">
-      <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-16 text-center">
         <Headphones className="mx-auto mb-4 h-12 w-12 text-louvre-gold-500" />
         <h1 className="mb-4 font-playfair text-4xl font-bold sm:text-5xl">
           Hét tárgy, amely hazudik neked

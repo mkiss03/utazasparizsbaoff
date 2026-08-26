@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { CheckCircle2, WifiOff, Download, AlertTriangle } from 'lucide-react'
 import type { TourManifest } from '@/lib/louvre/types'
 import { downloadTourAssets, formatMB, type DownloadProgress } from '@/lib/louvre/offline-manager'
@@ -36,7 +37,7 @@ export default function OfflineDownloadScreen({ manifest, onComplete }: Props) {
   const done = progress?.done ?? false
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 py-16 text-center">
+    <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 py-10 sm:px-6 sm:py-16 text-center">
       {!downloading && !done && (
         <>
           <WifiOff className="mb-4 h-12 w-12 text-louvre-navy-500" />
@@ -60,16 +61,21 @@ export default function OfflineDownloadScreen({ manifest, onComplete }: Props) {
 
       {downloading && !done && progress && (
         <>
-          <div className="mb-6 h-24 w-24 rounded-full border-4 border-louvre-gold-100">
-            <div
-              className="flex h-full w-full items-center justify-center rounded-full border-4 border-louvre-gold-500 text-lg font-bold text-louvre-navy-700"
-              style={{ borderTopColor: 'transparent', transform: `rotate(${percent * 3.6}deg)` }}
+          <p className="mb-2 text-4xl font-bold text-louvre-navy-700">{percent}%</p>
+          <div className="mb-3 h-3 w-full max-w-sm overflow-hidden rounded-full bg-slate-200">
+            <motion.div
+              className="h-full rounded-full bg-louvre-gold-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${percent}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
             />
           </div>
-          <p className="mb-1 text-2xl font-bold text-louvre-navy-700">{percent}%</p>
+          <p className="mb-1 text-sm text-slate-500">
+            {progress.downloadedAssets}/{progress.totalAssets} fájl -- {formatMB(progress.downloadedBytes)} MB /{' '}
+            {formatMB(progress.totalBytes)} MB
+          </p>
           <p className="mb-6 text-slate-600">
-            Offline készenlét: {progress.currentStationsReady}/{progress.totalStations} állomás --{' '}
-            {formatMB(progress.downloadedBytes)} MB / {formatMB(progress.totalBytes)} MB
+            Offline készenlét: {progress.currentStationsReady}/{progress.totalStations} állomás
           </p>
         </>
       )}

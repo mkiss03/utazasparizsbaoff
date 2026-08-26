@@ -70,7 +70,7 @@ export default function StationPlayer({
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
       <button
         onClick={onBack}
         className="mb-6 flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-louvre-navy-700"

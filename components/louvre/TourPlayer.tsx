@@ -29,7 +29,13 @@ export default function TourPlayer() {
   async function bootstrap() {
     try {
       const response = await fetch('/louvre/tour-manifest.json', { cache: 'no-store' })
+      if (!response.ok) {
+        throw new Error(`A manifest lekérése sikertelen (${response.status}).`)
+      }
       const data: TourManifest = await response.json()
+      if (!data || !Array.isArray(data.stations)) {
+        throw new Error('A manifest válasz nem érvényes túra-adat.')
+      }
       setManifest(data)
 
       let state = await loadTourState(data.version)
@@ -67,11 +73,11 @@ export default function TourPlayer() {
   }
 
   if (loading) {
-    return <div className="py-24 text-center text-slate-500">Betöltés...</div>
+    return <div className="py-16 sm:py-24 text-center text-slate-500">Betöltés...</div>
   }
 
   if (loadError || !manifest || !tourState) {
-    return <div className="py-24 text-center text-red-600">{loadError}</div>
+    return <div className="py-16 sm:py-24 text-center text-red-600">{loadError}</div>
   }
 
   if (!tourState.downloadComplete) {
@@ -148,7 +154,7 @@ export default function TourPlayer() {
     )
   } else if (view.kind === 'bonus') {
     content = (
-      <div className="px-4 py-8">
+      <div className="px-4 py-6 sm:py-8">
         <button
           onClick={() => setView({ kind: 'list' })}
           className="mx-auto mb-6 block text-sm font-medium text-slate-500 hover:text-louvre-navy-700"
@@ -168,7 +174,7 @@ export default function TourPlayer() {
     )
   } else {
     content = (
-    <div className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
       <h1 className="mb-2 text-center font-playfair text-3xl font-bold text-louvre-navy-700">{manifest.title}</h1>
       <p className="mb-8 text-center text-slate-600">
         Válassz egy állomást -- bármelyik sorrendben bejárhatod attól függően, merre jársz épp.
