@@ -14,7 +14,8 @@ import {
   Tag,
   MessageSquare,
   Map,
-  Headphones
+  Headphones,
+  Ticket
 } from 'lucide-react'
 
 import type { LucideIcon } from 'lucide-react'
@@ -111,6 +112,12 @@ const allNavItems: NavItem[] = [
     title: 'Louvre -- Túra szerkesztő',
     href: '/admin/louvre/editor',
     icon: PenTool,
+    type: 'item',
+  },
+  {
+    title: 'Louvre -- Voucherek',
+    href: '/admin/louvre/vouchers',
+    icon: Ticket,
     type: 'item',
   },
   {
