@@ -1,9 +1,16 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, MapPin, Sparkles } from 'lucide-react'
 import type { Station } from '@/lib/louvre/types'
 import SegmentRenderer from './SegmentRenderer'
+
+const segmentVariants = {
+  enter: { opacity: 0, x: 24 },
+  center: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -24 },
+}
 
 interface Props {
   station: Station
@@ -79,26 +86,47 @@ export default function StationPlayer({
 
       <h1 className="mb-6 font-playfair text-3xl font-bold text-louvre-navy-700">{station.title}</h1>
 
-      {!finished && <SegmentRenderer segment={segment} stationTitle={station.title} onFinished={handleFinished} />}
-
-      {finished && (
-        <div className="rounded-2xl border-2 border-louvre-gold-500 bg-louvre-gold-50 p-8 text-center">
-          <Sparkles className="mx-auto mb-3 h-10 w-10 text-louvre-gold-700" />
-          <p className="mb-2 text-sm font-medium uppercase tracking-wider text-louvre-navy-500">
-            Állomás teljesítve -- a kódszavad:
-          </p>
-          <p className="mb-6 font-playfair text-4xl font-bold text-louvre-navy-700">{station.codeword}</p>
-          <p className="mb-6 text-sm text-slate-600">
-            Jegyezd meg ezt a szót -- a 3 állomás kódszavából áll össze a bónuszsáv jelszava.
-          </p>
-          <button
-            onClick={onBack}
-            className="rounded-full bg-louvre-navy-700 px-6 py-3 font-semibold text-white hover:bg-louvre-navy-500"
+      <AnimatePresence mode="wait">
+        {!finished && (
+          <motion.div
+            key={segment.type === 'audio' ? segment.id : `${segment.type}-${index}`}
+            variants={segmentVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.25, ease: 'easeOut' }}
           >
-            Következő állomás
-          </button>
-        </div>
-      )}
+            <SegmentRenderer segment={segment} stationTitle={station.title} onFinished={handleFinished} />
+          </motion.div>
+        )}
+
+        {finished && (
+          <motion.div
+            key="finished"
+            variants={segmentVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="rounded-2xl border-2 border-louvre-gold-500 bg-louvre-gold-50 p-8 text-center"
+          >
+            <Sparkles className="mx-auto mb-3 h-10 w-10 text-louvre-gold-700" />
+            <p className="mb-2 text-sm font-medium uppercase tracking-wider text-louvre-navy-500">
+              Állomás teljesítve -- a kódszavad:
+            </p>
+            <p className="mb-6 font-playfair text-4xl font-bold text-louvre-navy-700">{station.codeword}</p>
+            <p className="mb-6 text-sm text-slate-600">
+              Jegyezd meg ezt a szót -- a 3 állomás kódszavából áll össze a bónuszsáv jelszava.
+            </p>
+            <button
+              onClick={onBack}
+              className="rounded-full bg-louvre-navy-700 px-6 py-3 font-semibold text-white hover:bg-louvre-navy-500"
+            >
+              Következő állomás
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

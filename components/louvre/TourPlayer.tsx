@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCircle2, MapPin, Circle } from 'lucide-react'
 import type { Station, TourManifest, TourState } from '@/lib/louvre/types'
 import { createInitialState, loadTourState, saveTourState } from '@/lib/louvre/db'
@@ -95,11 +96,14 @@ export default function TourPlayer() {
 
   const allCompleted = manifest.stations.every((s) => tourState.stations[s.id]?.completed)
 
+  const viewKey = view.kind === 'station' ? `station-${view.stationId}` : view.kind
+  let content: React.ReactNode = null
+
   if (view.kind === 'station') {
     const station = manifest.stations.find((s) => s.id === view.stationId) as Station
     const progress = tourState.stations[station.id]
 
-    return (
+    content = (
       <StationPlayer
         station={station}
         initialSegmentIndex={progress?.lastSegmentIndex ?? 0}
@@ -142,10 +146,8 @@ export default function TourPlayer() {
         onBack={() => setView({ kind: 'list' })}
       />
     )
-  }
-
-  if (view.kind === 'bonus') {
-    return (
+  } else if (view.kind === 'bonus') {
+    content = (
       <div className="px-4 py-8">
         <button
           onClick={() => setView({ kind: 'list' })}
@@ -164,9 +166,8 @@ export default function TourPlayer() {
         />
       </div>
     )
-  }
-
-  return (
+  } else {
+    content = (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="mb-2 text-center font-playfair text-3xl font-bold text-louvre-navy-700">{manifest.title}</h1>
       <p className="mb-8 text-center text-slate-600">
@@ -218,5 +219,20 @@ export default function TourPlayer() {
 
       <InstallInstructions variant="banner" />
     </div>
+    )
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={viewKey}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+      >
+        {content}
+      </motion.div>
+    </AnimatePresence>
   )
 }
