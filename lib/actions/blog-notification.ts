@@ -152,8 +152,8 @@ export async function sendBlogNotification(post: BlogPost) {
                 </div>
               </div>
               <div class="footer">
-                <p>Köszönjük, hogy feliratkoztál hírlevelünkre!</p>
-                <p>Ha kérdésed van, írj nekünk: <a href="mailto:utazasparizsba@gmail.com" style="color: #C9A581;">utazasparizsba@gmail.com</a></p>
+                <p>Köszönöm, hogy feliratkoztál a hírlevelemre!</p>
+                <p>Ha kérdésed van, írj nekem: <a href="mailto:utazasparizsba@gmail.com" style="color: #C9A581;">utazasparizsba@gmail.com</a></p>
                 <div class="unsubscribe">
                   <p>Nem szeretnél több értesítést kapni? <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://utazasparizsba.com'}">Leiratkozás</a></p>
                 </div>

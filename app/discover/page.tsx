@@ -112,7 +112,7 @@ export default async function DiscoverPage() {
                   Hamarosan érkeznek a felfedezések!
                 </h3>
                 <p className="text-slate-400">
-                  Dolgozunk azon, hogy a legjobb párizsi élményeket hozzuk el Önnek.
+                  Dolgozom azon, hogy a legjobb párizsi élményeket hozzam el Önnek.
                 </p>
               </div>
             )}
@@ -126,8 +126,8 @@ export default async function DiscoverPage() {
               Készen áll a felfedezésre?
             </h2>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-slate-600">
-              Csatlakozzon hozzánk egy felejthetetlen párizsi kalandhoz.
-              Válasszon túráink közül, vagy kérjen egyedi ajánlatot!
+              Tartson velem egy felejthetetlen párizsi kalandra!
+              Válasszon a túráim közül, vagy kérjen egyedi túraajánlatot!
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link

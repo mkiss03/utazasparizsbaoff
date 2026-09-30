@@ -21,7 +21,7 @@ interface TestimonialsSectionProps {
 
 export default function TestimonialsSection({
   title = 'Élmények, ahogy ők megélték',
-  subtitle = 'Amit az utazóink mondanak rólunk',
+  subtitle = 'Amit a vendégeim mondanak',
   testimonials = []
 }: TestimonialsSectionProps) {
   if (!testimonials || testimonials.length === 0) {
@@ -183,7 +183,7 @@ export default function TestimonialsSection({
           className="mt-16 text-center"
         >
           <p className="mb-6 text-lg text-parisian-grey-600">
-            Legyél Te is a következő elégedett vendégünk!
+            Legyél Te is a következő elégedett vendégem!
           </p>
           <motion.a
             href="#contact"

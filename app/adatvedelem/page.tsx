@@ -32,7 +32,7 @@ export default async function AdatvedelemPage() {
               Adatvédelmi Nyilatkozat
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600">
-              A személyes adataid védelme fontos számunkra
+              A személyes adataid védelme fontos számomra
             </p>
           </div>
 
@@ -43,8 +43,7 @@ export default async function AdatvedelemPage() {
 
                 <h2>1. Adatkezelő adatai</h2>
                 <p>
-                  <strong>Név:</strong> Szeidl Viktória<br/>
-                  <strong>Székhely:</strong> Párizs, Franciaország<br/>
+                  <strong>Név:</strong> Szeidl Viktória EI (entrepreneur individuel)<br/>
                   <strong>Email:</strong> utazasparizsba@gmail.com<br/>
                   <strong>SIRET:</strong> 94822714500018<br/>
                   <strong>SIREN:</strong> 948 227 145<br/>
@@ -52,7 +51,7 @@ export default async function AdatvedelemPage() {
                 </p>
 
                 <h2>2. Kezelt személyes adatok</h2>
-                <p>Weboldalunkon az alábbi személyes adatokat kezeljük:</p>
+                <p>A weboldalon az alábbi személyes adatokat kezelem:</p>
                 <ul>
                   <li><strong>Kapcsolatfelvételnél:</strong> név, email cím, üzenet tartalma</li>
                   <li><strong>Hírlevél feliratkozásnál:</strong> email cím, név (opcionális)</li>
@@ -63,7 +62,7 @@ export default async function AdatvedelemPage() {
 
                 <h3>3.1 Kapcsolatfelvétel</h3>
                 <p>
-                  <strong>Cél:</strong> Megkeresésére válaszadás, szolgáltatásaink bemutatása<br/>
+                  <strong>Cél:</strong> Megkeresésére válaszadás, szolgáltatásaim bemutatása<br/>
                   <strong>Jogalap:</strong> Hozzájárulás (GDPR 6. cikk (1) bekezdés a) pont)<br/>
                   <strong>Időtartam:</strong> A válaszadást követő 30 nap vagy törléskérésig
                 </p>
@@ -83,19 +82,19 @@ export default async function AdatvedelemPage() {
                 </p>
 
                 <h2>4. Adattovábbítás, adatfeldolgozók</h2>
-                <p>Az adatkezelés során az alábbi szolgáltatókat vesszük igénybe:</p>
+                <p>Az adatkezelés során az alábbi szolgáltatókat veszem igénybe:</p>
                 <ul>
                   <li><strong>Supabase:</strong> Adatbázis tárhely (székhelye: USA, GDPR kompatibilis)</li>
                   <li><strong>Vercel:</strong> Webtárhely szolgáltatás (székhelye: USA, GDPR kompatibilis)</li>
                   <li><strong>Resend:</strong> Email küldés (GDPR kompatibilis)</li>
                 </ul>
                 <p>
-                  Harmadik félnek az Ön adatait <strong>nem adjuk át</strong>, kivéve jogszabályi kötelezettség esetén.
+                  Harmadik félnek az Ön adatait <strong>nem adom át</strong>, kivéve jogszabályi kötelezettség esetén.
                 </p>
 
                 <h2>5. Adatbiztonság</h2>
                 <p>
-                  Az Ön adatainak védelme érdekében technikai és szervezési intézkedéseket alkalmazunk:
+                  Az Ön adatainak védelme érdekében technikai és szervezési intézkedéseket alkalmazok:
                 </p>
                 <ul>
                   <li>SSL titkosítás minden adatátvitelnél</li>
@@ -107,7 +106,7 @@ export default async function AdatvedelemPage() {
                 <h2>6. Az Ön jogai</h2>
                 <p>A GDPR alapján az alábbi jogokkal rendelkezik:</p>
                 <ul>
-                  <li><strong>Hozzáférés joga:</strong> Tájékoztatást kérhet, hogy mely adatait kezeljük</li>
+                  <li><strong>Hozzáférés joga:</strong> Tájékoztatást kérhet, hogy mely adatait kezelem</li>
                   <li><strong>Helyesbítés joga:</strong> Kérheti pontatlan adatai javítását</li>
                   <li><strong>Törlés joga:</strong> Kérheti adatainak törlését ("elfeledtetéshez való jog")</li>
                   <li><strong>Korlátozás joga:</strong> Kérheti adatkezelés korlátozását</li>
@@ -117,25 +116,25 @@ export default async function AdatvedelemPage() {
                 </ul>
 
                 <p>
-                  Jogai gyakorlásához írjon nekünk az <strong>utazasparizsba@gmail.com</strong> címre.
-                  Kérését 30 napon belül teljesítjük.
+                  Jogai gyakorlásához írjon nekem az <strong>utazasparizsba@gmail.com</strong> címre.
+                  Kérését 30 napon belül teljesítem.
                 </p>
 
                 <h2>7. Sütik (Cookies)</h2>
                 <p>
-                  Weboldalunk <strong>csak szükséges sütiket</strong> használ a működéshez (pl. munkamenet azonosítás).
-                  Marketing vagy elemző sütiket nem alkalmazunk.
+                  A weboldal <strong>csak szükséges sütiket</strong> használ a működéshez (pl. munkamenet azonosítás).
+                  Marketing vagy elemző sütiket nem alkalmaz.
                 </p>
 
                 <h2>8. Változások</h2>
                 <p>
-                  Fenntartjuk a jogot, hogy jelen adatvédelmi nyilatkozatot bármikor módosítsuk.
-                  A változásokról az oldalon tájékoztatást adunk. A nyilatkozat utolsó frissítésének dátuma: <strong>2026. január 26.</strong>
+                  Fenntartom a jogot, hogy jelen adatvédelmi nyilatkozatot bármikor módosítsam.
+                  A változásokról az oldalon tájékoztatást adok. A nyilatkozat utolsó frissítésének dátuma: <strong>2026. szeptember 30.</strong>
                 </p>
 
                 <h2>9. Kapcsolat</h2>
                 <p>
-                  Adatvédelemmel kapcsolatos kérdésekben írjon nekünk:<br/>
+                  Adatvédelemmel kapcsolatos kérdésekben írjon nekem:<br/>
                   <strong>Email:</strong> utazasparizsba@gmail.com<br/>
                   <strong>Telefon:</strong> +33 7 53 14 50 35
                 </p>

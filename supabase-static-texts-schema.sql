@@ -38,8 +38,7 @@ INSERT INTO site_text_content (key, value, section) VALUES
   ('footer_copyright', 'Szeidl Viktória. Készült', 'footer'),
   ('footer_services_title', 'Szolgáltatások:', 'footer'),
   ('footer_service_1', 'Városnéző séták', 'footer'),
-  ('footer_service_2', 'Programszervezés', 'footer'),
-  ('footer_service_3', 'Transzferek', 'footer')
+  ('footer_service_2', 'Utazási tanácsadás', 'footer')
 ON CONFLICT (key) DO NOTHING;
 
 -- Create function to update timestamp

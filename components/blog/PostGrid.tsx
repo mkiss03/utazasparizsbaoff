@@ -36,7 +36,7 @@ export function PostGrid({ posts, isLoading, selectedCategory }: PostGridProps) 
           {selectedCategory ? 'Nincs bejegyzés ebben a kategóriában' : 'Hamarosan...'}
         </h2>
         <p className="mt-2 text-parisian-grey-600">
-          {selectedCategory ? 'Próbálj ki egy másik kategóriát!' : 'Dolgozunk az első bejegyzéseken!'}
+          {selectedCategory ? 'Próbálj ki egy másik kategóriát!' : 'Dolgozom az első bejegyzéseken!'}
         </p>
       </div>
     )

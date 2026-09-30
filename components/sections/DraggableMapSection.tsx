@@ -402,7 +402,7 @@ export default function DraggableMapSection() {
           </h2>
           <p className="text-lg text-parisian-grey-600 max-w-2xl mx-auto">
             Kattints és húzd a térképet, majd válaszd ki az információs ikonokat
-            hogy többet tudj meg a párizsi közlekedésről!
+            hogy többet tudj meg a párizsi tömegközlekedésről!
           </p>
         </div>
 

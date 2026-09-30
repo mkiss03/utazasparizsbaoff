@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS profile (
   hero_cta_text TEXT DEFAULT 'Fedezze fel a túrákat',
   hero_background_image TEXT,
   about_title TEXT NOT NULL DEFAULT 'Rólam',
-  about_description TEXT NOT NULL DEFAULT 'Üdvözlöm! Viktória vagyok, licencelt párizsi idegenvezetője és a francia kultúra szenvedélyes rajongója.',
+  about_description TEXT NOT NULL DEFAULT 'Üdvözlöm! Viktória vagyok, Párizsban élő magyar idegenvezető és a francia kultúra szenvedélyes rajongója.',
   about_image TEXT,
-  contact_email TEXT DEFAULT 'viktoria@parizstourist.com',
-  contact_phone TEXT DEFAULT '+33 6 12 34 56 78',
-  contact_whatsapp TEXT DEFAULT '+33612345678',
+  contact_email TEXT DEFAULT 'utazasparizsba@gmail.com',
+  contact_phone TEXT DEFAULT '+33 7 53 14 50 35',
+  contact_whatsapp TEXT DEFAULT '+33753145035',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -77,7 +77,7 @@ VALUES (
   'Fedezze fel Párizs titkait',
   'Személyre szabott túrák a Fények Városában',
   'Rólam',
-  'Üdvözlöm! Viktória vagyok, licencelt párizsi idegenvezetője és a francia kultúra szenvedélyes rajongója. Több mint 10 éve élek Párizsban, és szeretném megosztani veletek a város rejtett kincseit.'
+  'Üdvözlöm! Viktória vagyok, Párizsban élő magyar idegenvezető és a francia kultúra szenvedélyes rajongója. Több mint 10 éve élek Párizsban, és szeretném megosztani Önökkel a város rejtett kincseit.'
 )
 ON CONFLICT DO NOTHING;
 

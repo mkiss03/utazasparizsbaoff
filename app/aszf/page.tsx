@@ -48,16 +48,15 @@ export default async function ASZFPage() {
                 <h3>1. Általános rendelkezések</h3>
                 <p>
                   Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) tartalmazzák Szeidl Viktória
-                  (székhely: Párizs, Franciaország; SIRET: 94822714500018; nyilvántartási szám: 250065)
-                  által nyújtott idegenvezetési és programszervezői szolgáltatások igénybevételének feltételeit.
+                  egyéni vállalkozó (entrepreneur individuel, EI; SIRET: 94822714500018; nyilvántartási szám: 250065)
+                  által nyújtott idegenvezetési és utazási tanácsadási szolgáltatások igénybevételének feltételeit.
                 </p>
 
                 <h3>2. A szolgáltatások köre</h3>
                 <ul>
                   <li><strong>Párizsi városnézés</strong> - Személyre szabott túrák egyéni vagy csoportos formában</li>
                   <li><strong>Múzeumi programok</strong> - Szakvezetés a párizsi múzeumokban</li>
-                  <li><strong>Programszervezés</strong> - Komplex utazási programok összeállítása</li>
-                  <li><strong>Transzfer szolgáltatás</strong> - Repülőtéri és egyéb közlekedési szolgáltatások</li>
+                  <li><strong>Utazási tanácsadás</strong> - Személyre szabott programjavaslat és útiterv (a szállást, a belépőjegyeket és a közlekedést az ügyfél maga foglalja és fizeti, közvetlenül a szolgáltatóknál)</li>
                 </ul>
 
                 <h3>3. Foglalás és lemondás</h3>
@@ -75,17 +74,33 @@ export default async function ASZFPage() {
                   <li><strong>Vis maior esetén:</strong> Teljes visszatérítés vagy új időpont egyeztetése</li>
                 </ul>
 
+                <h4>3.3 Elállási jog</h4>
+                <p>
+                  A meghatározott napra és időpontra foglalt idegenvezetés szabadidős szolgáltatás, amelyre a francia
+                  fogyasztóvédelmi törvénykönyv (Code de la consommation) L221-28. cikkének 12. pontja alapján a 14 napos
+                  elállási jog nem vonatkozik. A lemondásra a 3.2 pont feltételei irányadók.
+                </p>
+                <p>
+                  Utazási tanácsadás esetén a fogyasztót a szerződéskötéstől számított 14 napig elállási jog illeti meg.
+                  Ha az ügyfél kifejezett kérésére a tanácsadás e határidő lejárta előtt teljes egészében teljesül, és az
+                  ügyfél tudomásul vette, hogy ezzel elveszíti elállási jogát, az elállási jog a teljesítéssel megszűnik
+                  (L221-28. cikk 1. pont).
+                </p>
+
                 <h3>4. Díjak és fizetés</h3>
                 <p>
                   Az árak euróban (€) értendők és tartalmazzák az ÁFÁ-t. A fizetés készpénzben,
-                  bankkártyával vagy előzetes átutalással történhet. Egyedi programok esetén
-                  előleg fizetése szükséges.
+                  bankkártyával vagy előzetes átutalással történhet. Egyedi idegenvezetés vagy tanácsadás
+                  esetén a szolgáltató előleget kérhet, amely kizárólag a saját díjára vonatkozik.
                 </p>
 
                 <h3>5. Felelősség</h3>
                 <p>
-                  A szolgáltató nem vállal felelősséget a szolgáltatás igénybevétele során bekövetkező
-                  balesetekért, elveszett vagy megrongálódott tárgyakért. Ajánljuk megfelelő utasbiztosítás kötését.
+                  A szolgáltató a jogszabályok szerint felel az általa nyújtott idegenvezetési és tanácsadási
+                  szolgáltatás teljesítéséért. Nem felel azokért a károkért, amelyek az ügyfélnek, harmadik személynek
+                  (így az ügyfél által közvetlenül igénybe vett szállás-, közlekedési vagy jegyszolgáltatónak) vagy
+                  vis maiornak róhatók fel. Az ügyfél értéktárgyaiért a szolgáltató csak akkor felel, ha a kár az ő
+                  hibájából következett be. Utasbiztosítás kötése ajánlott.
                 </p>
 
                 <h3>6. Adatvédelem</h3>
@@ -114,7 +129,7 @@ export default async function ASZFPage() {
                 </p>
 
                 <p className="text-sm italic mt-8">
-                  Hatályos: 2026. január 26-tól
+                  Hatályos: 2026. szeptember 30-tól
                 </p>
               </div>
             </div>
@@ -128,16 +143,15 @@ export default async function ASZFPage() {
                 <h3>1. Dispositions générales</h3>
                 <p>
                   Les présentes Conditions Générales de Vente (ci-après : CGV) régissent les services
-                  de guide touristique et d'organisation de programmes fournis par Szeidl Viktória
-                  (siège social : Paris, France ; SIRET : 94822714500018 ; numéro d'enregistrement : 250065).
+                  de guide touristique et de conseil aux voyageurs fournis par Szeidl Viktória, entrepreneur
+                  individuel (EI) (SIRET : 94822714500018 ; numéro d'enregistrement : 250065).
                 </p>
 
                 <h3>2. Prestations proposées</h3>
                 <ul>
                   <li><strong>Visites guidées de Paris</strong> - Tours personnalisés individuels ou en groupe</li>
                   <li><strong>Programmes muséaux</strong> - Visites guidées dans les musées parisiens</li>
-                  <li><strong>Organisation de programmes</strong> - Conception de programmes de voyage complets</li>
-                  <li><strong>Service de transfert</strong> - Services de transport aéroport et autres</li>
+                  <li><strong>Conseil en voyage</strong> - Suggestions de programme et d'itinéraire personnalisées (l'hébergement, les billets d'entrée et les transports sont réservés et réglés par le client directement auprès des prestataires)</li>
                 </ul>
 
                 <h3>3. Réservation et annulation</h3>
@@ -155,17 +169,35 @@ export default async function ASZFPage() {
                   <li><strong>En cas de force majeure :</strong> Remboursement intégral ou report de la date</li>
                 </ul>
 
+                <h4>3.3 Droit de rétractation</h4>
+                <p>
+                  Conformément à l'article L221-28 12° du Code de la consommation, le droit de rétractation ne
+                  s'applique pas aux prestations de loisirs fournies à une date déterminée, telles que les visites
+                  guidées réservées pour une date précise. Les conditions d'annulation de l'article 3.2 s'appliquent.
+                </p>
+                <p>
+                  Pour les prestations de conseil en voyage, le consommateur dispose d'un délai de rétractation de
+                  14 jours à compter de la conclusion du contrat. Ce droit ne peut plus être exercé lorsque la
+                  prestation a été pleinement exécutée avant la fin de ce délai, à la demande expresse du
+                  consommateur et après qu'il a reconnu perdre son droit de rétractation (article L221-28 1°).
+                </p>
+
                 <h3>4. Tarifs et paiement</h3>
                 <p>
                   Les prix sont exprimés en euros (€) et incluent la TVA. Le paiement peut être effectué
-                  en espèces, par carte bancaire ou par virement préalable. Pour les programmes personnalisés,
-                  un acompte est requis.
+                  en espèces, par carte bancaire ou par virement préalable. Pour les visites guidées ou
+                  prestations de conseil personnalisées, un acompte portant exclusivement sur les honoraires
+                  du prestataire peut être demandé.
                 </p>
 
                 <h3>5. Responsabilité</h3>
                 <p>
-                  Le prestataire n'est pas responsable des accidents survenus pendant le service,
-                  ni des objets perdus ou endommagés. Il est recommandé de souscrire une assurance voyage appropriée.
+                  Le prestataire est responsable, dans les conditions prévues par la loi, de la bonne exécution
+                  des prestations de guide et de conseil qu'il fournit. Il n'est pas responsable des dommages
+                  imputables au client, à un tiers (notamment les prestataires d'hébergement, de transport ou de
+                  billetterie auxquels le client a recours directement) ou à un cas de force majeure. Il ne répond
+                  des objets personnels du client qu'en cas de faute de sa part. Il est recommandé de souscrire
+                  une assurance voyage.
                 </p>
 
                 <h3>6. Protection des données</h3>
@@ -196,7 +228,7 @@ export default async function ASZFPage() {
                 </p>
 
                 <p className="text-sm italic mt-8">
-                  En vigueur depuis le 26 janvier 2026
+                  En vigueur depuis le 30 septembre 2026
                 </p>
               </div>
             </div>

@@ -65,7 +65,7 @@ export default function GaleriaPage() {
             Párizsi Pillanatok
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-parisian-grey-600">
-            Fedezd fel Párizs varázsát a mi szemünkön keresztül
+            Fedezd fel Párizs varázsát az én szemszögemből
           </p>
         </motion.div>
       </section>

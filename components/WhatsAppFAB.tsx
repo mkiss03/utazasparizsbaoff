@@ -8,7 +8,7 @@ interface WhatsAppFABProps {
 }
 
 export default function WhatsAppFAB({
-  phoneNumber = '+33612345678',
+  phoneNumber = '+33753145035',
 }: WhatsAppFABProps) {
   const handleClick = () => {
     const message = encodeURIComponent('Szia! Szeretnék többet megtudni a túrákról.')

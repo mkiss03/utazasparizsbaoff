@@ -25,8 +25,8 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({
-  email = 'viktoria@parizstourist.com',
-  phone = '+33 6 12 34 56 78',
+  email = 'utazasparizsba@gmail.com',
+  phone = '+33 7 53 14 50 35',
   title = 'Lépjen kapcsolatba',
   subtitle = 'Készen áll felfedezni Párizst? Vegye fel velem a kapcsolatot, és tervezzük meg együtt az Ön álomtúráját!',
   locationLabel = 'Helyszín',
@@ -64,7 +64,7 @@ export default function ContactSection({
     if (result.success) {
       setStatus({
         type: 'success',
-        message: result.message || 'Köszönjük az üzenetet!'
+        message: result.message || 'Köszönöm az üzenetet!'
       })
       // Reset form on success
       setFormData({ name: '', email: '', message: '' })

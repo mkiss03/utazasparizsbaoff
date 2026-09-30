@@ -28,7 +28,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
             </h1>
 
             <p className="mb-8 text-lg text-slate-600">
-              Üdvözlünk a(z) {city || 'Város'} Pass-od közösségében! Most már teljes hozzáféréssel rendelkezel az összes prémium tartalomhoz.
+              Üdvözöllek a(z) {city || 'Város'} Pass-od közösségében! Most már teljes hozzáféréssel rendelkezel az összes prémium tartalomhoz.
             </p>
 
             {/* Pass Details */}
@@ -70,7 +70,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                 📧 Megerősítő e-mail lett elküldve az e-mail postafiókodba.
               </p>
               <p className="mt-2">
-                Segítségre van szükséged? <Link href="/#contact" className="font-medium text-french-blue-500 hover:underline">Kapcsolódj velünk</Link>
+                Segítségre van szükséged? <Link href="/#contact" className="font-medium text-french-blue-500 hover:underline">Írj nekem</Link>
               </p>
             </div>
           </div>

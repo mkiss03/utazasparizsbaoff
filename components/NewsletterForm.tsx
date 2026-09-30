@@ -25,7 +25,7 @@ export default function NewsletterForm() {
 
     if (result.success) {
       setStatus('success')
-      setMessage(result.message || 'Köszönjük! Sikeresen feliratkozott.')
+      setMessage(result.message || 'Köszönöm! Sikeresen feliratkozott.')
       setEmail('')
     } else {
       setStatus('error')
@@ -105,7 +105,7 @@ export default function NewsletterForm() {
       <p className="mt-4 text-center text-xs text-slate-500">
         Feliratkozással elfogadja az{' '}
         <a href="/adatvedelem" className="underline hover:text-slate-700 transition-colors">
-          adatvédelmi nyilatkozatunkat
+          adatvédelmi nyilatkozatomat
         </a>
         . Bármikor leiratkozhat.
       </p>
