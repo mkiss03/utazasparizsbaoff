@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
+import { handleMaintenance } from '@/lib/maintenance'
 
 // A Programszervező modul (lásd a tervdokumentumot) minden route-ja csak a
 // NEXT_PUBLIC_FEATURE_PLANNER flag mögött él. Flag nélkül 404-et adunk,
@@ -12,6 +13,13 @@ function isPlannerRouteBlocked(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   if (isPlannerRouteBlocked(request.nextUrl.pathname)) {
     return new NextResponse(null, { status: 404 })
+  }
+
+  // Karbantartás alatt a nyilvános oldalak helyett a karbantartási oldal
+  // jelenik meg; az /admin elérhető marad (lásd lib/maintenance.ts).
+  const maintenanceResponse = handleMaintenance(request)
+  if (maintenanceResponse) {
+    return maintenanceResponse
   }
 
   return await updateSession(request)
