@@ -43,7 +43,7 @@ export async function subscribeToNewsletter(email: string) {
       if (existing.is_active) {
         return {
           success: false,
-          error: 'Ez az email cím már feliratkozott a hírlevelünkre.'
+          error: 'Ez az email cím már feliratkozott a hírlevelemre.'
         }
       } else {
         // Reactivate subscription
@@ -62,7 +62,7 @@ export async function subscribeToNewsletter(email: string) {
 
         return {
           success: true,
-          message: 'Sikeresen újra feliratkozott a hírlevelünkre!'
+          message: 'Sikeresen újra feliratkozott a hírlevelemre!'
         }
       }
     }
@@ -85,7 +85,7 @@ export async function subscribeToNewsletter(email: string) {
 
     return {
       success: true,
-      message: 'Köszönjük a feliratkozást! Hamarosan küldjük az első hírlevelünket.'
+      message: 'Köszönöm a feliratkozást! Hamarosan küldöm az első hírlevelemet.'
     }
 
   } catch (error) {

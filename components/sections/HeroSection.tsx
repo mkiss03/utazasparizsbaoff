@@ -17,7 +17,7 @@ export default function HeroSection({
   headline = 'Fedezze fel Párizs',
   subheadline = 'Személyre szabott túrák a Fények Városában',
   backgroundImage = '/images/eiffel1.jpeg',
-  ctaText = 'Nézd meg szolgáltatásainkat',
+  ctaText = 'Nézd meg a szolgáltatásaimat',
   ctaLink = '#services',
 }: HeroSectionProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -176,10 +176,10 @@ export default function HeroSection({
                 </div>
                 <div>
                   <p className="font-montserrat text-xs font-semibold text-parisian-grey-800 sm:text-sm">
-                    Teljes körű szervezés
+                    Személyre szabott idegenvezetés
                   </p>
                   <p className="font-montserrat text-xs text-parisian-grey-500 hidden sm:block">
-                    Minden részlet egy helyen
+                    Magyarul, helyi szemmel
                   </p>
                 </div>
               </div>

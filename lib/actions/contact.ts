@@ -34,7 +34,7 @@ export async function sendContactEmail(formData: ContactFormData) {
       console.error('RESEND_API_KEY is not configured')
       return {
         success: false,
-        error: 'Az email küldési szolgáltatás nincs beállítva. Kérjük, vegye fel velünk a kapcsolatot közvetlenül.'
+        error: 'Az email küldési szolgáltatás nincs beállítva. Kérem, vegye fel velem a kapcsolatot közvetlenül.'
       }
     }
 
@@ -150,14 +150,14 @@ export async function sendContactEmail(formData: ContactFormData) {
 
     return {
       success: true,
-      message: 'Köszönjük az üzenetet! Hamarosan felvesszük Önnel a kapcsolatot.'
+      message: 'Köszönöm az üzenetet! Hamarosan felveszem Önnel a kapcsolatot.'
     }
 
   } catch (error) {
     console.error('Contact form error:', error)
     return {
       success: false,
-      error: 'Váratlan hiba történt. Kérjük, próbálja meg később vagy írjon nekünk közvetlenül.'
+      error: 'Váratlan hiba történt. Kérem, próbálja meg később, vagy írjon nekem közvetlenül.'
     }
   }
 }

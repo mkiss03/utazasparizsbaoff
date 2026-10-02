@@ -49,7 +49,7 @@ export const stationsDesktop: MetroStation[] = [
   {
     id: '3',
     letter: 'R',
-    title: 'Repülőtéri transzfer',
+    title: 'Repülőtéri jegy (RER B, 14-es metró)',
     description: 'Vigyázat! A repülőtér kivétel. Ne használj sima jegyet!',
     details: [
       '✈️ Ár: Egységesen 14,00 € (CDG és Orly)',
@@ -136,7 +136,7 @@ export const stationsMobile: MetroStation[] = [
   {
     id: '3',
     letter: 'R',
-    title: 'Repülőtéri transzfer',
+    title: 'Repülőtéri jegy (RER B, 14-es metró)',
     description: 'Vigyázat! A repülőtér kivétel. Ne használj sima jegyet!',
     details: [
       '✈️ Ár: Egységesen 14,00 € (CDG és Orly)',

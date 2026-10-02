@@ -176,7 +176,7 @@ export default function AboutSection({
                       Gondtalan élmény
                     </h4>
                     <p className="text-sm leading-relaxed text-parisian-grey-600">
-                      Teljes körű szervezéstől kezdve a praktikus tippekig – minden részletre figyelek, hogy te csak élvezd Párizst.
+                      A praktikus tippektől a személyre szabott útvonalig – a túrán minden részletre figyelek, hogy te csak élvezd Párizst.
                     </p>
                   </div>
                 </motion.div>
@@ -223,7 +223,7 @@ export default function AboutSection({
                 <div className="rounded-2xl border-2 border-parisian-beige-200 bg-white p-4">
                   <div className="text-center">
                     <p className="font-playfair text-3xl font-bold text-parisian-beige-600">⭐</p>
-                    <p className="font-montserrat text-sm text-parisian-grey-600">Licencelt idegenvezetés</p>
+                    <p className="font-montserrat text-sm text-parisian-grey-600">Magyar anyanyelvű idegenvezetés</p>
                   </div>
                 </div>
               </motion.div>

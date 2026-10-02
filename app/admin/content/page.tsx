@@ -336,7 +336,7 @@ export default function ContentPage() {
                 onChange={(e) =>
                   setProfile({ ...profile, contact_whatsapp: e.target.value })
                 }
-                placeholder="+33612345678"
+                placeholder="+33753145035"
               />
             </div>
           </CardContent>
@@ -653,7 +653,7 @@ export default function ContentPage() {
                     onChange={(e) =>
                       setStaticTexts({ ...staticTexts, footer_contact_email: e.target.value })
                     }
-                    placeholder="viktoria.szeidl@gmail.com"
+                    placeholder="utazasparizsba@gmail.com"
                   />
                 </div>
                 <div className="space-y-2">
@@ -665,7 +665,7 @@ export default function ContentPage() {
                     onChange={(e) =>
                       setStaticTexts({ ...staticTexts, footer_contact_phone: e.target.value })
                     }
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder="+33 7 53 14 50 35"
                   />
                 </div>
               </div>
@@ -680,7 +680,7 @@ export default function ContentPage() {
                   placeholder="Szolgáltatások:"
                 />
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="footer_service_1">Szolgáltatás 1</Label>
                   <Input
@@ -700,18 +700,7 @@ export default function ContentPage() {
                     onChange={(e) =>
                       setStaticTexts({ ...staticTexts, footer_service_2: e.target.value })
                     }
-                    placeholder="Programszervezés"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="footer_service_3">Szolgáltatás 3</Label>
-                  <Input
-                    id="footer_service_3"
-                    value={staticTexts.footer_service_3 || ''}
-                    onChange={(e) =>
-                      setStaticTexts({ ...staticTexts, footer_service_3: e.target.value })
-                    }
-                    placeholder="Transzferek"
+                    placeholder="Utazási tanácsadás"
                   />
                 </div>
               </div>

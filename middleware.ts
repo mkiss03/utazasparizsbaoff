@@ -10,8 +10,28 @@ function isPlannerRouteBlocked(pathname: string): boolean {
   return isPlannerRoute && process.env.NEXT_PUBLIC_FEATURE_PLANNER !== 'true'
 }
 
+// A flashcard-webbolt oldalai (lásd FLASHCARDS-FEATURE-FLAG.md) csak a
+// NEXT_PUBLIC_ENABLE_FLASHCARDS flag mögött érhetők el, közvetlen URL-lel sem.
+const FLASHCARD_ROUTE_PREFIXES = ['/pricing', '/city', '/bundles', '/checkout', '/my-passes', '/paris-flashcards', '/paris/']
+
+function matchesPrefix(pathname: string, prefix: string): boolean {
+  if (prefix.endsWith('/')) return pathname.startsWith(prefix)
+  return pathname === prefix || pathname.startsWith(`${prefix}/`)
+}
+
+function isFlashcardRouteBlocked(pathname: string): boolean {
+  const isFlashcardRoute = FLASHCARD_ROUTE_PREFIXES.some((prefix) => matchesPrefix(pathname, prefix))
+  return isFlashcardRoute && process.env.NEXT_PUBLIC_ENABLE_FLASHCARDS !== 'true'
+}
+
+// A /map-demo fejlesztői oldal, élesben nem érhető el.
+function isDevRouteBlocked(pathname: string): boolean {
+  return matchesPrefix(pathname, '/map-demo') && process.env.NODE_ENV === 'production'
+}
+
 export async function middleware(request: NextRequest) {
-  if (isPlannerRouteBlocked(request.nextUrl.pathname)) {
+  const { pathname } = request.nextUrl
+  if (isPlannerRouteBlocked(pathname) || isFlashcardRouteBlocked(pathname) || isDevRouteBlocked(pathname)) {
     return new NextResponse(null, { status: 404 })
   }
 

@@ -16,10 +16,9 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
   const copyright = staticTexts.footer_copyright || 'Szeidl Viktória. Készült'
   const servicesTitle = staticTexts.footer_services_title || 'Szolgáltatások:'
   const service1 = staticTexts.footer_service_1 || 'Városnéző séták'
-  const service2 = staticTexts.footer_service_2 || 'Programszervezés'
-  const service3 = staticTexts.footer_service_3 || 'Transzferek'
-  const contactEmail = staticTexts.footer_contact_email || 'viktoria.szeidl@gmail.com'
-  const contactPhone = staticTexts.footer_contact_phone || '+33 6 12 34 56 78'
+  const service2 = staticTexts.footer_service_2 || 'Utazási tanácsadás'
+  const contactEmail = staticTexts.footer_contact_email || 'utazasparizsba@gmail.com'
+  const contactPhone = staticTexts.footer_contact_phone || '+33 7 53 14 50 35'
 
   return (
     <footer className="relative overflow-hidden bg-parisian-grey-800 py-12 sm:py-16 text-white">
@@ -50,7 +49,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               </h3>
             </div>
             <p className="mb-4 text-sm text-white/90 font-semibold">
-              Hivatalos idegenvezető és utazásszervező Párizsban
+              Magyar nyelvű idegenvezető Párizsban
             </p>
             <p className="text-sm text-white/70">
               {description}
@@ -58,6 +57,7 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
 
             {/* Legal Info */}
             <div className="mt-6 space-y-1 text-xs text-white/60">
+              <p>Szeidl Viktória EI (entrepreneur individuel)</p>
               <p>Nyilvántartási szám: 250065</p>
               <p>SIRET: 94822714500018</p>
               <p>SIREN: 948 227 145</p>
@@ -141,7 +141,6 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
               <ul className="space-y-1 text-xs text-white/70">
                 <li>• {service1}</li>
                 <li>• {service2}</li>
-                <li>• {service3}</li>
               </ul>
             </div>
 

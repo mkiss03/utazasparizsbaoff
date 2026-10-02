@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
   title: 'Impresszum | Utazás Párizsba - Párizsi Idegenvezetés',
-  description: 'Jogi információk és kapcsolati adatok - Utazás Párizsba, Szeidl Viktória hivatalos idegenvezető Párizsban',
+  description: 'Jogi információk és kapcsolati adatok - Utazás Párizsba, Szeidl Viktória magyar nyelvű idegenvezető Párizsban',
 }
 
 export const dynamic = 'force-dynamic'
@@ -62,13 +62,13 @@ export default async function ImpresszumPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="mb-1 font-semibold text-parisian-grey-800">Név:</h3>
-                  <p className="text-parisian-grey-600">Szeidl Viktória</p>
+                  <p className="text-parisian-grey-600">Szeidl Viktória EI (entrepreneur individuel), micro-entrepreneur</p>
                 </div>
 
                 <div>
                   <h3 className="mb-1 font-semibold text-parisian-grey-800">Tevékenység:</h3>
                   <p className="text-parisian-grey-600">
-                    Hivatalos idegenvezető és utazásszervező Párizsban
+                    Idegenvezetés és utazási tanácsadás (guide touristique, conseil et assistance aux voyageurs)
                   </p>
                 </div>
 
@@ -144,7 +144,7 @@ export default async function ImpresszumPage() {
                 Szolgáltatások
               </h2>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border border-parisian-beige-200 bg-parisian-cream-50 p-4">
                   <h3 className="mb-2 font-semibold text-parisian-grey-800">Városnéző séták</h3>
                   <p className="text-sm text-parisian-grey-600">
@@ -153,16 +153,9 @@ export default async function ImpresszumPage() {
                 </div>
 
                 <div className="rounded-xl border border-parisian-beige-200 bg-parisian-cream-50 p-4">
-                  <h3 className="mb-2 font-semibold text-parisian-grey-800">Utazástervezés</h3>
+                  <h3 className="mb-2 font-semibold text-parisian-grey-800">Utazási tanácsadás</h3>
                   <p className="text-sm text-parisian-grey-600">
-                    Személyre szabott programok
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-parisian-beige-200 bg-parisian-cream-50 p-4">
-                  <h3 className="mb-2 font-semibold text-parisian-grey-800">Transzferek</h3>
-                  <p className="text-sm text-parisian-grey-600">
-                    Repülőtéri és privát transzferek
+                    Személyre szabott programjavaslat
                   </p>
                 </div>
               </div>
@@ -175,15 +168,15 @@ export default async function ImpresszumPage() {
               </h2>
               <div className="space-y-3 text-sm text-parisian-grey-700">
                 <p>
-                  Ez a weboldal Szeidl Viktória hivatalos idegenvezetői és utazásszervezői szolgáltatásainak
-                  bemutatására szolgál.
+                  Ez a weboldal Szeidl Viktória egyéni vállalkozó (EI) idegenvezetési és utazási tanácsadási
+                  szolgáltatásait mutatja be.
                 </p>
                 <p>
                   Az oldalon található információk tájékoztató jellegűek. A szolgáltatások részleteiről
                   és árakról érdeklődni a fenti elérhetőségeken lehet.
                 </p>
                 <p className="font-semibold">
-                  © {new Date().getFullYear()} Szeidl Viktória. Minden jog fenntartva.
+                  © {new Date().getFullYear()} Szeidl Viktória EI. Minden jog fenntartva.
                 </p>
               </div>
             </div>
