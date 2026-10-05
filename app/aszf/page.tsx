@@ -48,14 +48,13 @@ export default async function ASZFPage() {
                 <h3>1. Általános rendelkezések</h3>
                 <p>
                   Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) tartalmazzák Szeidl Viktória
-                  egyéni vállalkozó (entrepreneur individuel, EI; SIRET: 94822714500018; nyilvántartási szám: 250065)
+                  egyéni vállalkozó (entrepreneur individuel, EI; SIRET: 94822714500018)
                   által nyújtott idegenvezetési és utazási tanácsadási szolgáltatások igénybevételének feltételeit.
                 </p>
 
                 <h3>2. A szolgáltatások köre</h3>
                 <ul>
                   <li><strong>Párizsi városnézés</strong> - Személyre szabott túrák egyéni vagy csoportos formában</li>
-                  <li><strong>Múzeumi programok</strong> - Szakvezetés a párizsi múzeumokban</li>
                   <li><strong>Utazási tanácsadás</strong> - Személyre szabott programjavaslat és útiterv (a szállást, a belépőjegyeket és a közlekedést az ügyfél maga foglalja és fizeti, közvetlenül a szolgáltatóknál)</li>
                 </ul>
 
@@ -89,7 +88,8 @@ export default async function ASZFPage() {
 
                 <h3>4. Díjak és fizetés</h3>
                 <p>
-                  Az árak euróban (€) értendők és tartalmazzák az ÁFÁ-t. A fizetés készpénzben,
+                  Az árak euróban (€) értendők. Alanyi adómentesség miatt ÁFA nem kerül felszámításra
+                  (TVA non applicable, art. 293 B du CGI). A fizetés készpénzben,
                   bankkártyával vagy előzetes átutalással történhet. Egyedi idegenvezetés vagy tanácsadás
                   esetén a szolgáltató előleget kérhet, amely kizárólag a saját díjára vonatkozik.
                 </p>
@@ -129,7 +129,7 @@ export default async function ASZFPage() {
                 </p>
 
                 <p className="text-sm italic mt-8">
-                  Hatályos: 2026. szeptember 30-tól
+                  Hatályos: 2026. október 5-től
                 </p>
               </div>
             </div>
@@ -144,13 +144,12 @@ export default async function ASZFPage() {
                 <p>
                   Les présentes Conditions Générales de Vente (ci-après : CGV) régissent les services
                   de guide touristique et de conseil aux voyageurs fournis par Szeidl Viktória, entrepreneur
-                  individuel (EI) (SIRET : 94822714500018 ; numéro d'enregistrement : 250065).
+                  individuel (EI) (SIRET : 94822714500018).
                 </p>
 
                 <h3>2. Prestations proposées</h3>
                 <ul>
                   <li><strong>Visites guidées de Paris</strong> - Tours personnalisés individuels ou en groupe</li>
-                  <li><strong>Programmes muséaux</strong> - Visites guidées dans les musées parisiens</li>
                   <li><strong>Conseil en voyage</strong> - Suggestions de programme et d'itinéraire personnalisées (l'hébergement, les billets d'entrée et les transports sont réservés et réglés par le client directement auprès des prestataires)</li>
                 </ul>
 
@@ -184,7 +183,8 @@ export default async function ASZFPage() {
 
                 <h3>4. Tarifs et paiement</h3>
                 <p>
-                  Les prix sont exprimés en euros (€) et incluent la TVA. Le paiement peut être effectué
+                  Les prix sont exprimés en euros (€). TVA non applicable, article 293 B du CGI.
+                  Le paiement peut être effectué
                   en espèces, par carte bancaire ou par virement préalable. Pour les visites guidées ou
                   prestations de conseil personnalisées, un acompte portant exclusivement sur les honoraires
                   du prestataire peut être demandé.
@@ -228,7 +228,7 @@ export default async function ASZFPage() {
                 </p>
 
                 <p className="text-sm italic mt-8">
-                  En vigueur depuis le 30 septembre 2026
+                  En vigueur depuis le 5 octobre 2026
                 </p>
               </div>
             </div>

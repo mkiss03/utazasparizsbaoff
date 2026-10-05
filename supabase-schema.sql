@@ -86,7 +86,6 @@ INSERT INTO tours (title, slug, short_description, price, duration, max_group_si
 VALUES
   ('Klasszikus Párizs', 'klasszikus-parizs', 'Fedezze fel Párizs legismertebb nevezetességeit egyetlen varázslatos túra során.', 150.00, 3.0, 8, true, 1),
   ('Montmartre Művészei', 'montmartre-muveszei', 'Sétáljon a művészek negyedében, ahol Picasso és Van Gogh is alkotott.', 120.00, 2.5, 10, false, 2),
-  ('Gasztronómiai Kaland', 'gasztro nomiai-kaland', 'Kóstolja meg Párizs legjobb ételeit és borait egy autentikus túrán.', 180.00, 4.0, 6, true, 3),
   ('Rejtett Párizs', 'rejtett-parizs', 'Fedezze fel a turistautakról távol eső, varázslatos zugokat és helyi titkokat.', 140.00, 3.0, 8, false, 4)
 ON CONFLICT DO NOTHING;
 

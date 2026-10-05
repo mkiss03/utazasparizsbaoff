@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getMaintenanceDecision } from '../maintenance'
+import { getMaintenanceDecision, isMaintenanceMode } from '../maintenance'
 
 const TOKEN = 'titkos-elonezet-123'
 
@@ -48,5 +48,22 @@ describe('getMaintenanceDecision', () => {
     expect(
       getMaintenanceDecision({ enabled: true, pathname: '/', bypassToken: undefined, queryToken: undefined })
     ).toBe('block')
+  })
+})
+
+describe('isMaintenanceMode', () => {
+  it('csak MAINTENANCE_MODE=on esetén kapcsol be', () => {
+    const original = process.env.MAINTENANCE_MODE
+    try {
+      delete process.env.MAINTENANCE_MODE
+      expect(isMaintenanceMode()).toBe(false)
+      process.env.MAINTENANCE_MODE = 'off'
+      expect(isMaintenanceMode()).toBe(false)
+      process.env.MAINTENANCE_MODE = 'on'
+      expect(isMaintenanceMode()).toBe(true)
+    } finally {
+      if (original === undefined) delete process.env.MAINTENANCE_MODE
+      else process.env.MAINTENANCE_MODE = original
+    }
   })
 })

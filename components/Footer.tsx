@@ -58,7 +58,6 @@ export default function Footer({ staticTexts = {} }: FooterProps) {
             {/* Legal Info */}
             <div className="mt-6 space-y-1 text-xs text-white/60">
               <p>Szeidl Viktória EI (entrepreneur individuel)</p>
-              <p>Nyilvántartási szám: 250065</p>
               <p>SIRET: 94822714500018</p>
               <p>SIREN: 948 227 145</p>
             </div>

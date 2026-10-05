@@ -73,8 +73,11 @@ export default async function ImpresszumPage() {
                 </div>
 
                 <div>
-                  <h3 className="mb-1 font-semibold text-parisian-grey-800">Nyilvántartási szám:</h3>
-                  <p className="font-mono text-parisian-grey-600">250065</p>
+                  <h3 className="mb-1 font-semibold text-parisian-grey-800">Magyarországi idegenvezetői nyilvántartási szám:</h3>
+                  <p className="text-parisian-grey-600">
+                    <span className="font-mono">250065</span> (kiállító: magyarországi kormányhivatal). Franciaországban nem
+                    minősül guide-conférencier igazolványnak.
+                  </p>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -86,6 +89,11 @@ export default async function ImpresszumPage() {
                     <h3 className="mb-1 font-semibold text-parisian-grey-800">SIREN:</h3>
                     <p className="font-mono text-parisian-grey-600">948 227 145</p>
                   </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-1 font-semibold text-parisian-grey-800">ÁFA:</h3>
+                  <p className="text-parisian-grey-600">Alanyi adómentes (TVA non applicable, art. 293 B du CGI)</p>
                 </div>
               </div>
             </div>
