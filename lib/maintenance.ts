@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 // "karbantartás alatt" oldal jelenik meg, a keresők felé noindex jelzéssel.
 // Az /admin felület közben is elérhető marad, hogy a tartalmat javítani lehessen.
 //
-// Alapértelmezetten BE van kapcsolva. Újranyitás: MAINTENANCE_MODE=off a
+// Alapértelmezetten KI van kapcsolva. Bekapcsolás: MAINTENANCE_MODE=on a
 // környezeti változók között, majd új deploy. (A next.config.mjs ugyanezt a
 // változót olvassa a statikus fájlok noindex fejlécéhez.)
 //
@@ -17,7 +17,7 @@ export const BYPASS_COOKIE = 'maintenance_bypass'
 export const BYPASS_PARAM = 'preview'
 
 export function isMaintenanceMode(): boolean {
-  return process.env.MAINTENANCE_MODE !== 'off'
+  return process.env.MAINTENANCE_MODE === 'on'
 }
 
 export type MaintenanceDecision = 'pass' | 'robots' | 'grant-bypass' | 'block'

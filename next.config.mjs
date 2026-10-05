@@ -1,7 +1,7 @@
-// Karbantartási mód (lásd lib/maintenance.ts): alapból bekapcsolva,
-// MAINTENANCE_MODE=off kapcsolja ki. A middleware a képeket és a statikus
+// Karbantartási mód (lásd lib/maintenance.ts): alapból kikapcsolva,
+// MAINTENANCE_MODE=on kapcsolja be. A middleware a képeket és a statikus
 // fájlokat nem látja, ezért azok noindex fejlécét itt adjuk hozzá.
-const maintenanceMode = process.env.MAINTENANCE_MODE !== 'off'
+const maintenanceMode = process.env.MAINTENANCE_MODE === 'on'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
