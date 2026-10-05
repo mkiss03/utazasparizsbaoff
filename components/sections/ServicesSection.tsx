@@ -7,6 +7,7 @@ import type { LucideIcon } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Tour } from '@/lib/types/database'
+import { centeredGrid } from '@/components/ui/centered-grid'
 
 interface Program {
   title: string
@@ -109,6 +110,8 @@ export default function ServicesSection({
     return IconComponent || Icons.MapPin  // Fallback to MapPin
   }
 
+  const servicesGrid = centeredGrid(services.length, { wideContainer: 'mx-auto max-w-6xl' })
+
   if (isLoading) {
     return (
       <section id="services" className="relative overflow-hidden bg-white py-20 md:py-32">
@@ -162,7 +165,7 @@ export default function ServicesSection({
         </motion.div>
 
         {/* Services Grid */}
-        <div className="mx-auto grid max-w-6xl gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className={servicesGrid.container}>
           {services.map((service, index) => (
             <motion.div
               key={service.id}
@@ -171,7 +174,7 @@ export default function ServicesSection({
               transition={{ duration: 0.6, delay: index * 0.15 }}
               viewport={{ once: true, margin: '-50px' }}
               onClick={() => setSelectedService(service)}
-              className="group relative cursor-pointer"
+              className={`group relative cursor-pointer ${servicesGrid.item}`}
             >
               {/* Service Card */}
               <motion.div
