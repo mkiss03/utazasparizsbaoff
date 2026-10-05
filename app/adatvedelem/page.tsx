@@ -46,8 +46,7 @@ export default async function AdatvedelemPage() {
                   <strong>Név:</strong> Szeidl Viktória EI (entrepreneur individuel)<br/>
                   <strong>Email:</strong> utazasparizsba@gmail.com<br/>
                   <strong>SIRET:</strong> 94822714500018<br/>
-                  <strong>SIREN:</strong> 948 227 145<br/>
-                  <strong>Nyilvántartási szám:</strong> 250065
+                  <strong>SIREN:</strong> 948 227 145
                 </p>
 
                 <h2>2. Kezelt személyes adatok</h2>
@@ -129,7 +128,7 @@ export default async function AdatvedelemPage() {
                 <h2>8. Változások</h2>
                 <p>
                   Fenntartom a jogot, hogy jelen adatvédelmi nyilatkozatot bármikor módosítsam.
-                  A változásokról az oldalon tájékoztatást adok. A nyilatkozat utolsó frissítésének dátuma: <strong>2026. szeptember 30.</strong>
+                  A változásokról az oldalon tájékoztatást adok. A nyilatkozat utolsó frissítésének dátuma: <strong>2026. október 5.</strong>
                 </p>
 
                 <h2>9. Kapcsolat</h2>
