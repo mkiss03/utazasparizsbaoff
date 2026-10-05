@@ -5,6 +5,7 @@ import { Calendar, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Post } from '@/lib/types/database'
+import { centeredGrid } from '@/components/ui/centered-grid'
 
 interface BlogSectionProps {
   posts?: Post[]
@@ -18,6 +19,8 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
       day: 'numeric',
     })
   }
+
+  const postsGrid = centeredGrid(posts?.length ?? 0)
 
   if (!posts || posts.length === 0) {
     return null
@@ -69,14 +72,14 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
-          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+          className={postsGrid.container}
         >
           {posts.map((post) => (
             <motion.article
               key={post.id}
               variants={itemVariants}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="group"
+              className={`group ${postsGrid.item}`}
             >
               <Link href={`/blog/${post.slug}`}>
                 <div className="overflow-hidden rounded-3xl border-2 border-parisian-beige-200 bg-white shadow-xl transition-all duration-500 hover:shadow-2xl hover:border-parisian-beige-300">

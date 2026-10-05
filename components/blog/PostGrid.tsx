@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Post } from '@/lib/types/database'
+import { centeredGrid } from '@/components/ui/centered-grid'
 
 interface PostGridProps {
   posts: Post[]
@@ -42,11 +43,14 @@ export function PostGrid({ posts, isLoading, selectedCategory }: PostGridProps) 
     )
   }
 
+  const grid = centeredGrid(posts.length)
+
   return (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div className={grid.container}>
       {posts.map((post, index) => (
         <motion.div
           key={post.id}
+          className={grid.item}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: index * 0.1 }}

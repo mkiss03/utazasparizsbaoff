@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, MapPin } from 'lucide-react'
 import type { DiscoverItem } from '@/lib/types/database'
+import { centeredGrid } from '@/components/ui/centered-grid'
 
 // Force dynamic rendering to avoid build-time database access
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,7 @@ export default async function DiscoverPage() {
     .order('created_at', { ascending: false })
 
   const discoverItems = (items as DiscoverItem[]) || []
+  const discoverGrid = centeredGrid(discoverItems.length)
 
   return (
     <>
@@ -50,12 +52,12 @@ export default async function DiscoverPage() {
         <section className="py-20">
           <div className="container mx-auto px-4">
             {discoverItems.length > 0 ? (
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className={discoverGrid.container}>
                 {discoverItems.map((item) => (
                   <Link
                     key={item.id}
                     href={item.link_url || '#'}
-                    className="group relative overflow-hidden rounded-3xl bg-slate-50 shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                    className={`group relative overflow-hidden rounded-3xl bg-slate-50 shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${discoverGrid.item}`}
                   >
                     {/* Image */}
                     <div className="relative h-72 w-full overflow-hidden">
